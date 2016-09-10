@@ -1,0 +1,6 @@
+[submodule "CPSC475"]
+	path = CPSC475
+	url = git://github.com/pauldepalma/CPSC475
+[submodule "CPSC346"]
+	path = CPSC346
+	url = git://github.com/pauldepalma/CPSC346
