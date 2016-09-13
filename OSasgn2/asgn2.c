@@ -6,9 +6,30 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define DEBUG
+
+// Non-exhaustive ANSI color codes
+#define RED "\x1B[31m"
+#define GRN "\x1B[32m"
+#define YEL "\x1B[33m"
+#define BLU "\x1B[34m"
+#define MAG "\x1B[35m"
+#define CYN "\x1B[36m"
+#define WHT "\x1B[37m"
+
+#define IRED "\x1B[61m"
+#define IGRN "\x1B[62m"
+
+#define BGRN "\x1B[92m"
+#define BWHT "\x1B[97m"
+
+#define RST "\x1B[0m"
+
 // Global variables
-const unsigned MAX_INPUT = 8; // Maximum input per command
-const char* WHITESPACE = " \t"; // Whitespace characters
+const char PROMPT[] = CYN "Prompt" BWHT "$ " RST;
+const char OUTPUT[] = BGRN;
+const unsigned MAX_INPUT = 80; // Maximum input per command
+const char WHITESPACE[] = {' ','\t'}; // Whitespace characters
 
 // Enable pseudo-bool type for fun
 const int true = 1;
@@ -17,25 +38,45 @@ typedef int bool;
 
 // Input struct
 typedef struct {
-	unsigned argc;
-	char** argv;
-} Input; 
+	int argc; // Number of arguments
+	char** argv; // Pointer to array of argument strings
+} Input;
+
+// Prints out the prompt
+void printPrompt()
+{
+	printf(PROMPT); // Simple stuff
+}
+
+// Wraps malloc by returning initialized space
+void* initSpace(int size)
+{
+	char* ret = (char*)malloc(size); // Allocate space
+	if (!ret) return 0; // Ensure the space was allocated
+	memset(ret, 0, size); // Initialize them all to zero
+	return ret; // Return initialized space
+}
 
 // Get input from the user
 char* getInput()
 {
-	char* in = (char*)malloc(MAX_INPUT);
+	char* in = initSpace(MAX_INPUT + 1); // Plus a null
 	char* start = in;
-	char c;
 	
-	for (unsigned i = 0; i < MAX_INPUT; ++i) // Enforce the 80 character max
+	for (unsigned i = 0; i < MAX_INPUT; ++i) // Enforce the character max
 	{
-		c = getchar(); // Get a character
+		unsigned char c = getchar(); // Get a character
 		if (c == '\n') break; // Stop if enter is pressed
 		*in++ = c; // Save the character
 	}
 	
 	*in = '\0'; // Terminate the string
+	
+	#ifdef DEBUG
+		printf(YEL); // Yellow color for debug stuff
+		printf("_DEBUG_ Recieved input string: %s\n", start);
+		printf("_DEBUG_ String length: %lu\n", strlen(start));
+	#endif
 	
 	return start;
 }
@@ -44,17 +85,21 @@ char* getInput()
 Input* processInput(char* in)
 {
 	while (*in != '\0' && strchr(WHITESPACE, *in)) ++in; // Trim leading whitespace
-	if (*in == '\0') return 0; // Fail if there are no words
+	if (*in == '\0')
+	{
+		#ifdef DEBUG
+			printf("_DEBUG_ Empty or pure whitespace input.\n");
+		#endif
+		return 0; // Fail if there are no words
+	}
 	
 	// Create return variable
-	Input* out = (Input*)malloc(sizeof(Input));
-	out->argc = 0;
-	out->argv = 0;
+	Input* out = initSpace(sizeof(Input));
 	
 	char* start = in; // Save the location of the first character
 	
 	unsigned char_count = 0, // Number of characters in the input
-					 word_count = 1; // Number of words
+					 word_count = 1; // Number of words (there is at least one if we get this far)
 	
 	for (; *in != '\0'; ++in) // Advance until null is found
 	{
@@ -63,21 +108,21 @@ Input* processInput(char* in)
 			while (in[1] != '\0' && strchr(WHITESPACE, in[1])) ++in; // Advance to next word
 			word_count += in[1] == '\0' ? 0 : 1; // Increase word count if there is another word
 		}
-		/*
-		else if (*in == '"') // Quoted input
-		{
-			/// Needs to account for '\"', and add to char_count
-			do ++in; // Move along until end of string is found
-			while (*in != '\0' && *in != '"');
-		}
-		*/
 		else ++char_count; // Increase the number of characters (including one after every word)
 	}
 	
-	char* words = (char*)malloc(char_count + 1); // The number of characters in the input string, plus a final null
+	#ifdef DEBUG
+		printf("_DEBUG_ Counted %d valid characters.\n", char_count);
+		printf("_DEBUG_ Counted %d words.\n", word_count);
+		printf("_DEBUG_ Mallocing %d bytes for *argv[0]\n", char_count + word_count);
+		printf("_DEBUG_ Mallocing %lu bytes for *argv\n", sizeof(char*) * word_count);
+	#endif
+	
+	char* words = initSpace(char_count + word_count); // The number of characters in the input string, plus a final null
+	if (!words) return 0;
 	out->argc = word_count; // Set the number of arguments
-	out->argv = (char**)malloc(sizeof(char*) * word_count); // A pointer for every word
-	word_count = 0; // Reset
+	out->argv = initSpace(sizeof(char*) * word_count); // A pointer for every word
+	char** writer = out->argv; // Tracks where to write the addresses to
 	
 	bool word_start = true; // We start at the beginning of a word
 
@@ -87,21 +132,22 @@ Input* processInput(char* in)
 		*words = *start; // Copy the character over
 		if (word_start)
 		{
-			out->argv[word_count * sizeof(char*)] = words; // Save the location of the beginning of the word in argv
+			*writer++ = words; // Save the location of the beginning of the word in argv, then move pointer along
 			word_start = false; // No longer at the beginning of a word
 		}
 		else if (strchr(WHITESPACE, *start)) // End of word
 		{
 			*words = '\0'; // Terminate the current string
 			while (start[1] != '\0' && strchr(WHITESPACE, start[1])) ++start; // Advance to next word
-			if (start[1] != '\0')
-			{
-				word_start = true; // We will be at the beginning of a word next iteration
-				++word_count; // Increase word count if there is another word
-			}
+			word_start = start[1] != '\0'; // We will be at the beginning of a word next iteration
 		}
 	}
-	*words = '\0'; // Write the final null
+	
+	#ifdef DEBUG
+		printf("_DEBUG_ Addresses of argv\n");
+		for (int i = 0; i < out->argc; ++i)
+			printf("_DEBUG_ Index %d: %p\n", i, (void*)out->argv[i]);
+	#endif
 	
 	return out; // Return the Input
 }
@@ -110,11 +156,11 @@ Input* processInput(char* in)
 int main()
 {
 	Input* input = 0; // For inputs
-	bool loop = true;
+	bool loop;
 	
-	while (loop) // Main loop
+	do // Main loop
 	{
-		printf("Prompt$ "); // Print the prompt
+		printPrompt(); // Print the prompt
 		
 		char* in = getInput(); // Get the user's input
 		input = processInput(in); // Get and process the user's input
@@ -124,17 +170,20 @@ int main()
 		
 		if (loop)
 		{
+			printf(OUTPUT); // Change the output color if specified
+			
 			// Do something with the input
 			printf("There are %d arguments:\n", input->argc);
-			for (unsigned i = 0; i < input->argc; ++i)
-				printf("%s\n",input->argv[i * sizeof(char*)]);
+			for (int i = 0; i < input->argc; ++i)
+				printf("%s\n",input->argv[i]);
 		}
 		
 		// Free all the memory pointed at by the Input struct
 		free(input->argv[0]); // The first pointer owns all the other pointers' data
 		free(input->argv); // Free the stored pointers
 		free(input);
-	}
+	} while (loop);
 	
 	return 0;
 }
+
