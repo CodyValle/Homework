@@ -6,28 +6,32 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define DEBUG
-
-// Non-exhaustive ANSI color codes
-#define RED "\x1B[31m"
-#define GRN "\x1B[32m"
-#define YEL "\x1B[33m"
-#define BLU "\x1B[34m"
-#define MAG "\x1B[35m"
-#define CYN "\x1B[36m"
-#define WHT "\x1B[37m"
-
-#define IRED "\x1B[61m"
-#define IGRN "\x1B[62m"
-
-#define BGRN "\x1B[92m"
-#define BWHT "\x1B[97m"
-
-#define RST "\x1B[0m"
+//#define DEBUG
 
 // Global variables
-const char PROMPT[] = CYN "Prompt" BWHT "$ " RST;
-const char OUTPUT[] = BGRN;
+#ifdef __unix__ // On Unix...
+    // Non-exhaustive ANSI color codes
+    #define RED "\x1B[31m"
+    #define GRN "\x1B[32m"
+    #define YEL "\x1B[33m"
+    #define BLU "\x1B[34m"
+    #define MAG "\x1B[35m"
+    #define CYN "\x1B[36m"
+    #define WHT "\x1B[37m"
+
+    #define IRED "\x1B[61m"
+    #define IGRN "\x1B[62m"
+
+    #define BGRN "\x1B[92m"
+    #define BWHT "\x1B[97m"
+
+    #define RST "\x1B[0m"
+
+    const char PROMPT[] = CYN "Prompt" BWHT "$ " RST;
+    const char OUTPUT[] = BGRN;
+#else // On Windows
+    const char PROMPT[] = "Prompt$ ";
+#endif // _WIN32
 const unsigned MAX_INPUT = 80; // Maximum input per command
 const char WHITESPACE[] = {' ','\t'}; // Whitespace characters
 
@@ -62,22 +66,24 @@ char* getInput()
 {
 	char* in = initSpace(MAX_INPUT + 1); // Plus a null
 	char* start = in;
-	
+
 	for (unsigned i = 0; i < MAX_INPUT; ++i) // Enforce the character max
 	{
 		unsigned char c = getchar(); // Get a character
 		if (c == '\n') break; // Stop if enter is pressed
 		*in++ = c; // Save the character
 	}
-	
+
 	*in = '\0'; // Terminate the string
-	
+
 	#ifdef DEBUG
-		printf(YEL); // Yellow color for debug stuff
+        #ifdef __unix__
+            printf(YEL); // Yellow color for debug stuff
+        #endif
 		printf("_DEBUG_ Recieved input string: %s\n", start);
 		printf("_DEBUG_ String length: %lu\n", strlen(start));
 	#endif
-	
+
 	return start;
 }
 
@@ -92,15 +98,15 @@ Input* processInput(char* in)
 		#endif
 		return 0; // Fail if there are no words
 	}
-	
+
 	// Create return variable
 	Input* out = initSpace(sizeof(Input));
-	
+
 	char* start = in; // Save the location of the first character
-	
+
 	unsigned char_count = 0, // Number of characters in the input
 					 word_count = 1; // Number of words (there is at least one if we get this far)
-	
+
 	for (; *in != '\0'; ++in) // Advance until null is found
 	{
 		if (strchr(WHITESPACE, *in)) // End of word
@@ -110,20 +116,20 @@ Input* processInput(char* in)
 		}
 		else ++char_count; // Increase the number of characters (including one after every word)
 	}
-	
+
 	#ifdef DEBUG
 		printf("_DEBUG_ Counted %d valid characters.\n", char_count);
 		printf("_DEBUG_ Counted %d words.\n", word_count);
 		printf("_DEBUG_ Mallocing %d bytes for *argv[0]\n", char_count + word_count);
 		printf("_DEBUG_ Mallocing %lu bytes for *argv\n", sizeof(char*) * word_count);
 	#endif
-	
+
 	char* words = initSpace(char_count + word_count); // The number of characters in the input string, plus a final null
 	if (!words) return 0;
 	out->argc = word_count; // Set the number of arguments
 	out->argv = initSpace(sizeof(char*) * word_count); // A pointer for every word
 	char** writer = out->argv; // Tracks where to write the addresses to
-	
+
 	bool word_start = true; // We start at the beginning of a word
 
 	// Iterate through again, filling the argv portion of the Input struct
@@ -142,48 +148,50 @@ Input* processInput(char* in)
 			word_start = start[1] != '\0'; // We will be at the beginning of a word next iteration
 		}
 	}
-	
+
 	#ifdef DEBUG
 		printf("_DEBUG_ Addresses of argv\n");
 		for (int i = 0; i < out->argc; ++i)
 			printf("_DEBUG_ Index %d: %p\n", i, (void*)out->argv[i]);
 	#endif
-	
+
 	return out; // Return the Input
 }
 
-// Main 
+// Main
 int main()
 {
 	Input* input = 0; // For inputs
 	bool loop;
-	
+
 	do // Main loop
 	{
 		printPrompt(); // Print the prompt
-		
+
 		char* in = getInput(); // Get the user's input
 		input = processInput(in); // Get and process the user's input
 		free(in); // Done with that
 		if (!input) continue; // In case nothing was entered
 		loop = strcmp("exit", input->argv[0]); // If the first argument was exit, then exit
-		
+
 		if (loop)
 		{
-			printf(OUTPUT); // Change the output color if specified
-			
+		    #ifdef __unix__
+                printf(OUTPUT); // Change the output color if specified
+            #endif
+
 			// Do something with the input
 			printf("There are %d arguments:\n", input->argc);
 			for (int i = 0; i < input->argc; ++i)
 				printf("%s\n",input->argv[i]);
 		}
-		
+
 		// Free all the memory pointed at by the Input struct
 		free(input->argv[0]); // The first pointer owns all the other pointers' data
 		free(input->argv); // Free the stored pointers
 		free(input);
 	} while (loop);
-	
+
 	return 0;
 }
 
