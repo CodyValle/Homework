@@ -22,7 +22,7 @@ TARGET   = AlphaNum
 
 CC       = g++
 # compiling flags here
-CFLAGS   = -g -O2 -Wall -Wextra -pedantic -pedantic-errors -fexceptions -Weffc++
+CFLAGS   = -std=c++0x -g -O2 -Wall -Wextra -pedantic -pedantic-errors -fexceptions -Weffc++
 
 LINKER   = g++
 # linking flags here
