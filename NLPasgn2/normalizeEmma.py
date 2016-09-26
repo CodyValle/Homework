@@ -55,7 +55,7 @@ def plotData(data):
 	np.plot(xs, zys, label="Natural Zipfian Distribution") # Plot the Zipf Graph
 	np.plot(xs, eys, label="Emma's Zipfian Distribution") # Plot the Emma Graph
 
-	np.legend(loc='best') # Place the legend
+	
 	np.show() # Show the graph
 
 if __name__ == "__main__":
