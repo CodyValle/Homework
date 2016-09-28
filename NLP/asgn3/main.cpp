@@ -2,7 +2,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <stack>
+#include <deque>
 
 enum class Operation
 {
@@ -46,9 +46,6 @@ public:
 	trg(target),
 	m()
 	{
-		// Trim source of ending '*' characters
-		//while (src.at(src.length() - 1) == '*')
-		//	src.pop_back();
 		fillMatrix();
 	}
 	
@@ -57,9 +54,6 @@ public:
 	trg(target),
 	m()
 	{
-		// Trim source of ending '*' characters
-		//while (src.at(src.length() - 1) == '*')
-		//	src.pop_back();
 		fillMatrix();
 	}
 	
@@ -81,46 +75,42 @@ public:
 		}
 	}
 	
-	void printOperations()
+	std::deque<char> getOperations()
 	{
 		// Print out the operation list
 		unsigned i = src.length();
 		unsigned j = trg.length();
-		std::stack<char> st;
+		std::deque<char> st;
 
 		while (i > 0 || j > 0)
 		{
 			switch (m.at(i).at(j).operation())
 			{
 			case Operation::SUBSTITUTION:
-				st.push('s');
+				st.push_front('s');
 				--i;
 				--j;
 				break;
 				
 			case Operation::INSERTION:
-				st.push('i');
+				st.push_front('i');
 				--j;
 				break;
 				
 			case Operation::DELETION:
-				st.push('d');
+				st.push_front('d');
 				--i;
 				break;
 				
 			case Operation::NOTHING:
-				st.push('_');
+				st.push_front('_');
 				--i;
 				--j;
 				break;
 			}
 		}
-		while (st.size() > 0)
-		{
-			std::cout << st.top();
-			st.pop();
-		}
-		std::cout << std::endl;
+		
+		return st;
 	}
 	
 	unsigned getMinDistance()
@@ -141,28 +131,17 @@ private:
 		
 		m.at(0).at(0) = BackPointer(0, Operation::NOTHING);
 		for (unsigned i = 1; i <= src.length(); ++i)
-		{
-			unsigned v = m.at(i - 1).at(0).distance();
-			v += src.at(i - 1) == '*' ? 0 : 1;
-			m.at(i).at(0) = BackPointer(v, Operation::DELETION);
-		}
+			m.at(i).at(0) = BackPointer(i, Operation::DELETION);
 		
 		for (unsigned j = 1; j <= trg.length(); ++j)
-		{
-			unsigned v = m.at(0).at(j - 1).distance();
-			v += trg.at(j - 1) == '*' ? 0 : 1;
-			m.at(0).at(j) = BackPointer(v, Operation::INSERTION);
-		}
+			m.at(0).at(j) = BackPointer(j, Operation::INSERTION);
 		
 		for (unsigned i = 1; i <= src.length(); ++i)
 			for (unsigned j = 1; j <= trg.length(); ++j)
 			{
 				unsigned del = m.at(i - 1).at(j).distance() + 1;
 				unsigned sub = m.at(i - 1).at(j - 1).distance();
-				if (src.at(i - 1) == '*')
-					sub += 1;
-				else
-					sub += src.at(i - 1) == trg.at(j - 1) ? 0 : 2;
+				sub += src.at(i - 1) == trg.at(j - 1) ? 0 : 2;
 				unsigned ins = m.at(i).at(j - 1).distance() + 1;
 				
 				if (sub <= del)
@@ -171,21 +150,26 @@ private:
 					{
 						// Use sub
 						if (src.at(i - 1) != trg.at(j - 1))
-							m.at(i).at(j) = BackPointer(sub, Operation::SUBSTITUTION);
+						  m.at(i).at(j) = BackPointer(sub, Operation::SUBSTITUTION);
 						else
 							m.at(i).at(j) = BackPointer(sub, Operation::NOTHING);
 					}
-					else
+					else if (ins <= del)
 					{
 						// Use ins
 						m.at(i).at(j) = BackPointer(ins, Operation::INSERTION);
+					}
+					else
+					{   
+						// Use del
+						m.at(i).at(j) = BackPointer(del, Operation::DELETION);
 					}
 				}
 				else
 				{
 					if (del <= ins)
 					{
-						// Use del
+						// Use del          
 						m.at(i).at(j) = BackPointer(del, Operation::DELETION);
 					}
 					else
@@ -207,18 +191,40 @@ int main(int argc, char** argv)
 		return -1;
 	}
 	
+	// Set up variables
+	std::string source(argv[1]);
+	std::string target(argv[2]);
+	
 	// Rporting what we are doing
-	std::cout << "Converting " << argv[1] << " to " << argv[2] << "." << std::endl;
+	std::cout << "Converting " << source << " to " << target << "." << std::endl;
 	
 	// Calculate Minimum Edit Distance
-	MatrixNxN matrix(argv[1], argv[2]);
+	MatrixNxN matrix(source, target);
 	
 	// Print out the calculated matrix
 	matrix.print();
 	
-	// Print out the alignment
-	std::cout << argv[1] << std::endl << argv[2] << std::endl;
-	matrix.printOperations();
+	/// Print out the alignment
+	// Get the operation sequence
+	std::deque<char> ops = matrix.getOperations();
+	
+	// Print source string with aligning asterisks 
+	int curChar = 0; 
+	for (unsigned i = 0; i < ops.size(); ++i)
+	  std::cout << (ops.at(i) == 'i' ? '*' : source.at(curChar++));    
+	std::cout << std::endl;
+	         
+	// Print target string with aligning asterisks
+	curChar = 0;      
+	for (unsigned i = 0; i < ops.size(); ++i)
+	  std::cout << (ops.at(i) == 'd' ? '*' :target.at(curChar++));
+	std::cout << std::endl;
+	                                         	
+	// Print operation sequence
+	for (unsigned i = 0; i < ops.size(); ++i)
+		std::cout << ops.at(i);
+	std::cout << std::endl;
+	
 	
 	// Print out the minimum edit distance
 	std:: cout << "The minimum edit distance is " << matrix.getMinDistance() << "." << std::endl;
