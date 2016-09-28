@@ -36,15 +36,23 @@ const unsigned MAX_INPUT = 80; // Maximum input per command
 const char WHITESPACE[] = {' ','\t'}; // Whitespace characters
 
 // Enable pseudo-bool type for fun
+typedef int bool;
 const int true = 1;
 const int false = 0;
-typedef int bool;
 
 // Input struct
 typedef struct {
 	int argc; // Number of arguments
 	char** argv; // Pointer to array of argument strings
 } Input;
+
+// Frees all memory owned by an Input struct
+void delete_input(Input* input)
+{
+  free(input->argv[0]); // The first pointer owns all the other pointers' data
+	free(input->argv); // Free the stored pointers
+  free(input); // Free the created Input struct
+}
 
 // Prints out the prompt
 void printPrompt()
@@ -158,7 +166,7 @@ Input* processInput(char* in)
 	return out; // Return the Input
 }
 
-// Wraps all the past commands data
+// Wraps all the past commands data in a circular array
 typedef struct 
 {
   unsigned max_cmds; 
@@ -169,7 +177,7 @@ typedef struct
 } PastCommands;
 
 // Initializes a PastCommands structure with up to max possible commands
-PastCommands get_past_commands_structure(const unsigned max)
+PastCommands* get_past_commands_structure(const unsigned max)
 {
   PastCommands* ret = initSpace(sizeof(PastCommands));
   ret->max_cmds = max;
@@ -177,93 +185,102 @@ PastCommands get_past_commands_structure(const unsigned max)
   ret->back = 0;
   ret->count = 0;
   ret->cmds = initSpace(sizeof(Input) * max);
-  return *ret;
+  return ret;
 }
 
+// Frees all memory owned by a PastCommands struct
 void free_past_commands(PastCommands* past)
 {
   for (unsigned i = 0; i < past->count; ++i)
-  {
-    // Free all the memory pointed at by the Input struct
-    Input* input = past->cmds[(past->front + i) % past->max_cmds];
-		free(input->argv[0]); // The first pointer owns all the other pointers' data
-		free(input->argv); // Free the stored pointers
-		free(input); // Free the created Input struct
-  }
+	{
+		unsigned index = (past->front + i) % past->max_cmds;
+		delete_input(past->cmds[index]); // Free all the memory pointed at by the Input struct
+		past->cmds[index] = 0;
+	}
     
-  free(past->cmds); // Free the pointer to the Input pointers (???)
+  free(past->cmds); // Free the pointer to the Input pointers
+  past->cmds = 0;
   
   free(past); // Free the PastCommands structure
 }
 
-void add_command(PastCommands past, Input* input)
+// Adds a command to a PastCommands struct
+void add_command(PastCommands* past, Input* input)
 {  
-  if (past.count == past.max_cmds)
+  if (past->count == past->max_cmds) // Then front and back are pointing at the same element
   {
-    Input* input = past.cmds[past.front];
-		free(input->argv[0]); // The first pointer owns all the other pointers' data
-		free(input->argv); // Free the stored pointers
-		free(input); // Free the created Input struct
-		
-    past.front = (past.front + 1) % past.max_cmds;
+  	delete_input(past->cmds[past->front]); // Free the memory before we overwrite the pointer
+    past->front = (past->front + 1) % past->max_cmds; // Move front to the next command
   }
   else
-    ++past.count;
+    ++past->count; // Increase the count
   
-  past.cmds[past.back] = input; // Same as the freed memory if past.count == past.max_cmds
-  past.back = (past.back + 1) % past.max_cmds;
+  past->cmds[past->back] = input; // Same as the freed memory if past.count == past.max_cmds
+  past->back = (past->back + 1) % past->max_cmds; // Move back along
 }
 
-Input* get_command(PastCommands past, unsigned index) // Do not put index as 0!!!
+// Gets an Input struct from a PastCommands struct. 0 is the latest command added
+Input* get_command(PastCommands* past, unsigned index)
 {
-  if (index >= past.count)
+  if (index >= past->count)
     return 0;
   
-  unsigned temp_index = past.back;
-  while (index > 0)
+  unsigned temp_index = past->back;
+  while (index + 1 > 0)
   {
     if (temp_index == 0)
-      temp_index = past.max_cmds;
+      temp_index = past->max_cmds;
     
     --temp_index;
     --index;
   }
     
-  return past.cmds[temp_index];
+  return past->cmds[temp_index];
 }
 
-void print_history(PastCommands past)
+// Prints out all commands stored in a PastCommands struct with their indices
+void print_history(PastCommands* past)
 {
-  if (past.count == 0) return;
+  if (past->count == 0) return;
   
-  unsigned index = 1;
+  unsigned index = past->count;
   do
   {
-    printf("%d: ", index);
+    printf("%d: ", index - 1);
     
-    Input* input = past.cmds[(past.front + index - 1) % past.max_cmds];
+    Input* input = past->cmds[(past->front + past->count - index) % past->max_cmds];
     for (int i = 0; i < input->argc; ++i)
 			printf("%s ",input->argv[i]);
 		printf("\n");
 		
-		++index;
-  } while (index <= past.count);
+		--index;
+  } while (index > 0);
 }
 
-void delete_input(Input* input)
+// Executes the Input struct
+int execute(Input* input)
 {
-  free(input->argv[0]); // The first pointer owns all the other pointers' data
-	free(input->argv); // Free the stored pointers
-  free(input); // Free the created Input struct
+	// This is where the magic of 
+	for (int i = 0; i < input->argc; ++i)
+    printf("%s ",input->argv[i]);
+  printf("\n");
+  
+  return 0;
 }
 
 // Main
-int main()
+int main(int argc, char* argv[])
 {
+	int mem_input = 0;
+	if (argc > 1) // Parse input
+		mem_input = atoi(argv[1]);
+		
+	unsigned mem = mem_input <= 0 ? 10 : mem_input; // Default value of 10
+
 	Input* input = 0; // For inputs
 	bool loop;
 	
-	PastCommands past_commands = get_past_commands_structure(10); // Get an initialized PastCommands structure that can save 10 commands
+	PastCommands* past_commands = get_past_commands_structure(mem); // Get an initialized PastCommands structure that can save multiple commands
 
 	do // Main loop
 	{
@@ -271,99 +288,60 @@ int main()
 
 		char* in = getInput(); // Get the user's input
 		input = processInput(in); // Get and process the user's input
+		free(in); // No longer needed
+		
 		if (!input) continue; // In case nothing was entered	
 		loop = strcmp("exit", input->argv[0]); // If the first argument was exit, then exit
 
 		if (loop)
 		{
-		    #ifdef __unix__
-          printf(OUTPUT); // Change the output color if specified
-        #endif
+	    #ifdef __unix__
+        printf(OUTPUT); // Change the output color if specified
+      #endif
         
       // Check for history command
       bool history = !strcmp("history", input->argv[0]);
       
       if (history)
-        print_history(past_commands);
+      {
+      	print_history(past_commands);
+	    	delete_input(input); // We are not saving this command
+	    }
       else
       {
 			  // Check whether we are executing a past command
 			  if (input->argv[0][0] == '!')
 			  {
-			    switch (input->argv[0][1])
-			    {
-			    case '!':
-			    case '1':
-			      delete_input(input);
-			      input = get_command(past_commands, 1);
-			      break;
-			      
-			    case '2':
-			      delete_input(input);
-			      input = get_command(past_commands, 2);
-			      break;
-			      
-			    case '3':
-			      delete_input(input);
-			      input = get_command(past_commands, 3);
-			      break;
-			      
-			    case '4':
-			      delete_input(input);
-			      input = get_command(past_commands, 4);
-			      break;
-			      
-			    case '5':
-			      delete_input(input);
-			      input = get_command(past_commands, 5);
-			      break;
-			      
-			    case '6':
-			      delete_input(input);
-			      input = get_command(past_commands, 6);
-			      break;
-			      
-			    case '7':
-			      delete_input(input);
-			      input = get_command(past_commands, 7);
-			      break;
-			      
-			    case '8':
-			      delete_input(input);
-			      input = get_command(past_commands, 8);
-			      break;
-			      
-			    case '9':
-			      delete_input(input);
-			      input = get_command(past_commands, 9);
-			      break;
-			      
-			    default: break;
-			    }
+			  	int index = 0; // Which command do we want to recall
+			  	if (input->argv[0][1] != '!') // Check for special charater
+				  	index = atoi(&input->argv[0][1]); // Skip the '!' character
+			  	
+			  	Input* recalled_input = get_command(past_commands, index); // Get the desired command
 			    
-			    if (input)
-			    {
-			      for (int i = 0; i < input->argc; ++i)
-			        printf("%s ",input->argv[i]);
-			      printf("\n");
-			    }
+			    if (recalled_input) // If we got a valid command
+			    	execute(recalled_input); // Execute
+			    else
+			    	printf("Error! No command that far in history.\n");
+			    		    
+			    delete_input(input); // We are not saving this command
+			    	
+			  } // End if (... == '!')
+			  else
+			  { // Execute this input
+					add_command(past_commands, input); // Save the Input in the past_commands
+					execute(input);
 			  }
-			  //for (int i = 0; i < input->argc; ++i)
-			  //  printf("%s\n",input->argv[i]);
-				
-			  // Save the Input in the past_commands 
-			  add_command(past_commands, input);
-      }
-		}
-		else
+      } // End else of if (history)
+	    
+		} // End if (loop)
+		else // We are exiting
 		{
-		  free(input->argv[0]); // The first pointer owns all the other pointers' data
-	  	free(input->argv); // Free the stored pointers
-		  free(input); // Free the created Input struct
+		  delete_input(input);
+		  input = 0;
 		}
 	} while (loop);
 	
-	free_past_commands(&past_commands);
+	free_past_commands(past_commands);
 
 	return 0;
 }
