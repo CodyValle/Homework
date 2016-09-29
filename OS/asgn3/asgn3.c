@@ -1,10 +1,15 @@
-// Author: Cody Valle
-// Date: Sept. 10th, 2016
+// Authors: Cody Valle, Scott Rein
+// Date: Sept. 27th, 2016
 // Description: Main file for a shell for Operating Systems class
+// Long description: Functional shell program capable of remembering past commands
+// 	and executing current and past commands.
 
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
 //#define DEBUG
 
@@ -27,12 +32,17 @@
 
     #define RST "\x1B[0m"
 
-    const char PROMPT[] = CYN "Prompt" BWHT "$ " RST;
+		// PROMPT commands
+		// && will print an '&'
+		// &c will print the full current working directory
+		// &u will print the user that owns the shell
+    const char PROMPT[] = CYN "&u" BWHT "@" RED "&c" BWHT "$ " RST;
     const char OUTPUT[] = BGRN;
 #else // On Windows
-    const char PROMPT[] = "Prompt$ ";
+    const char PROMPT[] = "&u@&c$ ";
 #endif // _WIN32
-const unsigned MAX_INPUT = 80; // Maximum input per command
+
+const unsigned MAXINPUT = 80; // Maximum input per command
 const char WHITESPACE[] = {' ','\t'}; // Whitespace characters
 
 // Enable pseudo-bool type for fun
@@ -54,10 +64,60 @@ void delete_input(Input* input)
   free(input); // Free the created Input struct
 }
 
-// Prints out the prompt
-void printPrompt()
+// Parses the PROMPT string and writes the desired output to ptr
+void parsePrompt(char* ptr)
 {
-	printf(PROMPT); // Simple stuff
+	for (unsigned i = 0; i < sizeof(PROMPT); ++i)
+	{
+		if (PROMPT[i] == '&') // Check for a switch
+		{
+			++i; // Increment i
+			switch (PROMPT[i])
+			{
+			case '&': // Write a literal '&'
+				ptr += sprintf(ptr, "%c", '&');
+				break;
+				
+			case 'c': // Write the full current working directory
+			{
+				char cwd[256]; // The hope is that we don't overflow buf
+				
+				if (getcwd(cwd, sizeof(cwd)) != NULL) // Great! write it to buf
+					ptr += sprintf(ptr, "%s", cwd);
+				else // We write a default value
+					ptr += sprintf(ptr, "path");
+					
+				break;
+			}
+				
+			case 'u': // Write the user who owns the shell process
+			{
+				#ifdef __unix__
+					char usr[_POSIX_LOGIN_NAME_MAX]; // The longest a name can be!
+				
+					if (getlogin_r(usr, sizeof(usr)) == 0) // Great! write it to buf
+						ptr += sprintf(ptr, "%s", usr);
+					else // We write a default value
+						ptr += sprintf(ptr, "user");
+				#else
+					ptr += sprintf(ptr, "user");
+				#endif
+				
+				break;
+			}
+				
+			default: break; // Don't know what the switch was, so we will ignore it
+			}
+		}
+		else // Write the character to the buffer
+			ptr += sprintf(ptr, "%c", PROMPT[i]);
+	}
+}
+
+// Prints out the prompt
+void printPrompt(char* prompt)
+{
+	printf("%s", prompt); // Slightly more complicated
 }
 
 // Wraps malloc by returning initialized space
@@ -72,7 +132,7 @@ void* initSpace(int size)
 // Get input from the user
 char* getInput()
 {
-	char* in = initSpace(MAX_INPUT + 1); // Plus a null
+	char* in = initSpace(MAXINPUT + 1); // Plus a null
 	char* start = in;
 
 	for (unsigned i = 0; i < MAX_INPUT; ++i) // Enforce the character max
@@ -135,7 +195,7 @@ Input* processInput(char* in)
 	char* words = initSpace(char_count + word_count); // The number of characters in the input string, plus a final null
 	if (!words) return 0;
 	out->argc = word_count; // Set the number of arguments
-	out->argv = initSpace(sizeof(char*) * word_count); // A pointer for every word
+	out->argv = initSpace(sizeof(char*) * (word_count + 1)); // A pointer for every word, and a zero on the end
 	char** writer = out->argv; // Tracks where to write the addresses to
 
 	bool word_start = true; // We start at the beginning of a word
@@ -156,6 +216,8 @@ Input* processInput(char* in)
 			word_start = start[1] != '\0'; // We will be at the beginning of a word next iteration
 		}
 	}
+	
+	*writer = 0; // NULL-terminate the argv
 
 	#ifdef DEBUG
 		printf("_DEBUG_ Addresses of argv\n");
@@ -167,9 +229,9 @@ Input* processInput(char* in)
 }
 
 // Wraps all the past commands data in a circular array
-typedef struct 
+typedef struct
 {
-  unsigned max_cmds; 
+  unsigned max_cmds;
   unsigned front;
   unsigned back;
   unsigned count;
@@ -179,13 +241,13 @@ typedef struct
 // Initializes a PastCommands structure with up to max possible commands
 PastCommands* get_past_commands_structure(const unsigned max)
 {
-  PastCommands* ret = initSpace(sizeof(PastCommands));
-  ret->max_cmds = max;
+  PastCommands* ret = initSpace(sizeof(PastCommands)); // Make the space
+  ret->max_cmds = max; // Assign default values to everything
   ret->front = 0;
   ret->back = 0;
   ret->count = 0;
   ret->cmds = initSpace(sizeof(Input) * max);
-  return ret;
+  return ret; // This is essentially a constructor from C++...
 }
 
 // Frees all memory owned by a PastCommands struct
@@ -195,18 +257,16 @@ void free_past_commands(PastCommands* past)
 	{
 		unsigned index = (past->front + i) % past->max_cmds;
 		delete_input(past->cmds[index]); // Free all the memory pointed at by the Input struct
-		past->cmds[index] = 0;
 	}
-    
+
   free(past->cmds); // Free the pointer to the Input pointers
-  past->cmds = 0;
-  
-  free(past); // Free the PastCommands structure
+
+  free(past); // Oh, look, a destructor...
 }
 
 // Adds a command to a PastCommands struct
 void add_command(PastCommands* past, Input* input)
-{  
+{
   if (past->count == past->max_cmds) // Then front and back are pointing at the same element
   {
   	delete_input(past->cmds[past->front]); // Free the memory before we overwrite the pointer
@@ -214,7 +274,7 @@ void add_command(PastCommands* past, Input* input)
   }
   else
     ++past->count; // Increase the count
-  
+
   past->cmds[past->back] = input; // Same as the freed memory if past.count == past.max_cmds
   past->back = (past->back + 1) % past->max_cmds; // Move back along
 }
@@ -222,49 +282,65 @@ void add_command(PastCommands* past, Input* input)
 // Gets an Input struct from a PastCommands struct. 0 is the latest command added
 Input* get_command(PastCommands* past, unsigned index)
 {
-  if (index >= past->count)
+  if (index >= past->count) // This is not the command you're looking for
     return 0;
-  
-  unsigned temp_index = past->back;
-  while (index + 1 > 0)
+
+  unsigned temp_index = past->back; // temp_index tracks the command between back and front
+  while (index + 1 > 0) // Count down to the command of our dreams
   {
-    if (temp_index == 0)
+    if (temp_index == 0) // Circular array stuff
       temp_index = past->max_cmds;
-    
-    --temp_index;
+
+    --temp_index; // Reduce these indices
     --index;
   }
-    
-  return past->cmds[temp_index];
+
+  return past->cmds[temp_index]; // We want this one!
 }
 
 // Prints out all commands stored in a PastCommands struct with their indices
 void print_history(PastCommands* past)
 {
   if (past->count == 0) return;
-  
+
   unsigned index = past->count;
   do
   {
-    printf("%d: ", index - 1);
-    
-    Input* input = past->cmds[(past->front + past->count - index) % past->max_cmds];
-    for (int i = 0; i < input->argc; ++i)
+    printf("%d: ", index - 1); // The callable command index
+
+    Input* input = past->cmds[(past->front + past->count - index) % past->max_cmds]; // Get the input for this iteration
+    for (int i = 0; i < input->argc; ++i) // Print out the full argv
 			printf("%s ",input->argv[i]);
 		printf("\n");
-		
-		--index;
+
+		--index; // Next index
   } while (index > 0);
 }
 
 // Executes the Input struct
 int execute(Input* input)
 {
-	// This is where the magic of 
-	for (int i = 0; i < input->argc; ++i)
-    printf("%s ",input->argv[i]);
-  printf("\n");
-  
+	// Attempting the fork
+	int status;
+	
+	pid_t pid = fork();
+	
+	if (pid < 0) // Then the fork failed
+	{
+		fprintf(stderr, "Failed to Fork");
+		return -1;
+	}
+
+	if (pid == 0) // This is the child process
+	{
+		if (execvp(input->argv[0], input->argv) < 0) // Execute the command and check return
+			printf("%s: command not found\n", input->argv[0]);
+		
+		_Exit(3); // Close the child process
+	}
+	else
+		while (wait(&status) != pid); // Wait for the child process to finish
+	
   return 0;
 }
 
@@ -274,23 +350,26 @@ int main(int argc, char* argv[])
 	int mem_input = 0;
 	if (argc > 1) // Parse input
 		mem_input = atoi(argv[1]);
-		
+
 	unsigned mem = mem_input <= 0 ? 10 : mem_input; // Default value of 10
 
 	Input* input = 0; // For inputs
 	bool loop;
-	
+
 	PastCommands* past_commands = get_past_commands_structure(mem); // Get an initialized PastCommands structure that can save multiple commands
+	
+	char prompt[256]; // Buffer for printing out the prompt
+	parsePrompt(prompt);
 
 	do // Main loop
 	{
-		printPrompt(); // Print the prompt
+		printPrompt(prompt); // Print the prompt
 
 		char* in = getInput(); // Get the user's input
 		input = processInput(in); // Get and process the user's input
 		free(in); // No longer needed
-		
-		if (!input) continue; // In case nothing was entered	
+
+		if (!input) continue; // In case nothing was entered
 		loop = strcmp("exit", input->argv[0]); // If the first argument was exit, then exit
 
 		if (loop)
@@ -298,10 +377,10 @@ int main(int argc, char* argv[])
 	    #ifdef __unix__
         printf(OUTPUT); // Change the output color if specified
       #endif
-        
+
       // Check for history command
       bool history = !strcmp("history", input->argv[0]);
-      
+
       if (history)
       {
       	print_history(past_commands);
@@ -315,16 +394,16 @@ int main(int argc, char* argv[])
 			  	int index = 0; // Which command do we want to recall
 			  	if (input->argv[0][1] != '!') // Check for special charater
 				  	index = atoi(&input->argv[0][1]); // Skip the '!' character
-			  	
+
 			  	Input* recalled_input = get_command(past_commands, index); // Get the desired command
-			    
+
 			    if (recalled_input) // If we got a valid command
 			    	execute(recalled_input); // Execute
 			    else
 			    	printf("Error! No command that far in history.\n");
-			    		    
+
 			    delete_input(input); // We are not saving this command
-			    	
+
 			  } // End if (... == '!')
 			  else
 			  { // Execute this input
@@ -332,16 +411,15 @@ int main(int argc, char* argv[])
 					execute(input);
 			  }
       } // End else of if (history)
-	    
+
 		} // End if (loop)
 		else // We are exiting
 		{
 		  delete_input(input);
-		  input = 0;
 		}
-	} while (loop);
-	
-	free_past_commands(past_commands);
+	} while (loop); // End do
+
+	free_past_commands(past_commands); // Clean up
 
 	return 0;
 }
