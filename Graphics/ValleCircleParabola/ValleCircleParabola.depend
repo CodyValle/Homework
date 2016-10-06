@@ -1,12 +1,11 @@
 # depslib dependency file v1.0
-1473201146 source:e:\school\2016fall\computergraphics\vallecircleparabola\main.cpp
+1473634826 source:e:\school\2016fall\computergraphics\vallecircleparabola\main.cpp
 	<GL/glew.h>
 	<GL/freeglut.h>
 	<OpenGL/glext.h>
-	<GL/glew.h>
-	<GL/freeglut.h>
 	<GL/glext.h>
 	<cmath>
+	<iostream>
 
 1467828214 c:\mingw\include\gl\glew.h
 	<stddef.h>
@@ -255,13 +254,4 @@
 
 1301114765 c:\mingw\include\gl\glext.h
 	<windows.h>
-
-1473201189 source:u:\documents\classwork\vallecircleparabola\main.cpp
-	<GL/glew.h>
-	<GL/freeglut.h>
-	<OpenGL/glext.h>
-	<GL/glew.h>
-	<GL/freeglut.h>
-	<GL/glext.h>
-	<cmath>
 

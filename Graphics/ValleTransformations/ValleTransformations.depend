@@ -254,10 +254,3 @@
 1301114765 c:\mingw\include\gl\glext.h
 	<windows.h>
 
-1474410516 source:u:\documents\classwork\valletransformations\main.cpp
-	<iostream>
-	<GL/glew.h>
-	<GL/freeglut.h>
-	<OpenGL/glext.h>
-	<GL/glext.h>
-

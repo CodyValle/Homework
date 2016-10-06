@@ -23,7 +23,7 @@ void drawScene(void)
 {
    glClear(GL_COLOR_BUFFER_BIT);
 
-    // Draw a red square with specified vertices.
+   // Draw a red square with specified vertices.
    glColor3f(1, 0, 0);
    glBegin(GL_POLYGON);
       glVertex3f(20, 20, 0);
@@ -67,16 +67,6 @@ void drawScene(void)
       glVertex3f(140, 60, 0);
       glVertex3f(160, 60, 0);
       glVertex3f(180, 40, 0);
-    glEnd();
-
-    // Draw a triangle strip
-   glColor3f(0, 1, 1);
-   glBegin(GL_TRIANGLE_STRIP);
-        glVertex3f(160, 180, 0);
-        glVertex3f(170, 120, 0);
-        glVertex3f(175, 180, 0);
-        glVertex3f(180, 130, 0);
-        glVertex3f(190, 180, 0);
     glEnd();
 
    glFlush();

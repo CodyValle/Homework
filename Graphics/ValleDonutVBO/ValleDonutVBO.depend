@@ -1,12 +1,10 @@
 # depslib dependency file v1.0
-1473803318 source:e:\school\2016fall\computergraphics\valledonutvbo\main.cpp
+1474328662 source:e:\school\2016fall\computergraphics\valledonutvbo\main.cpp
 	<cmath>
 	<iostream>
 	<GL/glew.h>
 	<GL/freeglut.h>
 	<OpenGL/glext.h>
-	<GL/glew.h>
-	<GL/freeglut.h>
 	<GL/glext.h>
 
 1467828214 c:\mingw\include\gl\glew.h

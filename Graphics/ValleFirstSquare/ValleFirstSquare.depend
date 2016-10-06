@@ -261,11 +261,3 @@
 1301114765 c:\mingw\include\gl\glext.h
 	<windows.h>
 
-1472594465 source:u:\documents\classwork\vallefirstsquare\main.cpp
-	<GL/glew.h>
-	<GL/freeglut.h>
-	<OpenGL/glext.h>
-	<GL/glew.h>
-	<GL/freeglut.h>
-	<GL/glext.h>
-

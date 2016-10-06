@@ -13,7 +13,7 @@
 #  include <GL/glext.h>
 #pragma comment(lib, "glew32.lib")
 #endif
-/*
+
 // Drawing routine.
 void drawScene(void)
 {
@@ -27,47 +27,6 @@ void drawScene(void)
       glVertex3f(80.0, 20.0, 0.0);
       glVertex3f(80.0, 80.0, 0.0);
       glVertex3f(20.0, 80.0, 0.0);
-   glEnd();
-
-   glFlush();
-}
-*/
-
-// Drawing routine.
-void drawScene(void)
-{
-   glClear(GL_COLOR_BUFFER_BIT);
-
-   glColor3f(0.0, 0.0, 0.0);
-   glBegin(GL_POLYGON);
-      glVertex3f(10.0, 10.0, -0.5);
-      glVertex3f(80.0, 20.0, 0.5);
-      glVertex3f(80.0, 80.0, 0.5);
-      glVertex3f(20.0, 80.0, 0.5);
-   glEnd();
-
-   glColor3f(1.0, 0.0, 0.0);
-   glBegin(GL_POLYGON);
-      glVertex3f(90.0, 10.0, -0.5);
-      glVertex3f(80.0, 80.0, 0.5);
-      glVertex3f(20.0, 80.0, 0.5);
-      glVertex3f(20.0, 20.0, 0.5);
-   glEnd();
-
-   glColor3f(0.0, 1.0, 0.0);
-   glBegin(GL_POLYGON);
-      glVertex3f(90.0, 90.0, -0.5);
-      glVertex3f(20.0, 80.0, 0.5);
-      glVertex3f(20.0, 20.0, 0.5);
-      glVertex3f(80.0, 20.0, 0.5);
-   glEnd();
-
-   glColor3f(0.0, 0.0, 1.0);
-   glBegin(GL_POLYGON);
-      glVertex3f(10.0, 90.0, -0.5);
-      glVertex3f(20.0, 20.0, 0.5);
-      glVertex3f(20.0, 80.0, 0.5);
-      glVertex3f(80.0, 20.0, 0.5);
    glEnd();
 
    glFlush();
@@ -95,14 +54,14 @@ void resize(int w, int h)
     * far = 1.0
     *
     * Corners of the box are at:
-    * (left, bottom, -near) = (0.0, 0.0, 1.0)
-    * (right, bottom, -near) = (100.0, 0.0, 1.0)
-    * (left, top, -near) = (0.0, 100.0, 1.0)
-    * (right, top, -near) = (100.0, 100.0, 1.0)
-    * (left, bottom, -far) = (0.0, 0.0, -1.0)
-    * (right, bottom, -far) = (100.0, 0.0, -1.0)
-    * (left, top, -far) = (0.0, 100.0, -1.0)
-    * (right, top, -far) = (100.0, 100.0, -1.0)
+    * (left, bottom, -near) = (0.0, 0.0, -1.0)
+    * (right, bottom, -near) = (100.0, 0.0, -1.0)
+    * (left, top, -near) = (0.0, 100.0, -1.0)
+    * (right, top, -near) = (100.0, 100.0, -1.0)
+    * (left, bottom, -far) = (0.0, 0.0, 1.0)
+    * (right, bottom, -far) = (100.0, 0.0, 1.0)
+    * (left, top, -far) = (0.0, 100.0, 1.0)
+    * (right, top, -far) = (100.0, 100.0, 1.0)
     */
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
