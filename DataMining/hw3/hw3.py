@@ -1,6 +1,7 @@
 """
 Andrew Burke, Katreina Carpenter, Cody Valle
 HW3
+Performs k-Nearest Neighbor and Linear Regression algorithms on the 'auto-data.txt' dataset.
 """
 
 import math
