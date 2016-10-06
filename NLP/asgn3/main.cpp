@@ -267,6 +267,8 @@ int main(int argc, char** argv)
 	
 	// Print out the minimum edit distance
 	std:: cout << "The minimum edit distance is " << matrix.getMinDistance() << "." << std::endl;
+
+	int* loss = new int(5);
 	
 	return 0;
 }
