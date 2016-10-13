@@ -44,7 +44,7 @@ void* thread1(void* in)
 
     selectionSort(numbers, 0, N / 2 + (N % 2 == 0 ? 0 : 1));
 
-    pthread_exit(NULL);
+    pthread_exit(0);
 }
 
 // Performs the duties of thread 2
@@ -54,7 +54,7 @@ void* thread2(void* in)
 
     selectionSort(numbers, N / 2 + (N % 2 == 0 ? 0 : 1), N);
 
-    pthread_exit(NULL);
+    pthread_exit(0);
 }
 
 // Structure for parameters to pass into thread3
@@ -94,7 +94,7 @@ void* thread3(void* in)
 
     fclose(outfile);
 
-    pthread_exit(NULL);
+    pthread_exit(0);
 }
 
 // main method
@@ -175,11 +175,11 @@ int main(int argc, char** argv)
         printf("Error in thread 3!\n");
 
 	// Join thread 3
-    pthread_join(threads[2], NULL);
+  pthread_join(threads[2], NULL);
 
 	// Free allocated memory
     free(numbers);
     free(p);
 
-    return 0;
+    pthread_exit(0); // Treat main as a thread
 }

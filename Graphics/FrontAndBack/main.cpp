@@ -27,7 +27,7 @@ void drawScene(void)
    glPolygonMode(GL_FRONT, GL_LINE);
    glPolygonMode(GL_BACK, GL_FILL);
 
-   gluLookAt(0.0, 7.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0); // for Question 3
+   //gluLookAt(0.0, 7.0, 10.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0); // for Question 3
 
 
   // Question 1
@@ -56,20 +56,18 @@ void drawScene(void)
    // Question 2
    // Is this a triangulation?
    // if yes, is it consistently oriented? Need page 40
-   /*
-   glBegin(GL_TRIANGLE_STRIP);
+   glBegin(GL_TRIANGLES);
        glVertex3f(20.0, 80.0, 0.0);
        glVertex3f(20.0, 20.0, 0.0);
        glVertex3f(50.0, 80.0, 0.0);
-       glVertex3f(50.0, 20.0, 0.0);
-       glVertex3f(80.0, 20.0, 0.0);
-       glVertex3f(80.0, 80.0, 0.0);
+//       glVertex3f(50.0, 20.0, 0.0);
+       //glVertex3f(80.0, 20.0, 0.0);
+       //glVertex3f(80.0, 80.0, 0.0);
    glEnd();
-   */
 
    // Question 3
    //Change to   glFrustum(-5.0, 5.0, -5.0, 5.0, 5.0, 100.0);
-
+/*
    glBegin(GL_TRIANGLE_STRIP);
       glVertex3f(-5.0, 1.0, 5.0);
       glVertex3f(-5.0, -1.0, 5.0);
@@ -82,7 +80,7 @@ void drawScene(void)
       glVertex3f(-5.0, 1.0, 5.0);
       glVertex3f(-5.0, -1.0, 5.0);
    glEnd();
-
+*/
    glFlush();
 }
 
@@ -98,8 +96,8 @@ void resize(int w, int h)
    glViewport(0, 0, w, h);
    glMatrixMode(GL_PROJECTION);
    glLoadIdentity();
-   //glOrtho(0.0, 100.0, 0.0, 100.0, -1.0, 1.0);
-   glFrustum(-5.0, 5.0, -5.0, 5.0, 5.0, 100.0);
+   glOrtho(0.0, 100.0, 0.0, 100.0, -1.0, 1.0);
+   //glFrustum(-5.0, 5.0, -5.0, 5.0, 5.0, 100.0);
    glMatrixMode(GL_MODELVIEW);
    glLoadIdentity();
 }
@@ -122,7 +120,7 @@ int main(int argc, char **argv)
 {
    glutInit(&argc, argv);
 
-   glutInitContextVersion(4, 3);
+   glutInitContextVersion(2, 1);
    glutInitContextProfile(GLUT_COMPATIBILITY_PROFILE);
 
    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);

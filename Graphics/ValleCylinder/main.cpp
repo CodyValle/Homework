@@ -30,7 +30,7 @@ using namespace std;
 
 // Globals.
 static int p = 6; // Number of grid columns for [-pi,pi]
-static int q = 4; // Number of grid rows for [-1,1]
+static int q = 40; // Number of grid rows for [-1,1]
 static float *vertices = NULL; // Vertex array of the mapped sample on the cylinder.
 static float Xangle = 150.0, Yangle = 60.0, Zangle = 0.0; // Angles to rotate the cylinder.
 
@@ -194,7 +194,7 @@ int main(int argc, char **argv)
    printInteraction();
    glutInit(&argc, argv);
 
-   glutInitContextVersion(3, 3);
+   glutInitContextVersion(2, 1);
    glutInitContextProfile(GLUT_COMPATIBILITY_PROFILE);
 
    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA);
