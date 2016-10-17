@@ -188,8 +188,9 @@ void keyInput(unsigned char key, int x, int y)
 // Callback routine for non-ASCII key entry.
 void specialKeyInput(int key, int x, int y)
 {
-   if(key == GLUT_KEY_UP) if (step < 180) step+=.1;;
-   if(key == GLUT_KEY_DOWN) if (step > 0) step--;;
+   if(key == GLUT_KEY_UP) if (step < 180) step+=.1;
+   if(key == GLUT_KEY_DOWN) if (step > 0) step--;
+   setup();
    glutPostRedisplay();
 }
 

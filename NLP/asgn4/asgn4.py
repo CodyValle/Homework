@@ -2,12 +2,23 @@
 # Jinous Esmaeili
 # GU ID: cvalle
 
+"""
+The states that exist in this transducer are simulated by the functions
+q0, q1, q2, q3, q4, and q5. There are more states that exist in the actual
+transducer, but many do the same thing, so they were lumped together.
+"""
+
 import sys
 
+""" The start state of the Finite State Transducer.
+        The parameter 'character' is the current character being read.
+        Returns a tuple: (the next state to go to, what to print) """
 def q0(character):
-        return ('q1', character
-                )
+        return ('q1', character)
 
+""" The second state of the Finite State Transducer.
+        The parameter 'character' is the current character being read.
+        Returns a tuple: (the next state to go to, what to print) """
 def q1(character):
         if character in 'AEIOUWHY':
                 return 'q1', ''
@@ -24,12 +35,19 @@ def q1(character):
         if character in 'R':
                 return 'q7', '6'
 
+""" An intermediate state of the Finite State Transducer.
+        The parameter 'character' is the current character being read.
+        The parameter 'curstate' is the current state the transducer is in.
+        Returns a tuple: (the next state to go to, what to print) """
 def q2(curstate, character):
         if character in 'AEIOUY':
+                # Consonant then vowel, possible repetition of printed number
                 return 'q9', ''
         if character in 'HW':
+                # Print nothing, stay in this state
                 return curstate, ''
         if character in 'BFPV':
+                # Don't print anything if we encounter a consonant from the same group
                 return 'q2', ('1' if curstate != 'q2' else '')
         if character in 'CGJKQSXZ':
                 return 'q3', ('2' if curstate != 'q3' else '')
@@ -42,6 +60,9 @@ def q2(curstate, character):
         if character in 'R':
                 return 'q7', ('6' if curstate != 'q7' else '')
 
+""" An intermediate state of the Finite State Transducer.
+        The parameter 'character' is the current character being read.
+        Returns a tuple: (the next state to go to, what to print) """
 def q3(character):
         if character in 'AEIOUWHY':
                 return 'q9', ''
@@ -58,6 +79,10 @@ def q3(character):
         if character in 'R':
                 return 'q15', '6'
 
+""" An intermediate state of the Finite State Transducer.
+        The parameter 'character' is the current character being read.
+        The parameter 'curstate' is the current state the transducer is in.
+        Returns a tuple: (the next state to go to, what to print) """
 def q4(curstate, character):
         if character in 'AEIOUY':
                 return 'q9', ''
@@ -76,21 +101,32 @@ def q4(curstate, character):
         if character in 'R':
                 return 'q16', ('6' if curstate != 'q15' else '')
 
+""" The final state of the Finite State Transducer. Loops back to
+        itself and prints zeroes until the word is done.
+        The parameter 'character' is the current character being read.
+        Returns a tuple: (the next state to go to, what to print) """
 def q5(character):
       return 'q16', '0'  
 
+""" Models a Finite State Transducer
+        The parameter 'toParse' is the string to run through
+        the transducer. """
 def FST(toParse):
-        print 'Parsing "' + toParse + '" with the FST.'
+        print 'Parsing "' + toParse + '".'
 
-        toParse = toParse.upper()
+        toParse = toParse.upper() # Step 1
 
+        # The result of the FST
         output = ''
 
-        (state, character) = q0(toParse[0])
-        output += character
+        # state is the state the actual FST would be in
+        state = 'q0'
 
-        for c in toParse[1:]:
-                if state == 'q1':
+        for c in toParse:
+                # This large if elif block maps the actual state to the funtion states
+                if state == 'q0':
+                       (state, character) = q0(c)
+                elif state == 'q1':
                        (state, character) = q1(c)
                 elif state == 'q2':
                        (state, character) = q2(state, c)
@@ -123,16 +159,17 @@ def FST(toParse):
                 elif state == 'q16':
                        (state, character) = q5(c)
 
-                output += character
+                output += character # Append the printed character
 
-        output = output[:4]
-        output = output + '0' * (4 - len(output))
-        print 'FST Soundex output "' + output + '".'
+        output = output[:4] # Trim excess numbers
+        output = output + '0' * (4 - len(output)) # Pad with zeroes
+        print 'Soundex output "' + output + '".'
 
+""" Original implementation of the algorithm. Unused and kept for posterity. """
 def main(toParse):
 	import re
 	
-	print 'Parsing "' + toParse + '" the old way.'
+	print 'Parsing "' + toParse + '".'
 
 	""" Step 1 """
 	toParse = toParse.upper() # Capitalize every character
@@ -161,33 +198,15 @@ def main(toParse):
 	toParse = toParse[:4]
 	toParse = toParse + '0' * (4 - len(toParse))
 
-	print 'Old Soundex output "' + toParse + '".'
+	print 'Soundex output "' + toParse + '".'
 
+"""
+Entry point. Usage: python asgn4.py word [word word ...]
+"""
 if __name__ == '__main__':
 	if len(sys.argv) < 2:
 		print 'Error! Need at least one argument to parse.'
 	else:
+                # Parse all arguments with the FST
 		for i in range(1, len(sys.argv)):
-			main(sys.argv[i])
-			
-
-	FST('Herman')
-	main('Herman')
-	FST('Cody')
-	main('Cody')
-	FST('Jinous')
-	main('Jinous')
-	FST('Kitty')
-	main('Kitty')
-	FST('bigger')
-	main('bigger')
-	FST('sassy')
-	main('sassy')
-	FST('ashcraft')
-	main('ashcraft')
-	FST('achsraft')
-	main('achsraft')
-	FST('Rubin')
-	main('Rubin')
-	FST('Rupert')
-	main('Rupert')
+			FST(sys.argv[i])
