@@ -1,7 +1,7 @@
 # depslib dependency file v1.0
-1476362812 source:e:\school\2016fall\homework\graphics\vallecylinder\main.cpp
-	<cmath>
+1476755888 source:e:\school\2016fall\homework\graphics\burkevallevase\main.cpp
 	<iostream>
+	<cmath>
 	<GL/glew.h>
 	<GL/freeglut.h>
 	<OpenGL/glext.h>
