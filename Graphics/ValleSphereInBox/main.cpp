@@ -7,7 +7,7 @@
 // Interaction:
 // Press up/down arrow keys to open/close the box.
 //
-// Sumanta Guha.
+// Sumanta Guha, modified by Cody Valle.
 //////////////////////////////////////////////////////
 
 #include <iostream>
@@ -85,17 +85,19 @@ void setup(void)
    // second and third row of light properties matrix
    // these are set to the particular color of the light source so bright white light source
    float lightDifAndSpec[] = {1.0, 1.0, 1.0, 1.0};
+   //float lightDifAndSpec[] = {.0, .0, 1.0, 1.0}; // Blue
 
    // location of light source in homogeneous coordinates but no object is really created here
    float lightPos[] = {0.0, 1.5, 3.0, 1.0};
+   //float lightPos[] = {0.0, 0., -3.0, 1.0}; // Light at back of box
 
    // this is really all of the ambient stuff: from light source and globally. easier this way
    float globAmb[] = {0.2, 0.2, 0.2, 1.0};
 
    // Light properties for a single light source
    glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmb);
-   glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDifAndSpec);
-   glLightfv(GL_LIGHT0, GL_SPECULAR, lightDifAndSpec);
+   glLightfv(GL_LIGHT0, GL_DIFFUSE, lightAmb); // lightDifAndSpec
+   glLightfv(GL_LIGHT0, GL_SPECULAR, lightAmb); // lightDifAndSpec
    glLightfv(GL_LIGHT0, GL_POSITION, lightPos);
 
    glEnable(GL_LIGHT0); // Enable particular light source.
@@ -188,7 +190,7 @@ void keyInput(unsigned char key, int x, int y)
 // Callback routine for non-ASCII key entry.
 void specialKeyInput(int key, int x, int y)
 {
-   if(key == GLUT_KEY_UP) if (step < 180) step+=.1;
+   if(key == GLUT_KEY_UP) if (step < 180) step+=1;
    if(key == GLUT_KEY_DOWN) if (step > 0) step--;
    setup();
    glutPostRedisplay();

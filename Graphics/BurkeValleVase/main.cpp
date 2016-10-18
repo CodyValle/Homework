@@ -26,7 +26,7 @@ using namespace std;
 // Globals.
 static int p = 10; // Number of grid columns for [-pi,pi]
 static int q = 10; // Number of grid rows for [-1,1]
-static float *vertices = nullptr; // Vertex array of the mapped sample on the cylinder.
+static float *vertices = NULL; // Vertex array of the mapped sample on the cylinder.
 static float Xangle = 90.0, Yangle = 0.0, Zangle = 0.0; // Angles to rotate the cylinder.
 
 // Expects a value on [0,q].
@@ -161,7 +161,7 @@ void keyInput(unsigned char key, int x, int y)
 
     default: break;
     }
-    
+
     glutPostRedisplay();
 }
 
