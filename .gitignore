@@ -32,3 +32,12 @@ myShell
 # Debug files
 *.dSYM/
 *.su
+/BioMedics/Lab6/nbproject/private/
+/BioMedics/Lab6a/nbproject/private/
+/BioMedics/Lab6a/build/
+/BioMedics/Lab6b/nbproject/private/
+/BioMedics/Lab6b/build/
+/BioMedics/Lab6c/nbproject/private/
+/BioMedics/Lab6c/build/
+/BioMedics/Lab7a/nbproject/private/
+/BioMedics/Lab7a/build/
