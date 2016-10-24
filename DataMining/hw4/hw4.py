@@ -34,9 +34,8 @@ Gets a list of all different categorical values
 def get_categories(table, index):
     values = []
     for row in table:
-       for value in row[index]:
-            if value not in values:
-                values.append(value)
+        if row[index] not in values:
+            values.append(row[index])
     return values
 
 """
@@ -285,7 +284,6 @@ def test2_of_naive_bayes_classifier(classifier, table):
                             [100. * matrix[i][i] / (total if total != 0 else 1)])
     print tabulate(tabbed_table, headers = ['MPG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Total', 'Recognition (%)'])
 
-
 """
 Step2:
 """
@@ -301,7 +299,7 @@ def step2(table):
 """
 Takes a table and removes every row that has an 'NA' present
 """
-def clean_data(table):
+def clean_auto_data(table):
     ret = []
     for row in table:
         found = False
@@ -314,6 +312,179 @@ def clean_data(table):
 
     return ret
 
+"""
+Performs the Naive Bayes Classifier to the Titanic Dataset
+"""
+def naive_bayes_part(table):
+    from tabulate import tabulate
+    
+    # Builds a Naive Bayes classifier
+    nb_classifier = build_naive_bayes_classifier(table, [SURVIVED])
+
+    # Test using step2 approach from HW3
+    print '==========================================='
+    print 'TEST 3: Naive Bayes Survival Classifier (Titanic)'
+    print '==========================================='
+
+    total_tests = 10
+    random_instances = [random.randint(0, len(table) - 1) for _ in range(total_tests)]   
+    correct = 0
+    
+    for index in random_instances:
+        predicted = guess_label_categorical(nb_classifier, table[index], [CLASS,AGE,SEX], SURVIVED)
+        
+        print '  predicted:', predicted, '  actual:', table[index][SURVIVED]
+        if predicted == table[index][SURVIVED]:
+            correct += 1
+            
+    # Print statistics from step3 of HW3
+    accuracy = float(correct) / total_tests
+    print ''
+    print ' For k=10 Random Subsampling:'
+    print ' accuracy:', accuracy, ', error_rate:', (1 - accuracy)
+    print ''
+
+    # Confusion matrix is a dictionary of dictionaries
+    matrix = {'yes' : {'yes' : 0, 'no' : 0},
+              'no' : {'yes' : 0, 'no' : 0}}
+    for row in table:
+        predicted = guess_label_categorical(nb_classifier, row, [CLASS,AGE,SEX], SURVIVED)
+        matrix[row[SURVIVED]][predicted] += 1
+    
+    tabbed_table = []
+    for i in ['yes','no']:
+        total = sum([matrix[i][j] for j in ['yes','no']]) * 1.0
+        tabbed_table.append([i] +
+                            [matrix[i][j] for j in ['yes','no']] +
+                            [total] +
+                            [100. * matrix[i][i] / (total if total != 0 else 1)])
+    print tabulate(tabbed_table, headers = ['SURVIVED', 'yes', 'no', 'Total', 'Recognition (%)'])
+
+    numerator = matrix['yes']['yes'] + matrix['no']['no']
+    total = numerator + matrix['yes']['no'] + matrix['no']['yes']
+    accuracy = float(numerator) / total
+
+    print '   accuracy:', accuracy, ' error_rate:', (1 - accuracy)
+
+"""
+Partitions the passed in table into k folds.
+"""
+def partition_into_folds(table, k, class_index):
+    folds = [[]] * k
+    table.sort(key=lambda x: x[class_index]) # Sort by class_index
+    cur_fold = 0
+    for row in table:
+        folds[cur_fold].append(row)
+        cur_fold = (cur_fold + 1) % k
+
+    return folds
+
+"""
+Creates a testing set and training set from a list of folds, on the index of the test fold.
+"""
+def create_test_and_train_from_folds(folds, index):
+    training_set = []
+    # Build a new training set excluding the current fold (index)
+    for j in range(len(folds)):
+        if index != j:
+            training_set += folds[j]
+    return (training_set, folds[index])
+
+"""
+Takes a table and an index, calculates the minimum and
+divisor used to normalize a value, then returns those.
+"""
+def get_normalize_factors_from_titanic(table, index):
+    d = {'crew' : 0., 'first' : 0.33, 'second' : 0.66, 'third' : 1.,
+         'child' : 0., 'adult' : 1.,
+         'female' : 0., 'male' : 1.}
+    mini = min([d[row[index]] for row in table])
+    maxi = max([d[row[index]] for row in table])
+    return (mini, (maxi - mini) * 1.0)
+
+"""
+Takes a training set and an instance, and returns a label
+"""
+def guess_label_using_stratified_k_fold(training, instance, k):
+    import operator
+    import math
+    
+    neighbors = []
+
+    clsmin, clsminmax = get_normalize_factors_from_titanic(training, CLASS)
+    agemin, ageminmax = get_normalize_factors_from_titanic(training, AGE)
+    sexmin, sexminmax = get_normalize_factors_from_titanic(training, SEX)
+
+    def difference(row1, row2, index, mini, minmax):
+        d = {'crew' : 0., 'first' : 0.33, 'second' : 0.66, 'third' : 1.,
+         'child' : 0., 'adult' : 1.,
+         'female' : 0., 'male' : 1.}
+        return ((d[row1[index]] - mini) / minmax) - ((d[row2[index]] - mini) / minmax)
+
+    for row in training:
+        # Calculate Euclidean distance on normalized values
+        distance = 0.0
+        distance += difference(row, instance, CLASS, clsmin, clsminmax) ** 2
+        distance += difference(row, instance, AGE, agemin, ageminmax) ** 2
+        distance += difference(row, instance, SEX, sexmin, sexminmax) ** 2
+
+        root = math.sqrt(distance)
+
+        neighbors.append([root, row[SURVIVED]]) # Add the distance and label to neighbors
+
+        neighbors.sort(key=lambda x: x[0]) # Sort by root
+
+    # Determine the most occuring label
+    labels = {}
+    for i in range(k):
+        labels[neighbors[i][1]] = labels.get(neighbors[i][1], 0) + 1
+
+    """ max item from dictionary from: http://stackoverflow.com/questions/268272/getting-key-with-maximum-value-in-dictionary """
+    return max(labels.iteritems(), key=operator.itemgetter(1))[0]
+
+"""
+Performs the k-fold classifier on the Titanic Dataset
+"""
+def k_fold_part(table):
+    from tabulate import tabulate
+    print '==========================================='
+    print 'TEST 3: Stratified Survival Classifier (Titanic)'
+    print '==========================================='
+    
+    folds = partition_into_folds(table, 10, SURVIVED) # Partitions the data into k folds
+    matrix = {'yes' : {'yes' : 0, 'no' : 0},
+              'no' : {'yes' : 0, 'no' : 0}}
+    for i in range(10):
+        training_set, test_set = create_test_and_train_from_folds(folds, i)
+
+        # Test the current fold against the training set
+        for instance in test_set:
+            predicted = guess_label_using_stratified_k_fold(training_set, instance, 10)
+            matrix[instance[SURVIVED]][predicted] += 1
+
+    # Print out the confusion matrix
+    tabbed_table = []
+    for i in ['yes','no']:
+        total = sum([matrix[i][j] for j in ['yes','no']]) * 1.0
+        tabbed_table.append([i] +
+                            [matrix[i][j] for j in ['yes','no']] +
+                            [total] +
+                            [100. * matrix[i][i] / (total if total != 0 else 1)])
+    print tabulate(tabbed_table, headers = ['SURVIVED', 'yes', 'no', 'Total', 'Recognition (%)'])
+
+    numerator = matrix['yes']['yes'] + matrix['no']['no']
+    total = numerator + matrix['yes']['no'] + matrix['no']['yes']
+    accuracy = float(numerator) / total
+
+    print '   accuracy:', accuracy, ' error_rate:', (1 - accuracy)
+
+"""
+Step3:
+"""
+def step3(table):
+    naive_bayes_part(table)
+    k_fold_part(table)
+    
 """ Main function for this file """
 def main():
     # Some index references to use globally
@@ -339,12 +510,25 @@ def main():
     MSRP = 9
     global LABEL
     LABEL = 10
-    
-    table = read_csv('auto-data.txt') # Read in the automotive data
-    table = clean_data(table) # Cleans the table
 
-    step1(copy.deepcopy(table))
-    step2(copy.deepcopy(table))
+    global CLASS
+    CLASS = 0
+    global AGE
+    AGE = 1
+    global SEX
+    SEX = 2
+    global SURVIVED
+    SURVIVED = 3
+    
+    auto_table = read_csv('auto-data.txt') # Read in the automotive data
+    auto_table = clean_auto_data(auto_table) # Cleans the table
+
+    step1(copy.deepcopy(auto_table))
+    step2(copy.deepcopy(auto_table))
+
+    titanic_table = read_csv('titanic.txt')[1:]
+
+    step3(copy.deepcopy(titanic_table))
 
 """ Entry point """
 if __name__ == '__main__':
