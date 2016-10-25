@@ -264,3 +264,9 @@
 1301114765 c:\mingw\include\gl\glext.h
 	<windows.h>
 
+1476829788 source:u:\homework\graphics\valletextures\getbmp.cpp
+	<fstream>
+	"getbmp.h"
+
+1476829788 u:\homework\graphics\valletextures\getbmp.h
+
