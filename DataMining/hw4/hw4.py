@@ -526,7 +526,7 @@ def main():
     step1(copy.deepcopy(auto_table))
     step2(copy.deepcopy(auto_table))
 
-    titanic_table = read_csv('titanic.txt')[1:400]
+    titanic_table = read_csv('titanic.txt')[1:]
 
     step3(copy.deepcopy(titanic_table))
 
