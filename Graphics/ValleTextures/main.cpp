@@ -44,7 +44,7 @@ void loadExternalTextures()
     BitMapFile *image[1];
 
     // Load the image.
-    image[0] = getbmp("E:\\School\\2016Fall\\Homework\\Graphics\\LoadTexturesChapter12\\koala.bmp");
+    image[0] = getbmp("U:\\Homework\\Graphics\\ValleTextures\\my_pic.bmp");
 
     // Create texture object texture[0].
     glBindTexture(GL_TEXTURE_2D, texture[0]);
@@ -144,9 +144,9 @@ void drawScene(void)
     // Map the texture onto a square polygon.
     glBegin(GL_POLYGON);
         glTexCoord2f(.0, .0); glVertex3f(-10.0, -10.0, 0.0);
-        glTexCoord2f(.5, .0); glVertex3f(10.0, -10.0, 0.0);
-        glTexCoord2f(.5, .5); glVertex3f(10.0, 10.0, 0.0);
-        glTexCoord2f(.0, .5); glVertex3f(-10.0, 10.0, 0.0);
+        glTexCoord2f(1., .0); glVertex3f(10.0, -10.0, 0.0);
+        glTexCoord2f(1., 1.); glVertex3f(10.0, 10.0, 0.0);
+        glTexCoord2f(.0, 1.); glVertex3f(-10.0, 10.0, 0.0);
     glEnd();
 
     glutSwapBuffers();
