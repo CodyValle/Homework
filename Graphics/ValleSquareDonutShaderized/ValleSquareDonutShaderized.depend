@@ -1,5 +1,5 @@
 # depslib dependency file v1.0
-1477433122 source:e:\school\2016fall\homework\graphics\vallesquareshaderized\main.cpp
+1477525456 source:u:\homework\graphics\vallesquaredonutshaderized\main.cpp
 	<iostream>
 	<fstream>
 	<GL/glew.h>
@@ -254,12 +254,4 @@
 
 1301114765 c:\mingw\include\gl\glext.h
 	<windows.h>
-
-1477433716 source:u:\homework\graphics\vallesquareshaderized\main.cpp
-	<iostream>
-	<fstream>
-	<GL/glew.h>
-	<GL/freeglut.h>
-	<OpenGL/glext.h>
-	<GL/glext.h>
 

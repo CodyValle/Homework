@@ -46,10 +46,16 @@ enum object {SQUARE};
 // Globals
 static Vertex squareVertices[] =
 {
-   { { 20.0, 20.0, 0.0, 1.0 }, { 1.0, 0.0, 0.0, 1.0 } },
-   { { 80.0, 20.0, 0.0, 1.0 }, { 0.0, 1.0, 0.0, 1.0 } },
-   { { 20.0, 80.0, 0.0, 1.0 }, { 0.0, 0.0, 1.0, 1.0 } },
-   { { 80.0, 80.0, 0.0, 1.0 }, { 1.0, 1.0, 0.0, 1.0 } }
+   { { 30.0, 30.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 } },
+   { { 10.0, 10.0, 0.0, 1.0 }, { 1.0, 0.0, 0.0, 1.0 } },
+   { { 70.0, 30.0, 0.0, 1.0 }, { 0.0, 1.0, 0.0, 1.0 } },
+   { { 90.0, 10.0, 0.0, 1.0 }, { 0.0, 0.0, 1.0, 1.0 } },
+   { { 70.0, 70.0, 0.0, 1.0 }, { 1.0, 1.0, 0.0, 1.0 } },
+   { { 90.0, 90.0, 0.0, 1.0 }, { 1.0, 0.0, 1.0, 1.0 } },
+   { { 30.0, 70.0, 0.0, 1.0 }, { 0.0, 1.0, 1.0, 1.0 } },
+   { { 10.0, 90.0, 0.0, 1.0 }, { 1.0, 0.0, 0.0, 1.0 } },
+   { { 30.0, 30.0, 0.0, 1.0 }, { 0.0, 0.0, 0.0, 1.0 } },
+   { { 10.0, 10.0, 0.0, 1.0 }, { 1.0, 0.0, 0.0, 1.0 } }
 };
 
 static Matrix4x4
@@ -160,7 +166,7 @@ void drawScene(void)
 {
    glClear(GL_COLOR_BUFFER_BIT);
 
-   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+   glDrawArrays(GL_TRIANGLE_STRIP, 0, 10);
 
    glFlush();
 }
@@ -196,7 +202,7 @@ int main(int argc, char* argv[])
    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
    glutInitWindowSize(500, 500);
    glutInitWindowPosition(100, 100);
-   glutCreateWindow("squareShaderized.cpp");
+   glutCreateWindow("Square Donut Shaderized");
    glutDisplayFunc(drawScene);
    glutReshapeFunc(resize);
    glutKeyboardFunc(keyInput);
