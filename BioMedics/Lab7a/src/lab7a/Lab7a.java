@@ -50,44 +50,45 @@ public class Lab7a {
         int num_ages = 0;
         for (Row r : rows.getRows())
         {
-            String age = r.get(0);
-            String age_code = r.get(1);
+            String age = r.get(0).trim();
+            String age_code = r.get(1).trim();
             
-            if (age == "" || age_code == "") continue;
+            if (age.isEmpty() || age_code.isEmpty()) continue;
             
             ++num_ages;
             
-            switch (age_code)
-            {
+            switch (age_code) {
                 case "DEC":
-                    total_age += (double)Integer.parseInt(age) * 10;
+                    total_age += Double.parseDouble(age) * 10;
                     break;
-                    
+
                 case "YR":
-                    total_age += (double)Integer.parseInt(age);
+                    total_age += Double.parseDouble(age);
                     break;
-                    
+
                 case "MON":
-                    total_age += (double)Integer.parseInt(age) / 12;
+                    total_age += Double.parseDouble(age) / 12;
                     break;
-                    
+
                 case "WK":
-                    total_age += (double)Integer.parseInt(age) / 52;
+                    total_age += Double.parseDouble(age) / 52;
                     break;
-                    
+
                 case "DY":
-                    total_age += (double)Integer.parseInt(age) / 365.25;
+                    total_age += Double.parseDouble(age) / 365.25;
                     break;
-                    
+
                 case "HR":
-                    total_age += (double)Integer.parseInt(age) / 8766;
+                    total_age += Double.parseDouble(age) / 8766;
                     break;
-                
-                default: break;
+
+                default:
+                    System.out.println("Unknown age code: " + age_code + ".");
+                    break;
             }
         }
         
-        System.out.println(total_age / num_ages);
+        System.out.println("The average age of patients in the database is " + (total_age / num_ages) + " years.");
     }
     
 }
