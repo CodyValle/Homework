@@ -95,7 +95,7 @@ void setup(void)
 
    // Create shader program executable.
    // FIRST read the vertexShader.glsl file into the character string vertexShader
-   char* vertexShader = readTextFile("U:\\Homework\\Graphics\\ValleSquareDonutShaderized\\vertexShader.glsl");
+   char* vertexShader = readTextFile("C:\\Users\\Yerion\\Documents\\Graphics\\StudentsGraphics2\\vertexShader.glsl");
    // SECOND create an empty vertex shader object returning the non-zero id vertexShaderID
    vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
    // THIRD sets the source code of the shader with id vertexShaderId to the value of the character string vertexShader
@@ -107,7 +107,7 @@ void setup(void)
    free(vertexShader);
 
    // Similarly we do the same four steps for the fragment shader
-   char* fragmentShader = readTextFile("U:\\Homework\\Graphics\\ValleSquareDonutShaderized\\fragmentShader.glsl");
+   char* fragmentShader = readTextFile("C:\\Users\\Yerion\\Documents\\Graphics\\StudentsGraphics2\\fragmentShader.glsl");
    fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
    glShaderSource(fragmentShaderId, 1, (const char**) &fragmentShader, NULL);
    glCompileShader(fragmentShaderId);
