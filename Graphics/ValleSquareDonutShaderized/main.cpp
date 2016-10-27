@@ -72,7 +72,7 @@ static unsigned int
    vao[1];
 
 // Function to read text file.
-char* readTextFile(char* aTextFile)
+char* readTextFile(const char* aTextFile)
 {
    FILE* filePointer = fopen(aTextFile, "rb");
    char* content = NULL;
@@ -88,6 +88,23 @@ char* readTextFile(char* aTextFile)
    return content;
 }
 
+void error()
+{
+    GLint vertexCompiled;
+   glGetShaderiv( vertexShaderId, GL_COMPILE_STATUS, &vertexCompiled );
+	if ( !vertexCompiled ) {
+	    std::cerr << "  vertex shader failed to compile:" << std::endl;
+	    GLint  logSize;
+	    glGetShaderiv( vertexShaderId, GL_INFO_LOG_LENGTH, &logSize );
+	    char* logMsg = new char[logSize];
+	    glGetShaderInfoLog( vertexShaderId, logSize, NULL, logMsg );
+	    std::cerr << logMsg << std::endl;
+	    delete [] logMsg;
+
+	    exit( EXIT_FAILURE );
+	}
+}
+
 // Initialization routine.
 void setup(void)
 {
@@ -95,21 +112,21 @@ void setup(void)
 
    // Create shader program executable.
    // FIRST read the vertexShader.glsl file into the character string vertexShader
-   char* vertexShader = readTextFile("C:\\Users\\Yerion\\Documents\\Graphics\\StudentsGraphics2\\vertexShader.glsl");
+   char* vertexShader = readTextFile(string("E:\\School\\2016Fall\\Homework\\Graphics\\ValleSquareDonutShaderized\\vertexShader.glsl").c_str());
    // SECOND create an empty vertex shader object returning the non-zero id vertexShaderID
    vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
    // THIRD sets the source code of the shader with id vertexShaderId to the value of the character string vertexShader
    //     which is only one-null-terminated string.  WHERE DOES THAT HAPPEN in readTextFile?
-   glShaderSource(vertexShaderId, 1, (const char**) &vertexShader, NULL);
+   glShaderSource(vertexShaderId, 1, &vertexShader, NULL);
    // FOURTH  compile the source code for shader id vertexShaderId. At the end, we have a compiled vertex shader objecgt
    glCompileShader(vertexShaderId);
 
    free(vertexShader);
 
    // Similarly we do the same four steps for the fragment shader
-   char* fragmentShader = readTextFile("C:\\Users\\Yerion\\Documents\\Graphics\\StudentsGraphics2\\fragmentShader.glsl");
+   char* fragmentShader = readTextFile(string("E:\\School\\2016Fall\\Homework\\Graphics\\ValleSquareDonutShaderized\\fragmentShader.glsl").c_str());
    fragmentShaderId = glCreateShader(GL_FRAGMENT_SHADER);
-   glShaderSource(fragmentShaderId, 1, (const char**) &fragmentShader, NULL);
+   glShaderSource(fragmentShaderId, 1, &fragmentShader, NULL);
    glCompileShader(fragmentShaderId);
 
    free(fragmentShader);
