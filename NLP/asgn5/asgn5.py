@@ -1,6 +1,12 @@
 """
 Cody Valle and Jinous Esmaeili
 Natural Language Processing Assignment 5: N-Grams of the Brown Corpus
+To use:
+You must have the Brown corpus downloaded from NLTK already. Run the code 'nltk.download('brown')' to have it available.
+This program takes no arguments. Simply run the file.
+NB: Creating a unigram sentence takes an excessively long time to complete.
+Reason unknown, but attempting to fix. That’s the reason the
+'print make_ngram_sentence(unigrams, unistarts)’ line in main is commented.
 """
 
 import decimal
@@ -117,7 +123,7 @@ def getSentences():
 The main function.
 """
 def main():
-        decimal.getcontext().prec = 14 # Double the default precision
+        decimal.getcontext().prec = 56 # Double the default precision
         
         # Get the sentences from the Brown corpus
         sentences = getSentences()
@@ -127,11 +133,17 @@ def main():
         unigrams, unistarts = make_ngrams(words, 1)
         bigrams, bistarts = make_ngrams(words, 2)
         trigrams, tristarts = make_ngrams(words, 3)
-        quadgrams, uquadstarts = make_ngrams(words, 4)
+        quadgrams, quadstarts = make_ngrams(words, 4)
 
         # Make N-Gram sentences
-        for i in range(3):
-                print str(i) + ':', ngram_sentence(trigrams, tristarts)
+        print 'Unigram Sentence:'
+        #print ngram_sentence(unigrams, unistarts), ''
+        print 'Bigram Sentence:'
+        print ngram_sentence(bigrams, bistarts), ''
+        print 'Trigram Sentence:'
+        print ngram_sentence(trigrams, tristarts),''
+        print 'Quadgram Sentence:'
+        print ngram_sentence(quadgrams, quadstarts), ''
 
 if __name__ == '__main__':
     main()
