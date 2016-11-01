@@ -5,6 +5,8 @@ Data Mining Homework 5 Program
 
 import copy
 import math
+import random
+
 
 """ Reads a csv file and returns a table (list of lists) """
 def read_csv(filename):
@@ -59,28 +61,18 @@ def partition_into_folds(table, k, class_index):
 
     return folds
 
-"""
-Calculates the least entropy of the passed in attribute values
-"""
-def calculate_least_entropy(table, indices):
-    min_ent = 2
-    for index in indices:
-        ent = calc_enew(table, index, SURVIVED)
-        if ent < min_ent:
-            min_ent = ent
-            ret = index
-    return ret
-
 """Returns the class frequencies for each attribute value:
 {att_val:[{class1: freq, class2: freq, ...}, total], ...}
 """
 def attribute_frequencies(instances, att_index, class_index):
-    # get unique list of attribute and class values
-    att_vals = list(set(get_categories(instances, att_index)))
-    class_vals = list(set(get_categories(instances, class_index)))
-    # initialize the result
+    # Get unique list of attribute and class values
+    att_vals = get_categories(instances, att_index)
+    class_vals = get_categories(instances, class_index)
+    
+    # Initialize the result
     result = {v: [{c: 0 for c in class_vals}, 0] for v in att_vals}
-    # build up the frequencies
+    
+    # Build up the frequencies
     for row in instances:
         label = row[class_index]
         att_val = row[att_index]
@@ -89,27 +81,43 @@ def attribute_frequencies(instances, att_index, class_index):
     return result
 
 def calc_enew(instances, att_index, class_index):
-    # get the length of the partition
+    # Get the length of the partition
     D = len(instances)
-    # calculate the partition stats for att_index (see below)
+    
+    # Calculate the partition stats for att_index (see below)
     freqs = attribute_frequencies(instances, att_index, class_index)
+    
     # find E_new from freqs (calc weighted avg)
     E_new = 0
     for att_val in freqs:
         D_j = float(freqs[att_val][1])
         probs = [(c/D_j) for (_, c) in freqs[att_val][0].items()]
-        E_D_j = -sum([p*math.log(p,2) for p in probs])
+        E_D_j = -sum([0 if p == 0.0 else p*math.log(p,2) for p in probs])
         E_new += (D_j/D)*E_D_j
     return E_new
+
+"""
+Calculates the least entropy of the passed in attribute values
+"""
+def calculate_least_entropy(table, indices, class_index):
+    min_ent = 2
+    for index in indices:
+        ent = calc_enew(table, index, class_index)
+        if ent < min_ent:
+            min_ent = ent
+            ret = index
+    return ret
 
 """
 Creates a Decision Tree based on the passed in attributes
 """
 def decision_tree(table, attrs, class_index):
-    # Check for three conditions
+    """ Check three conditions """
+    # No rows
     if len(table) == 0:
         return (None,None)
-    
+
+    # No attributes
     if len(attrs) == 0:
         l = float(len(table))
         values = get_categories(table, class_index)
@@ -119,11 +127,14 @@ def decision_tree(table, attrs, class_index):
 
         return (None, options)
 
-    
-    #if len(count_occurences(table, class_index, get_categories(table, class_index)[0]))
+    # All labels are the same
+    labels = get_categories(table, class_index)
+    num_max_label =  max([count_occurences(table, class_index, label) for label in labels])
+    if num_max_label == len(table):
+        return (None, [(table[0][class_index], 1.0)])
     
     # Calculate the smallest entropy
-    index = calculate_least_entropy(table, attrs)
+    index = calculate_least_entropy(table, attrs, class_index)
 
     # Partition on that index
     values = get_categories(table, index)
@@ -132,10 +143,11 @@ def decision_tree(table, attrs, class_index):
         partitions[row[index]].append(row)
 
     # Create a decision tree on each partition
-    attrs.pop(index)
+    new_attrs = copy.deepcopy(attrs)
+    new_attrs.pop(attrs.index(index))
     sub_trees = {}
     for value in values:
-        sub_trees[value] = decision_tree(partitions[value], attrs, class_index)
+        sub_trees[value] = decision_tree(partitions[value], new_attrs, class_index)
 
     return (index, sub_trees)
 
@@ -144,12 +156,12 @@ Uses the decision tree to determine the class label
 """
 def decide(tree, x):
     if tree[0] == None:
-        prob = math.random(100)
+        prob = random.randint(0, 99) / 100.
         options = tree[1]
         for option in options:
-            prob -= option[0]
+            prob -= option[1]
             if prob <= 0:
-                return option[1]
+                return option[0]
     return decide(tree[1][x[tree[0]]], x)
 
 """
@@ -158,11 +170,12 @@ Performs step 1 of the homework
 def step1(table):
     #folds = partition_into_folds(copy.deepcopy(table), 10, SURVIVED)
 
+    #table.sort(key=lambda x: x[SURVIVED])
+    #table = table[:712]
     tree = decision_tree(copy.deepcopy(table), [CLASS, AGE, SEX], SURVIVED)
-    print decide(tree, ['crew','adult','male','no'])
+    #print tree
+    print decide(tree, ['crew','adult','male']) # 97.222% chance of 'no'
     
-    
-
 """
 Takes a table and removes every row that has an 'NA' present
 """
