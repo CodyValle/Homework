@@ -13,7 +13,7 @@
 using namespace std;
 
 // Function to read text file.
-char* readTextFile(char* aTextFile)
+char* readTextFile(const char* aTextFile)
 {
    FILE* filePointer = fopen(aTextFile, "rb");
    char* content = NULL;
@@ -30,7 +30,7 @@ char* readTextFile(char* aTextFile)
 }
 
 // Function to initialize shaders.
-int setShader(char* shaderType, char* shaderFile)
+int setShader(const char* shaderType, const char* shaderFile)
 {
    int shaderId;
    char* shader = readTextFile(shaderFile);

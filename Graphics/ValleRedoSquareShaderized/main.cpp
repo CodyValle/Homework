@@ -48,10 +48,10 @@ enum object {SQUARE};
 // Globals
 static Vertex squareVertices[] =
 {
-   { { 20.0, 20.0, 0.0, 1.0 }, { 1.0, 0.0, 0.0, 1.0 } },
-   { { 80.0, 20.0, 0.0, 1.0 }, { 0.0, 1.0, 0.0, 1.0 } },
-   { { 20.0, 80.0, 0.0, 1.0 }, { 0.0, 0.0, 1.0, 1.0 } },
-   { { 80.0, 80.0, 0.0, 1.0 }, { 1.0, 1.0, 0.0, 1.0 } }
+   { { -5.0, 20.0, 0.0, 1.0 }, { 1.0, 0.0, 0.0, 1.0 } },
+   { { 5.0, 20.0, 0.0, 1.0 }, { 0.0, 1.0, 0.0, 1.0 } },
+   { { -5.0, 30.0, 0.0, 1.0 }, { 0.0, 0.0, 1.0, 1.0 } },
+   { { 5.0, 30.0, 0.0, 1.0 }, { 1.0, 1.0, 0.0, 1.0 } }
 };
 
 static Matrix4x4
@@ -72,9 +72,9 @@ void setup(void)
 {
     glClearColor(1.0, 1.0, 1.0, 0.0);
 
-    vertexShaderId = setShader("vertex", "E:\\School\\2016Fall\\Homework\\Graphics\\ValleRedoSquareShaderized\\vertexShader.glsl");
+    vertexShaderId = setShader("vertex", "C:\\Users\\Yerion\\Documents\\Graphics\\StudentsGraphics2\\vertexShader.glsl");
 
-    fragmentShaderId = setShader("fragment", "E:\\School\\2016Fall\\Homework\\Graphics\\ValleRedoSquareShaderized\\fragmentShader.glsl");
+    fragmentShaderId = setShader("fragment", "C:\\Users\\Yerion\\Documents\\Graphics\\StudentsGraphics2\\fragmentShader.glsl");
 
     // now greate an empty shader program object returning a non-zero id programID
     programId = glCreateProgram();
@@ -102,8 +102,8 @@ void setup(void)
    Matrix4x4 projMat =
    {
       {
-         0.02, 0.0,  0.0, -1.0,
-         0.0,  0.02, 0.0, -1.0,
+         0.05, 0.0,  0.0, 0.0,
+         0.0,  0.04, 0.0, -1.0,
          0.0,  0.0, -1.0,  0.0,
          0.0,  0.0,  0.0,  1.0
       }
@@ -164,7 +164,7 @@ int main(int argc, char* argv[])
    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGBA);
    glutInitWindowSize(500, 500);
    glutInitWindowPosition(100, 100);
-   glutCreateWindow("squareShaderized.cpp");
+   glutCreateWindow("Totally Revamped Awesome Square Shaderized");
    glutDisplayFunc(drawScene);
    glutReshapeFunc(resize);
    glutKeyboardFunc(keyInput);

@@ -103,16 +103,64 @@ def calc_enew(instances, att_index, class_index):
     return E_new
 
 """
+Creates a Decision Tree based on the passed in attributes
+"""
+def decision_tree(table, attrs, class_index):
+    # Check for three conditions
+    if len(table) == 0:
+        return (None,None)
+    
+    if len(attrs) == 0:
+        l = float(len(table))
+        values = get_categories(table, class_index)
+        options = []
+        for value in values:
+            options.append((value, count_occurences(table, class_index, value) / l))
+
+        return (None, options)
+
+    
+    #if len(count_occurences(table, class_index, get_categories(table, class_index)[0]))
+    
+    # Calculate the smallest entropy
+    index = calculate_least_entropy(table, attrs)
+
+    # Partition on that index
+    values = get_categories(table, index)
+    partitions = {value : [] for value in values}
+    for row in table:
+        partitions[row[index]].append(row)
+
+    # Create a decision tree on each partition
+    attrs.pop(index)
+    sub_trees = {}
+    for value in values:
+        sub_trees[value] = decision_tree(partitions[value], attrs, class_index)
+
+    return (index, sub_trees)
+
+"""
+Uses the decision tree to determine the class label
+"""
+def decide(tree, x):
+    if tree[0] == None:
+        prob = math.random(100)
+        options = tree[1]
+        for option in options:
+            prob -= option[0]
+            if prob <= 0:
+                return option[1]
+    return decide(tree[1][x[tree[0]]], x)
+
+"""
 Performs step 1 of the homework
 """
 def step1(table):
-    #table.sort(key=lambda x: x[SURVIVED])
-    folds = partition_into_folds(copy.deepcopy(table), 10, SURVIVED)
+    #folds = partition_into_folds(copy.deepcopy(table), 10, SURVIVED)
 
-    att_indices = [CLASS, AGE, SEX]
-    index = calculate_least_entropy(table, att_indices)
-    att_indices.pop(index)
-    print att_indices
+    tree = decision_tree(copy.deepcopy(table), [CLASS, AGE, SEX], SURVIVED)
+    print decide(tree, ['crew','adult','male','no'])
+    
     
 
 """
