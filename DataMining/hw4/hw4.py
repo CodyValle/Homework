@@ -368,6 +368,7 @@ def naive_bayes_part(table):
 
 """
 Partitions the passed in table into k folds.
+BROKEN
 """
 def partition_into_folds(table, k, class_index):
     folds = [[]] * k
