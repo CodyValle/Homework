@@ -30,14 +30,6 @@ def count_occurences(table, index, value):
             count += 1
     return count
 
-""" Makes floats """
-def get_column_as_floats(table, index):
-    column = []
-    for row in table:
-        if row[index] != 'NA':
-            column.append(float(row[index]))
-    return column
-
 """
 Gets a list of all different categorical values
 """
@@ -81,9 +73,6 @@ def attribute_frequencies(instances, att_index, class_index):
     return result
 
 def calc_enew(instances, att_index, class_index):
-    # Get the length of the partition
-    D = len(instances)
-    
     # Calculate the partition stats for att_index (see below)
     freqs = attribute_frequencies(instances, att_index, class_index)
     
@@ -91,18 +80,23 @@ def calc_enew(instances, att_index, class_index):
     E_new = 0
     for att_val in freqs:
         D_j = float(freqs[att_val][1])
+        #print D_j
         probs = [(c/D_j) for (_, c) in freqs[att_val][0].items()]
-        E_D_j = -sum([0 if p == 0.0 else p*math.log(p,2) for p in probs])
-        E_new += (D_j/D)*E_D_j
-    return E_new
+        #print probs
+        E_D_j = -sum([0. if p == 0.0 else p * math.log(p,2) for p in probs])
+        #print E_D_j
+        E_new += D_j * E_D_j
+    #print ''
+    return E_new / len(instances)
 
 """
 Calculates the least entropy of the passed in attribute values
 """
 def calculate_least_entropy(table, indices, class_index):
-    min_ent = 2
+    min_ent = 20000
     for index in indices:
         ent = calc_enew(table, index, class_index)
+        #print 'Entropy:',ent
         if ent < min_ent:
             min_ent = ent
             ret = index
@@ -154,27 +148,110 @@ def decision_tree(table, attrs, class_index):
 """
 Uses the decision tree to determine the class label
 """
-def decide(tree, x):
+def decide(tree, x, class_labels):
     if tree[0] == None:
-        prob = random.randint(0, 99) / 100.
+        prob = random.uniform(0, 1)
         options = tree[1]
         for option in options:
             prob -= option[1]
             if prob <= 0:
                 return option[0]
-    return decide(tree[1][x[tree[0]]], x)
+    if x[tree[0]] not in tree[1]:
+        return random.choice(class_labels)
+    return decide(tree[1][x[tree[0]]], x, class_labels)
+
+"""
+Creates a testing set and training set from a list of folds, on the index of the test fold.
+"""
+def create_test_and_train_from_folds(folds, index):
+    training_set = []
+    # Build a new training set excluding the current fold (index)
+    for j in range(len(folds)):
+        if index != j:
+            training_set += folds[j]
+    return (training_set, folds[index])
 
 """
 Performs step 1 of the homework
 """
 def step1(table):
-    #folds = partition_into_folds(copy.deepcopy(table), 10, SURVIVED)
+    from tabulate import tabulate
+    class_labels = get_categories(table, SURVIVED)
+    folds = partition_into_folds(copy.deepcopy(table), 10, SURVIVED)
 
-    #table.sort(key=lambda x: x[SURVIVED])
-    #table = table[:712]
-    tree = decision_tree(copy.deepcopy(table), [CLASS, AGE, SEX], SURVIVED)
-    #print tree
-    print decide(tree, ['crew','adult','male']) # 97.222% chance of 'no'
+    # Confusion matrix
+    matrix = [[0] * 2 for _ in range(2)]
+    for i in range(10):
+        training_set, test_set = create_test_and_train_from_folds(folds, i)
+        tree = decision_tree(training_set, [CLASS, AGE, SEX], SURVIVED)
+        for row in test_set:
+            predicted = decide(tree, row, class_labels)
+            matrix[class_labels.index(row[SURVIVED])][class_labels.index(predicted)] += 1
+    
+    tabbed_table = []
+    for i in range(len(class_labels)):
+        total = sum(matrix[i]) * 1.0
+        tabbed_table.append([class_labels[i]] +
+                            [matrix[i][j] for j in range(len(matrix[i]))] +
+                            [total] +
+                            [100. * matrix[i][i] / (total if total != 0 else 1)])
+    print tabulate(tabbed_table, headers = ['SURVIVED', 'yes', 'no', 'Total', 'Recognition (%)'])
+
+"""
+Performs step 2 of the homework
+"""
+def step2(table):
+    from tabulate import tabulate
+    discretize_mpg(table)
+    discretize_weight(table)
+
+    class_labels = get_categories(table, MPG)
+    folds = partition_into_folds(copy.deepcopy(table), 10, MPG)
+
+    # Confusion matrix
+    matrix = [[0] * 10 for _ in range(10)]
+    for i in range(10):
+        training_set, test_set = create_test_and_train_from_folds(folds, i)
+        tree = decision_tree(copy.deepcopy(table), [CYLINDERS, WEIGHT, MODEL_YEAR], MPG)
+        for row in test_set:
+            predicted = decide(tree, row, class_labels)
+            matrix[int(i) - 1][int(predicted) - 1] += 1
+    
+    tabbed_table = []
+    for i in range(10):
+        total = sum(matrix[i]) * 1.0
+        tabbed_table.append([str(i + 1)] +
+                            [matrix[i][j] for j in range(len(matrix[i]))] +
+                            [total] +
+                            [100. * matrix[i][i] / (total if total != 0 else 1)])
+    print tabulate(tabbed_table, headers = ['MPG', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Total', 'Recognition (%)']) 
+
+"""
+Gets all rules for the tree
+"""
+def get_rules(tree):
+    if tree[0] == None:
+        ret = "THEN"
+        for label, odds in tree[1]:
+            ret += ' ' + label + ': ' + str(round(odds * 100, 1)) + '%'
+        return [ret]
+    else:
+        loop_rules = []
+        for key,sub_tree in tree[1].iteritems():
+            rules = get_rules(sub_tree)
+            for rule in rules:
+                to_append = rule if rule[:4] == 'THEN' else 'AND ' + rule
+                loop_rules.append('attr' + str(tree[0]) + ' == ' + key + ' ' + to_append)
+        return loop_rules
+
+"""
+Prints out the rules for the decision tree
+"""
+def step3(table):
+    tree = decision_tree(table, [CLASS, AGE, SEX], SURVIVED)
+    rules = get_rules(tree)
+    for rule in rules:
+        print 'IF ' + rule
     
 """
 Takes a table and removes every row that has an 'NA' present
@@ -191,6 +268,48 @@ def clean_auto_data(table):
             ret.append(row) # Add the row to the return table
 
     return ret
+
+"""
+Takes an instance and returns a label based on the MPG value.
+"""
+def discretize_mpg(table):
+    for row in table:
+        if float(row[MPG]) <= 13:
+            row[MPG] = '1'
+        elif float(row[MPG]) <= 15:
+            row[MPG] = '2'
+        elif float(row[MPG]) <= 17:
+            row[MPG] = '3'
+        elif float(row[MPG]) <= 20:
+            row[MPG] = '4'
+        elif float(row[MPG]) <= 24:
+            row[MPG] = '5'
+        elif float(row[MPG]) <= 27:
+            row[MPG] = '6'
+        elif float(row[MPG]) <= 31:
+            row[MPG] = '7'
+        elif float(row[MPG]) <= 37:
+            row[MPG] = '8'
+        elif float(row[MPG]) <= 45:
+            row[MPG] = '9'
+        else:
+            row[MPG] = '10'
+
+"""
+Converts the weight column to categories
+"""
+def discretize_weight(table):
+    for row in table:
+        if float(row[WEIGHT]) <= 1999:
+            row[WEIGHT] = '1'
+        elif float(row[WEIGHT]) <= 2499:
+            row[WEIGHT] = '2'
+        elif float(row[WEIGHT]) <= 2999:
+            row[WEIGHT] = '3'
+        elif float(row[WEIGHT]) <= 3499:
+            row[WEIGHT] = '4'
+        else:
+            row[WEIGHT] = '5'
 
 """
 The main function for this program
@@ -235,6 +354,8 @@ def main():
     titanic_table = read_csv('titanic.txt')[1:]
 
     step1(copy.deepcopy(titanic_table))
+    step2(copy.deepcopy(auto_table))
+    step3(copy.deepcopy(titanic_table))
 
 if __name__ == '__main__':
     main()

@@ -1,3 +1,13 @@
+/**
+ * Scott Rein and Cody Valle
+ * srein@zagmail.gonzaga.edu, cvalle@zagmail.gonzaga.edu
+ * Operating Systems Assignment 5
+ * CPSC 346.2
+ * This program takes four numbers as parameters (e.g. a.out 1 1 1 1)
+ *  and runs a parent child process that do not access their respective
+ *  critical sections at the same time.
+**/
+
 #include <stdio.h>
 #include <sys/types.h>
 #include <stdlib.h>
