@@ -212,7 +212,7 @@ def step2(table):
     matrix = [[0] * 10 for _ in range(10)]
     for i in range(10):
         training_set, test_set = create_test_and_train_from_folds(folds, i)
-        tree = decision_tree(copy.deepcopy(table), [CYLINDERS, WEIGHT, MODEL_YEAR], MPG)
+        tree = decision_tree(table, [CYLINDERS, WEIGHT, MODEL_YEAR], MPG)
         for row in test_set:
             predicted = decide(tree, row, class_labels)
             matrix[int(i) - 1][int(predicted) - 1] += 1
@@ -247,8 +247,15 @@ def get_rules(tree):
 """
 Prints out the rules for the decision tree
 """
-def step3(table):
-    tree = decision_tree(table, [CLASS, AGE, SEX], SURVIVED)
+def step3(titanic_table, auto_table):
+    tree = decision_tree(titanic_table, [CLASS, AGE, SEX], SURVIVED)
+    rules = get_rules(tree)
+    for rule in rules:
+        print 'IF ' + rule
+        
+    discretize_mpg(auto_table)
+    discretize_weight(auto_table)
+    tree = decision_tree(auto_table, [CYLINDERS, WEIGHT, MODEL_YEAR], MPG)
     rules = get_rules(tree)
     for rule in rules:
         print 'IF ' + rule
@@ -355,7 +362,7 @@ def main():
 
     step1(copy.deepcopy(titanic_table))
     step2(copy.deepcopy(auto_table))
-    step3(copy.deepcopy(titanic_table))
+    step3(copy.deepcopy(titanic_table), copy.deepcopy(auto_table))
 
 if __name__ == '__main__':
     main()
