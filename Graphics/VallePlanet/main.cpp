@@ -15,59 +15,118 @@
 #include <iostream>
 #include <fstream>
 
-#  include <GL/glew.h>
-#  include <GL/freeglut.h>
-#ifdef __APPLE__
-#  include <OpenGL/glext.h>
-#else
-#  include <GL/glext.h>
-#endif
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 #include "shader.h"
-#include "sphere.h"
-#include "transform.h"
+#include "drawableFactory.h"
+#include "node.h"
 
 using namespace std;
 using namespace glm;
 
 // Globals.
-static float latAngle = 0.0; // Latitudinal angle.
-static float longAngle = 0.0; // Longitudinal angle.
-//static float Xangle = 0.0, Yangle = 0.0, Zangle = 0.0; // Angles to rotate scene.
-static int isAnimate = 0; // Animated?
-static int animationPeriod = 100; // Time interval between frames.
+static float Xangle = 90.0, Yangle = 0.0, Zangle = 0.0; // Angles to rotate scene.
+static bool isAnimate = true; // Animated?
+static unsigned animationPeriod = 10; // Time interval between frames.
 
-Sphere* sphere = '\0';
+// Identity Matrix View
+mat4 identity = mat4(1.0);
 
-unsigned int
-        vertexShaderId,
-        fragmentShaderId;
+// Root node
+static Node* root = '\0';
+
+// Timer function.
+void animate(int value)
+{
+    if (isAnimate)
+    {
+        if (root)
+            root->animate();
+
+        glutPostRedisplay();
+        glutTimerFunc(animationPeriod, animate, value);
+    }
+}
 
 // Initialization routine.
 void setup(void)
 {
-    glClearColor(1.0, 1.0, 1.0, 0.0);
+    glClearColor(0.2, 0.2, 0.2, 1.0);
     glEnable(GL_DEPTH_TEST);
 
     // Create shader program executable.
-    vertexShaderId = setShader("vertex", "vertexShader.glsl");
-    fragmentShaderId = setShader("fragment", "fragmentShader.glsl");
-    unsigned int programId = glCreateProgram();
+    unsigned vertexShaderId = setShader("vertex", "vertexShader.glsl");
+    unsigned fragmentShaderId = setShader("fragment", "fragmentShader.glsl");
+    unsigned programId = glCreateProgram();
     glAttachShader(programId, vertexShaderId);
     glAttachShader(programId, fragmentShaderId);
     glLinkProgram(programId);
     glUseProgram(programId);
 
-    // Set up the sphere
-    Transform t(vec3(0., 0., -25.),
-                vec4(45., 0., 0., 0.),
-                vec3(1., 1., 1.));
-    sphere = new Sphere(t);
-    sphere->setup(programId);
+    // Obtain projection matrix uniform location and set value.
+    unsigned projMatLoc = glGetUniformLocation(programId,"projMat");
+    mat4 projMat = frustum(-5.0, 5.0, -5.0, 5.0, 5.0, 100.0);
+    glUniformMatrix4fv(projMatLoc, 1, GL_FALSE, value_ptr(projMat));
+
+    // Create a DrawableFactory
+    DrawableFactory df(programId);
+
+    // Set up the root node
+    root = new Node();
+
+    /// Set up the sun
+    // Create the sun
+    float sunColor[] = {1., 1., 0.3, 1.};
+    root->addDrawable(df.makeSphere(sunColor, 5., 15., 10.));
+
+    /// Set up the planet
+    // create the planet
+    Node* planet = new Node();
+    root->addChild(planet); // Planet is child of sun
+
+    planet->getTransform().translate(10., 0., 0.); // From parent node (sun)
+    float planetColor[] = {0.2, 0.2, 0.9, 1.};
+    planet->addDrawable(df.makeSphere(planetColor, 2., 10, 5));
+
+    // Animate the planet
+    Animator* anim = root->getAnimator();
+    anim->getAnimation().rotate(0., 90, 0.);
+
+    anim = new EllipticalAnimation(root, planet, 10, 5); // from root, planet animate. 10 major axis, 5 minor axis
+/*
+    /// Set up the close moon
+    // Create the first moon
+    Node* moon1 = new Node();
+    planet->addChild(moon1); // Moon is child of planet
+
+    moon1->getTransform().translate(3., 0., 0.); // From parent node (planet)
+    float moon1Color[] = {0.8, 0.8, 0.8, 1.0};
+    moon1->addDrawable(df.makeSphere(moon1Color, 1., 8, 4));
+
+    // Animate the moon
+    anim = planet->getAnimator();
+    anim->getAnimation().rotate(0., -0.02, 0.);
+
+    /// Set up the far moon
+    // Create the second moon
+    Node* moon2 = new Node();
+    planet->addChild(moon2); // Moon is child of planet
+
+    moon2->getTransform().translate(5., 0., 0.); // From parent node (planet)
+    float moon2Color[] = {0.9, 0.9, 0.7, 1.0};
+    moon2->addDrawable(df.makeSphere(moon2Color, 1., 8, 4));
+
+    // Animate the moon
+    anim = planet->getAnimator();
+    anim->getAnimation().rotate(0., 0.03, 0.);
+*/
+
+    // Animation on by default
+    if (isAnimate)
+        animate(1);
+}
+
+float radians(float in)
+{
+    return in / 180. * PI;
 }
 
 // Drawing routine.
@@ -75,7 +134,15 @@ void drawScene(void)
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    sphere->draw();
+    // Create base model view matrix
+    mat4 modelViewMat = translate(identity, vec3(0., 0., -25.));
+    modelViewMat = rotate(modelViewMat, radians(Xangle), vec3(1., 0., 0.));
+    modelViewMat = rotate(modelViewMat, radians(Yangle), vec3(0., 1., 0.));
+    modelViewMat = rotate(modelViewMat, radians(Zangle), vec3(0., 0., 1.));
+
+    // Draw the scene
+    if (root)
+        root->draw(modelViewMat);
 
     glutSwapBuffers();
 }
@@ -86,79 +153,61 @@ void resize(int w, int h)
     glViewport(0, 0, w, h);
 }
 
-// Timer function.
-void animate(int value)
-{
-    if (isAnimate)
-    {
-        latAngle += 5.0;
-        if (latAngle > 360.0) latAngle -= 360.0;
-        longAngle += 1.0;
-        if (longAngle > 360.0) longAngle -= 360.0;
-
-        glutPostRedisplay();
-        glutTimerFunc(animationPeriod, animate, 1);
-    }
-}
-
 // Keyboard input processing routine.
 void keyInput(unsigned char key, int x, int y)
 {
-   switch(key)
-   {
-      case 27:
-         exit(0);
-         break;
-	  case ' ':
-         if (isAnimate) isAnimate = 0;
-		 else
-		 {
-	        isAnimate = 1;
-			animate(1);
-		 }
-		 break;
-      /*
-      case 'x':
-         Xangle += 5.0;
-		 if (Xangle > 360.0) Xangle -= 360.0;
-         glutPostRedisplay();
-         break;
-      case 'X':
-         Xangle -= 5.0;
-		 if (Xangle < 0.0) Xangle += 360.0;
-         glutPostRedisplay();
-         break;
-      case 'y':
-         Yangle += 5.0;
-		 if (Yangle > 360.0) Yangle -= 360.0;
-         glutPostRedisplay();
-         break;
-      case 'Y':
-         Yangle -= 5.0;
-		 if (Yangle < 0.0) Yangle += 360.0;
-         glutPostRedisplay();
-         break;
-      case 'z':
-         Zangle += 5.0;
-		 if (Zangle > 360.0) Zangle -= 360.0;
-         glutPostRedisplay();
-         break;
-      case 'Z':
-         Zangle -= 5.0;
-		 if (Zangle < 0.0) Zangle += 360.0;
-         glutPostRedisplay();
-         break;
-        */
-      default:
-         break;
-   }
+    const float angleMod = 3;
+
+    switch(key)
+    {
+    case 27:
+        exit(0);
+
+    case ' ':
+        if (isAnimate)
+            isAnimate = false;
+        else
+        {
+            isAnimate = true;
+            animate(1);
+        }
+        return;
+
+    case 'x':
+        Xangle = fmod(Xangle + angleMod, 360.0);
+        break;
+
+    case 'X':
+        Xangle = fmod(Xangle - angleMod, 360.0);
+        break;
+
+    case 'y':
+        Yangle = fmod(Yangle + angleMod, 360.0);
+        break;
+
+    case 'Y':
+        Yangle = fmod(Yangle - angleMod, 360.0);
+        break;
+
+    case 'z':
+        Zangle = fmod(Zangle + angleMod, 360.0);
+        break;
+
+    case 'Z':
+        Zangle = fmod(Zangle - angleMod, 360.0);
+        break;
+
+    default:
+        break;
+    }
+    glutPostRedisplay();
 }
 
 // Callback routine for non-ASCII key entry.
 void specialKeyInput(int key, int x, int y)
 {
-    if (key == GLUT_KEY_DOWN) animationPeriod += 5;
-    if( key == GLUT_KEY_UP) if (animationPeriod > 5) animationPeriod -= 5;
+    if (key == GLUT_KEY_DOWN && animationPeriod < 500) animationPeriod += 1;
+    if (key == GLUT_KEY_UP && animationPeriod >= 2) animationPeriod -= 1;
     glutPostRedisplay();
 }
 
@@ -168,7 +217,7 @@ void printInteraction(void)
     cout << "Interaction:" << endl
          << "Press space to toggle between animation on and off." << endl
          << "Press the up/down arrow keys to speed up/slow down animation." << endl
-         ;//<< "Press the x, X, y, Y, z, Z keys to rotate the scene." << endl;
+         << "Press the x, X, y, Y, z, Z keys to rotate the scene." << endl;
 }
 
 // Main routine.

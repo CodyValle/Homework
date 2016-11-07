@@ -1,47 +1,35 @@
 #ifndef SPHERE_H_INCLUDED
 #define SPHERE_H_INCLUDED
 
-#  include <GL/glew.h>
-#  include <GL/freeglut.h>
-#ifdef __APPLE__
-#  include <OpenGL/glext.h>
-#else
-#  include <GL/glext.h>
-#endif
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
-
 #include "hemisphere.h"
-#include "transform.h"
 
-using namespace std;
-using namespace glm;
-
-class Sphere
+class Sphere : public Drawable
 {
 public:
-    Hemisphere hemiTop;
-    Hemisphere hemiBtm;
+    void draw(mat4 modelViewMat)
+    {
+        // Draw the top
+        hemisphere->draw(modelViewMat);
+        // Draw the bottom
+        modelViewMat = scale(modelViewMat, vec3(1., -1., 1.));
+        hemisphere->draw(modelViewMat);
+    }
 
-    Sphere(Transform transform) :
-        hemiTop(Hemisphere(transform)),
-        hemiBtm(Hemisphere(transform))
+    ~Sphere()
+    {
+        delete hemisphere;
+    }
+
+protected:
+    friend class DrawableFactory;
+
+    Sphere(const unsigned int pid, float const color[4], Hemisphere* hemi) :
+        Drawable(pid, color),
+        hemisphere(hemi)
     {
     }
 
-    void setup(const unsigned int programId)
-    {
-        hemiTop.setup(programId);
-        hemiBtm.setup(programId);
-    }
-
-    void draw()
-    {
-        hemiTop.draw();
-        hemiBtm.draw();
-    }
+    Hemisphere* hemisphere;
 };
 
 #endif // SPHERE_H_INCLUDED

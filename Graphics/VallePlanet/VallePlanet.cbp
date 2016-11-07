@@ -42,10 +42,14 @@
 			<Add library="gdi32" />
 			<Add directory="C:/MinGW/lib" />
 		</Linker>
+		<Unit filename="animator.h" />
+		<Unit filename="drawable.h" />
+		<Unit filename="drawableFactory.h" />
 		<Unit filename="fragmentShader.glsl" />
 		<Unit filename="hemisphere.cpp" />
 		<Unit filename="hemisphere.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="node.h" />
 		<Unit filename="shader.cpp" />
 		<Unit filename="shader.h" />
 		<Unit filename="sphere.h" />
