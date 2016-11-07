@@ -13,13 +13,13 @@ import sys
 """ The start state of the Finite State Transducer.
         The parameter 'character' is the current character being read.
         Returns a tuple: (the next state to go to, what to print) """
-def q0(character):
+def q0_old(character):
         return ('q1', character)
 
 """ The second state of the Finite State Transducer.
         The parameter 'character' is the current character being read.
         Returns a tuple: (the next state to go to, what to print) """
-def q1(character):
+def q1_old(character):
         if character in 'AEIOUWHY':
                 return 'q1', ''
         if character in 'BFPV':
@@ -39,7 +39,7 @@ def q1(character):
         The parameter 'character' is the current character being read.
         The parameter 'curstate' is the current state the transducer is in.
         Returns a tuple: (the next state to go to, what to print) """
-def q2(curstate, character):
+def q2_old(curstate, character):
         if character in 'AEIOUY':
                 # Consonant then vowel, possible repetition of printed number
                 return 'q9', ''
@@ -63,7 +63,7 @@ def q2(curstate, character):
 """ An intermediate state of the Finite State Transducer.
         The parameter 'character' is the current character being read.
         Returns a tuple: (the next state to go to, what to print) """
-def q3(character):
+def q3_old(character):
         if character in 'AEIOUWHY':
                 return 'q9', ''
         if character in 'BFPV':
@@ -83,7 +83,7 @@ def q3(character):
         The parameter 'character' is the current character being read.
         The parameter 'curstate' is the current state the transducer is in.
         Returns a tuple: (the next state to go to, what to print) """
-def q4(curstate, character):
+def q4_old(curstate, character):
         if character in 'AEIOUY':
                 return 'q9', ''
         if character in 'HW':
@@ -105,13 +105,36 @@ def q4(curstate, character):
         itself and prints zeroes until the word is done.
         The parameter 'character' is the current character being read.
         Returns a tuple: (the next state to go to, what to print) """
-def q5(character):
-      return 'q16', '0'  
+def q5_old(character):
+      return 'q16', '0'
+
+"""
+Pads a length less than four string to length of four and cuts a length
+greater than four string to length four.
+"""
+def FST_trim(state, input):
+        if len(input) == 0:
+                if state == 'q1':
+                        return '0' + FST_trim('q0', input)
+                if state == 'q2':
+                        return '0' + FST_trim('q1', input)
+                if state == 'q3':
+                        return '0' + FST_trim('q2', input)
+        if state == 'q0':
+                return ''
+        if state == 'q1':
+                return input[0] + FST_trim('q0', input[1:])
+        if state == 'q2':
+                return input[0] + FST_trim('q1', input[1:])
+        if state == 'q3':
+                return input[0] + FST_trim('q2', input[1:])
+        if state == 'q4':
+                return input[0] + FST_trim('q3', input[1:])
 
 """ Models a Finite State Transducer
         The parameter 'toParse' is the string to run through
         the transducer. """
-def FST(toParse):
+def FST_old(toParse):
         print 'Parsing "' + toParse + '".'
 
         toParse = toParse.upper() # Step 1
@@ -123,82 +146,46 @@ def FST(toParse):
         state = 'q0'
 
         for c in toParse:
-                # This large if elif block maps the actual state to the funtion states
+                # This large if elif block maps the actual state to the function states
                 if state == 'q0':
-                       (state, character) = q0(c)
+                       (state, character) = q0_old(c)
                 elif state == 'q1':
-                       (state, character) = q1(c)
+                       (state, character) = q1_old(c)
                 elif state == 'q2':
-                       (state, character) = q2(state, c)
+                       (state, character) = q2_old(state, c)
                 elif state == 'q3':
-                       (state, character) = q2(state, c)
+                       (state, character) = q2_old(state, c)
                 elif state == 'q4':
-                       (state, character) = q2(state, c)
+                       (state, character) = q2_old(state, c)
                 elif state == 'q5':
-                       (state, character) = q2(state, c)
+                       (state, character) = q2_old(state, c)
                 elif state == 'q6':
-                       (state, character) = q2(state, c)
+                       (state, character) = q2_old(state, c)
                 elif state == 'q7':
-                       (state, character) = q2(state, c)
+                       (state, character) = q2_old(state, c)
                 elif state == 'q8':
-                       (state, character) = q2(state, c)
+                       (state, character) = q2_old(state, c)
                 elif state == 'q9':
-                       (state, character) = q3(c)
+                       (state, character) = q3_old(c)
                 elif state == 'q10':
-                       (state, character) = q4(state, c)
+                       (state, character) = q4_old(state, c)
                 elif state == 'q11':
-                       (state, character) = q4(state, c)
+                       (state, character) = q4_old(state, c)
                 elif state == 'q12':
-                       (state, character) = q4(state, c)
+                       (state, character) = q4_old(state, c)
                 elif state == 'q13':
-                       (state, character) = q4(state, c)
+                       (state, character) = q4_old(state, c)
                 elif state == 'q14':
-                       (state, character) = q4(state, c)
+                       (state, character) = q4_old(state, c)
                 elif state == 'q15':
-                       (state, character) = q4(state, c)
+                       (state, character) = q4_old(state, c)
                 elif state == 'q16':
-                       (state, character) = q5(c)
+                       (state, character) = q5_old(c)
 
                 output += character # Append the printed character
 
-        output = output[:4] # Trim excess numbers
-        output = output + '0' * (4 - len(output)) # Pad with zeroes
+        output = FST_trim('q4', output)
         print 'Soundex output "' + output + '".'
-
-""" Original implementation of the algorithm. Unused and kept for posterity. """
-def main(toParse):
-	import re
-	
-	print 'Parsing "' + toParse + '".'
-
-	""" Step 1 """
-	toParse = toParse.upper() # Capitalize every character
-	toParse = toParse[0] +  re.compile("[^A-Z]").sub('', toParse[1:]) # Remove everything that isn't a capital letter
-
-	""" Step 2 is implied """
-	""" Step 3 """
-	toParse = toParse[0] +  re.compile("[AEIOUHWY]").sub('0', toParse[1:]) # Converts listed characters to '0'
-
-	""" Step 4 """
-	toParse = toParse[0] +  re.compile("[BFPV]").sub('1', toParse[1:])
-	toParse = toParse[0] +  re.compile("[CGJKQSXZ]").sub('2', toParse[1:])
-	toParse = toParse[0] +  re.compile("[DT]").sub('3', toParse[1:])
-	toParse = toParse[0] +  re.compile("[L]").sub('4', toParse[1:])
-	toParse = toParse[0] +  re.compile("[MN]").sub('5', toParse[1:])
-	toParse = toParse[0] +  re.compile("[R]").sub('6', toParse[1:])
-
-	""" Step 5 """
-	for i in range(1,6):
-		toParse = toParse[0] +  re.compile(str(i) + "{2,}").sub(str(i), toParse[1:])
-
-	""" Step 6 """
-	toParse = toParse[0] +  re.compile("0").sub('', toParse[1:])
-
-	""" Step 7 """
-	toParse = toParse[:4]
-	toParse = toParse + '0' * (4 - len(toParse))
-
-	print 'Soundex output "' + toParse + '".'
 
 """
 Entry point. Usage: python asgn4.py word [word word ...]
@@ -209,4 +196,4 @@ if __name__ == '__main__':
 	else:
                 # Parse all arguments with the FST
 		for i in range(1, len(sys.argv)):
-			FST(sys.argv[i])
+			FST_old(sys.argv[i])
