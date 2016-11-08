@@ -30,9 +30,10 @@ protected:
     unsigned longitudes, // Number of longitudinal slices.
              latitudes; // Number of latitudinal slices.
 
+private:
     /// Methods to fill vertex data
     // Fill the vertex array with co-ordinates of the sample points.
-    static void fillHemVertexArray(Vertex* hemVertices, float radius, unsigned lats, unsigned longs)
+    void fillHemVertexArray(Vertex* hemVertices, float radius, unsigned lats, unsigned longs)
     {
         int k = 0;
         for (unsigned j = 0; j <= lats; j++)
@@ -47,7 +48,7 @@ protected:
     }
 
     // Fill the array of index arrays.
-    static void fillHemIndices(unsigned* hemIndices, unsigned lats, unsigned longs)
+    void fillHemIndices(unsigned* hemIndices, unsigned lats, unsigned longs)
     {
         for(unsigned j = 0; j < lats; j++)
             for (unsigned i = 0; i <= longs; i++)
@@ -58,14 +59,14 @@ protected:
     }
 
     // Fill the array of counts.
-    static void fillHemCounts(int hemCounts[], unsigned lats, unsigned longs)
+    void fillHemCounts(int hemCounts[], unsigned lats, unsigned longs)
     {
         for(unsigned j = 0; j < lats; j++)
             hemCounts[j] = 2*(longs + 1);
     }
 
     // Fill the array of buffer offsets.
-    static void fillHemOffsets(void* hemOffsets[], unsigned lats, unsigned longs)
+    void fillHemOffsets(void* hemOffsets[], unsigned lats, unsigned longs)
     {
         for(unsigned j = 0; j < lats; j++)
             hemOffsets[j] = (GLvoid*)(2*(longs+1)*j*sizeof(unsigned));

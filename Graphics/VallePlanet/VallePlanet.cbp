@@ -45,6 +45,7 @@
 		<Unit filename="animator.h" />
 		<Unit filename="drawable.h" />
 		<Unit filename="drawableFactory.h" />
+		<Unit filename="ellipticalAnimator.h" />
 		<Unit filename="fragmentShader.glsl" />
 		<Unit filename="hemisphere.cpp" />
 		<Unit filename="hemisphere.h" />

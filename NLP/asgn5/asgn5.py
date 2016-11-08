@@ -5,8 +5,7 @@ To use:
 You must have the Brown corpus downloaded from NLTK already. Run the code 'nltk.download('brown')' to have it available.
 This program takes no arguments. Simply run the file.
 NB: Creating a unigram sentence takes an excessively long time to complete.
-Reason unknown, but attempting to fix. That’s the reason the
-'print make_ngram_sentence(unigrams, unistarts)’ line in main is commented.
+That’s the reason the '...range(2,4)’ starts at 2 in main.
 """
 
 import decimal
@@ -23,11 +22,22 @@ def random_float():
 """
 Chooses a random N-Gram based on frequency
 """
-def random_ngram(grams):
+def random_ngram(grams, matches):
         # Get a random number between 0 and 1, with desired precision
         percent = random_float()
-        for key,val in grams.iteritems():
-                # Count down the probability until less than zero
+
+        # Get a list of possible grams
+        new_grams = grams
+        for i in range(len(matches)):
+            next_grams = new_grams
+            new_grams = {}
+            for key,val in next_grams.iteritems():
+                if matches[i] == key[i]:
+                    new_grams[key] = val
+        
+        # Count down the probability until zero
+        while percent > 0:
+            for key,val in new_grams.iteritems():
                 percent -= val
                 if percent < 0:
                         return key
@@ -47,12 +57,17 @@ def ngram_sentence(grams, starts):
 
         # Keep choosing until we get an end of sentence
         choice = ['']
-        while choice[-1] != '</s>':
-                choice = random_ngram(grams)
+        loop = True
+        while loop:
+                choice = random_ngram(grams, choice[1:])
                 # Append the gram to the return string
-                for word in choice:
-                        ret += word + ' '
-
+                if len(choice) == 1:
+                        loop = choice[0] != '</s>'
+                        ret += choice[0] + ' '
+                else:
+                        loop = choice[-1] != '</s>'
+                        ret += choice[-1] + ' '
+                        
         return ret
 
 """
@@ -62,7 +77,7 @@ def make_ngrams(words, n):
         grams = {}
 
         # Create a gram starting at every word
-        for index in range(len(words) - n):
+        for index in range(len(words) - n + 1):
                 # Create the n-length gram
                 gram_list = []
                 for offset in range(n):
@@ -80,7 +95,7 @@ def make_ngrams(words, n):
         starts = []
         for key,_ in grams.iteritems():
                 if key[0] == '<s>':
-                        starts.append(key)
+                     starts.append(key)
                 
         return grams, starts
 
@@ -116,7 +131,6 @@ def getSentences():
                 # We have t make sure we have words in this sentence
                 if sentence[-1] != '<s>':
                         sentences.append(sentence + ['</s>'])
-
         return sentences 
 
 """
@@ -128,22 +142,31 @@ def main():
         # Get the sentences from the Brown corpus
         sentences = getSentences()
         words = flatten(sentences) # Flatten them into a single list
+
+        for i in range(2,5):
+                # Get the N-Grams
+                grams, starts = make_ngrams(words, i)
+                # Make N-Gram sentences
+                print str(i) + '-Gram Sentence:'
+                print ngram_sentence(grams, starts), ''
         
-        # Get the N-Grams
+        """
         unigrams, unistarts = make_ngrams(words, 1)
         bigrams, bistarts = make_ngrams(words, 2)
         trigrams, tristarts = make_ngrams(words, 3)
         quadgrams, quadstarts = make_ngrams(words, 4)
 
-        # Make N-Gram sentences
+
+        
         print 'Unigram Sentence:'
-        #print ngram_sentence(unigrams, unistarts), ''
+        print ngram_sentence(unigrams, unistarts), ''
         print 'Bigram Sentence:'
         print ngram_sentence(bigrams, bistarts), ''
         print 'Trigram Sentence:'
         print ngram_sentence(trigrams, tristarts),''
         print 'Quadgram Sentence:'
         print ngram_sentence(quadgrams, quadstarts), ''
+        """
 
 if __name__ == '__main__':
     main()

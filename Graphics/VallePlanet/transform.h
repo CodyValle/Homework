@@ -23,6 +23,15 @@ public:
     inline glm::vec3 getTranslate()
         { return trans; }
 
+    inline void setTranslate(glm::vec3 loc)
+        { trans = loc; }
+
+    inline glm::vec3 getRotate()
+        { return rot; }
+
+    inline void setRotate(glm::vec3 r)
+        { rot = r; }
+
     inline float getXAngle()
         { return rot[0] / 180. * PI; }
 

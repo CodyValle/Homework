@@ -18,6 +18,7 @@
 #include "shader.h"
 #include "drawableFactory.h"
 #include "node.h"
+#include "ellipticalAnimator.h"
 
 using namespace std;
 using namespace glm;
@@ -78,46 +79,65 @@ void setup(void)
     root->addDrawable(df.makeSphere(sunColor, 5., 15., 10.));
 
     /// Set up the planet
-    // create the planet
+    // Create the planet
     Node* planet = new Node();
-    root->addChild(planet); // Planet is child of sun
+    // Its Transform is controlled by an elliptical animation
+    Animator* anim = new EllipticalAnimator(planet->getTransform(), 27, 17, PI / 128, PI / 3);
+    // Planet is child of sun
+    root->addChild(planet, anim);
 
-    planet->getTransform().translate(10., 0., 0.); // From parent node (sun)
+    // Add the planet Sphere to the Node
     float planetColor[] = {0.2, 0.2, 0.9, 1.};
     planet->addDrawable(df.makeSphere(planetColor, 2., 10, 5));
 
-    // Animate the planet
-    Animator* anim = root->getAnimator();
-    anim->getAnimation().rotate(0., 90, 0.);
-
-    anim = new EllipticalAnimation(root, planet, 10, 5); // from root, planet animate. 10 major axis, 5 minor axis
-/*
     /// Set up the close moon
     // Create the first moon
     Node* moon1 = new Node();
-    planet->addChild(moon1); // Moon is child of planet
+    // Create its animation
+    anim = new EllipticalAnimator(moon1->getTransform(), 11, 9.5, PI / 60);
+    // Moon is child of planet
+    planet->addChild(moon1, anim);
 
-    moon1->getTransform().translate(3., 0., 0.); // From parent node (planet)
-    float moon1Color[] = {0.8, 0.8, 0.8, 1.0};
+    // Add the moon Sphere to the Node
+    float moon1Color[] = {0.3, 0.8, 0.3, 1.0};
     moon1->addDrawable(df.makeSphere(moon1Color, 1., 8, 4));
-
-    // Animate the moon
-    anim = planet->getAnimator();
-    anim->getAnimation().rotate(0., -0.02, 0.);
 
     /// Set up the far moon
     // Create the second moon
     Node* moon2 = new Node();
-    planet->addChild(moon2); // Moon is child of planet
+    // Create its animation
+    anim = new EllipticalAnimator(moon2->getTransform(), 6, 7, -PI / 80);
+    // Moon is child of planet
+    planet->addChild(moon2, anim);
 
-    moon2->getTransform().translate(5., 0., 0.); // From parent node (planet)
-    float moon2Color[] = {0.9, 0.9, 0.7, 1.0};
+    // Add the moon Sphere to the Node
+    float moon2Color[] = {0.4, 0.9, 0.7, 1.0};
     moon2->addDrawable(df.makeSphere(moon2Color, 1., 8, 4));
 
-    // Animate the moon
-    anim = planet->getAnimator();
-    anim->getAnimation().rotate(0., 0.03, 0.);
-*/
+    /// Add Halley's Comet
+    Node* comet = new Node();
+    anim = new EllipticalAnimator(comet->getTransform(), 70, 30, PI / 300);
+    anim->setTranslation(vec3(60, 0, 0));
+    root->addChild(comet, anim);
+
+    float cometColor[] = {0.8, 0.3, 0.3, 1.0};
+    comet->addDrawable(df.makeSphere(cometColor, 0.7, 5, 5));
+
+    /// Add asteroids
+    Node* asteroid = '\0';
+    float asteroidColor[] = {0.5, 0.5, 0.5, 1.0};
+    const int numAsteroids = 100;
+
+    for (float j = 0; j < numAsteroids / 10.; ++j)
+        for (int i = 0; i < numAsteroids; ++i)
+        {
+            asteroid = new Node();
+            float radius = j / float(numAsteroids) * 100.0 + 40.0;
+            anim = new EllipticalAnimator(asteroid->getTransform(), radius, radius, PI / 500, PI * 2 * float(i) / numAsteroids);
+            root->addChild(asteroid, anim);
+
+            asteroid->addDrawable(df.makeSphere(asteroidColor, 0.2, 3, 3));
+        }
 
     // Animation on by default
     if (isAnimate)
@@ -135,10 +155,11 @@ void drawScene(void)
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     // Create base model view matrix
-    mat4 modelViewMat = translate(identity, vec3(0., 0., -25.));
+    mat4 modelViewMat = translate(identity, vec3(0., 0., -45.));
     modelViewMat = rotate(modelViewMat, radians(Xangle), vec3(1., 0., 0.));
     modelViewMat = rotate(modelViewMat, radians(Yangle), vec3(0., 1., 0.));
     modelViewMat = rotate(modelViewMat, radians(Zangle), vec3(0., 0., 1.));
+    //modelViewMat = scale(modelViewMat, vec3(0.8, 0.8, 0.8));
 
     // Draw the scene
     if (root)

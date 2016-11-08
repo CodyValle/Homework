@@ -4,25 +4,19 @@
 class Animator
 {
 public:
-    void animate()
-    {
-        transform.translate(animation.getTranslate());
-        transform.rotate(animation.getXAngle(), animation.getYAngle(), animation.getZAngle());
-        transform.scale(animation.getScale());
-    }
+    Animator()
+    {}
 
-    inline Transform& getAnimation()
-        { return animation; }
+    ~Animator()
+    {}
+
+    virtual void animate() = 0;
+
+    void setTranslation(glm::vec3 trans)
+        { transform.setTranslate(trans); }
 
 protected:
-    friend class Node;
-    Animator(Transform& t) :
-        transform(t)
-    {
-    }
-
-    Transform& transform;
-    Transform animation;
+    Transform transform;
 };
 
 #endif // ANIMATOR_H_INCLUDED

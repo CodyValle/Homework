@@ -120,9 +120,9 @@ void setup(void)
    glUniformMatrix4fv(projMatLoc, 1, GL_FALSE, value_ptr(projMat));
 
    // Obtain color uniform locations and set values.
-   hemColorLoc = glGetUniformLocation(programId, "colorIn");
+   hemColorLoc = glGetUniformLocation(programId, "hemColor");
    glUniform4fv(hemColorLoc, 1, &hemColors[0]);
-   torColorLoc = glGetUniformLocation(programId, "colorIn");
+   torColorLoc = glGetUniformLocation(programId, "torColor");
    glUniform4fv(torColorLoc, 1, &torColors[0]);
 
    // Obtain modelview matrix uniform and object uniform locations.

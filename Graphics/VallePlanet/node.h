@@ -39,15 +39,14 @@ public:
     inline void addChild(Node* node)
         { children.push_back(node); }
 
+    inline void addChild(Node* node, Animator* anim)
+        {
+            children.push_back(node);
+            animators.push_back(anim);
+        }
+
     inline void addDrawable(Drawable* draw)
         { drawables.push_back(draw); }
-
-    Animator* getAnimator()
-    {
-        Animator* anim = new Animator(transform);
-        animators.push_back(anim);
-        return anim;
-    }
 
     void draw(mat4 modelViewMat)
     {
