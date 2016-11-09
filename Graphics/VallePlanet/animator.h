@@ -1,22 +1,26 @@
 #ifndef ANIMATOR_H_INCLUDED
 #define ANIMATOR_H_INCLUDED
 
+#include "transform.h"
+
 class Animator
 {
 public:
-    Animator()
-    {}
+    // Constructor
+    Animator();
 
-    ~Animator()
-    {}
+    // Destructor
+    ~Animator();
 
+    // To be defined to child classes
     virtual void animate() = 0;
 
-    void setTranslation(glm::vec3 trans)
+    // Sets a translation offset from the final calculation
+    inline void setTranslation(glm::vec3 trans)
         { transform.setTranslate(trans); }
 
 protected:
-    Transform transform;
+    Transform transform; // Tracks offsets
 };
 
 #endif // ANIMATOR_H_INCLUDED

@@ -2,30 +2,18 @@
 #define ELLIPTICALANIMATOR_H_INCLUDED
 
 #include "animator.h"
-#include "drawable.h"
 
 class EllipticalAnimator : public Animator
 {
 public:
-    EllipticalAnimator(Transform& t, float major, float minor, float radsPerSec, float initialAngle = 0) :
-        object(t),
-        mjr(major),
-        mnr(minor),
-        rads(radsPerSec),
-        angle(initialAngle)
-    {
-    }
+    // Constructor
+    EllipticalAnimator(Transform& t, float major, float minor, float radsPerSec, float initialAngle = 0);
 
-    ~EllipticalAnimator()
-    {}
+    // Destructor
+    ~EllipticalAnimator();
 
-    virtual void animate()
-    {
-        float x = cos(angle) * mjr + transform.getTranslate()[0];
-        float z = sin(angle) * mnr + transform.getTranslate()[2];
-        object.setTranslate(glm::vec3(x, 0, z));
-        angle = fmod(angle + rads, 2 * PI);
-    }
+    // Inherited from Animator
+    void animate();
 
 protected:
     Transform& object;

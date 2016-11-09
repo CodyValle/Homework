@@ -3,34 +3,27 @@
 
 #include <glm/glm.hpp>
 
+#include "globals.h"
+
+using namespace glm;
+
 class Transform
 {
 public:
-    Transform() :
-        trans(glm::vec3(0., 0., 0.)),
-        rot(glm::vec3(0., 0., 0.)),
-        scal(glm::vec3(1., 1., 1.))
-    {
-    }
+    // Constructors
+    Transform();
+    Transform(vec3 translate, vec3 rotate, vec3 scale);
 
-    Transform(glm::vec3 translate, glm::vec3 rotate, glm::vec3 scale) :
-        trans(translate),
-        rot(rotate),
-        scal(scale)
-    {
-    }
-
-    inline glm::vec3 getTranslate()
+    // Translation getter, setter
+    inline vec3 getTranslate()
         { return trans; }
 
-    inline void setTranslate(glm::vec3 loc)
+    inline void setTranslate(vec3 loc)
         { trans = loc; }
 
-    inline glm::vec3 getRotate()
+    // Rotation getter, setter
+    inline vec3 getRotate()
         { return rot; }
-
-    inline void setRotate(glm::vec3 r)
-        { rot = r; }
 
     inline float getXAngle()
         { return rot[0] / 180. * PI; }
@@ -41,22 +34,29 @@ public:
     inline float getZAngle()
         { return rot[2] / 180. * PI; }
 
-    inline glm::vec3 getScale()
+    inline void setRotate(vec3 r)
+        { rot = r; }
+
+    // Scale getter
+    inline vec3 getScale()
         { return scal; }
 
-    inline void translate(glm::vec3 t)
+    // Translation modifiers
+    inline void translate(vec3 t)
         { trans += t; }
 
     inline void translate(float x, float y, float z)
-        { trans += glm::vec3(x, y, z); }
+        { trans += vec3(x, y, z); }
 
-    inline void rotate(glm::vec3 r)
+    // Rotation modifiers
+    inline void rotate(vec3 r)
         { rot += r; }
 
     inline void rotate(float x, float y, float z)
-        { rot += glm::vec3(x, y, z); }
+        { rot += vec3(x, y, z); }
 
-    inline void scale(glm::vec3 s)
+    // Scale modifiers
+    inline void scale(vec3 s)
         {
             scal[0] *= s[0];
             scal[1] *= s[1];
@@ -71,9 +71,9 @@ public:
         }
 
 private:
-    glm::vec3 trans;
-    glm::vec3 rot;
-    glm::vec3 scal;
+    vec3 trans; // The current translation
+    vec3 rot; // The current angles in respective axes
+    vec3 scal; // The current scale
 };
 
 #endif // TRANSFORM_H_INCLUDED

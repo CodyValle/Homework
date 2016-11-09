@@ -1,7 +1,12 @@
+#include "hemisphere.h"
+
 #include <cmath>
 #include <iostream>
 
-#include "hemisphere.h"
+#include <GL/glew.h>
+
+#include <glm/gtc/type_ptr.hpp>
+
 
 using namespace std;
 
@@ -31,7 +36,16 @@ Hemisphere::Hemisphere(const unsigned pid, float const color[4], float r, unsign
     glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(vec4), 0);
     glEnableVertexAttribArray(0);
 
+    // Wireframe for now
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+}
+
+Hemisphere::~Hemisphere()
+{
+    delete[] vertices;
+    delete[] indices;
+    delete[] counts;
+    delete[] offsets;
 }
 
 void Hemisphere::draw(mat4 modelViewMat)

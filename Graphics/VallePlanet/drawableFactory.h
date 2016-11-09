@@ -6,41 +6,23 @@
 class DrawableFactory
 {
 public:
-    DrawableFactory(const unsigned pid) :
-        programId(pid)
-    {
-        color[0] = 0.;
-        color[1] = 0.;
-        color[2] = 0.;
-        color[3] = 1.;
-    }
+    // Constructor
+    DrawableFactory(const unsigned pid);
 
-    Sphere* makeSphere(float radius = 2., unsigned longs = 10, unsigned lats = 5)
-    {
-        return new Sphere(programId, color, makeHemisphere(radius, longs, lats));
-    }
+    // Produce Spheres
+    Sphere* makeSphere(float radius = 2., unsigned longs = 10, unsigned lats = 5);
+    Sphere* makeSphere(float const col[4], float radius = 2., unsigned longs = 10, unsigned lats = 5);
 
-    Sphere* makeSphere(float const col[4], float radius = 2., unsigned longs = 10, unsigned lats = 5)
-    {
-        return new Sphere(programId,col, makeHemisphere(col, radius, longs, lats));
-    }
-
-    Hemisphere* makeHemisphere(float radius = 2., unsigned longs = 10, unsigned lats = 5)
-    {
-        return new Hemisphere(programId, color, radius, longs, lats);
-    }
-
-    Hemisphere* makeHemisphere(float const col[4], float radius = 2., unsigned longs = 10, unsigned lats = 5)
-    {
-        return new Hemisphere(programId, col, radius, longs, lats);
-    }
+    // Produce Hemispheres
+    Hemisphere* makeHemisphere(float radius = 2., unsigned longs = 10, unsigned lats = 5);
+    Hemisphere* makeHemisphere(float const col[4], float radius = 2., unsigned longs = 10, unsigned lats = 5);
 
 protected:
     // GL ids
     const unsigned
         programId;
 
-    // Default color
+    // Default color is black
     float color[4]; // Color of object
 };
 

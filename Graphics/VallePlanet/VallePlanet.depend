@@ -256,12 +256,15 @@
 1301111165 c:\mingw\include\gl\glext.h
 	<windows.h>
 
-1478642802 source:e:\school\2016fall\homework\graphics\valleplanet\hemisphere.cpp
+1478651836 source:e:\school\2016fall\homework\graphics\valleplanet\hemisphere.cpp
+	"hemisphere.h"
 	<cmath>
 	<iostream>
-	"hemisphere.h"
+	<GL/glew.h>
+	<glm/gtc/type_ptr.hpp>
 
-1478643534 e:\school\2016fall\homework\graphics\valleplanet\hemisphere.h
+1478650584 e:\school\2016fall\homework\graphics\valleplanet\hemisphere.h
+	"globals.h"
 	"drawable.h"
 
 1478032430 e:\school\2016fall\homework\graphics\valleplanet\vertex.h
@@ -1153,10 +1156,14 @@
 
 1473914702 e:\school\2016fall\homework\graphics\glm\glm\simd\integer.h
 
-1478643466 source:e:\school\2016fall\homework\graphics\valleplanet\main.cpp
+1478651806 source:e:\school\2016fall\homework\graphics\valleplanet\main.cpp
 	<cmath>
 	<iostream>
 	<fstream>
+	<GL/glew.h>
+	<GL/freeglut.h>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
 	"shader.h"
 	"drawableFactory.h"
 	"node.h"
@@ -1221,37 +1228,53 @@
 
 1478031368 e:\school\2016fall\homework\graphics\valleplanet\shader.h
 
-1478488884 e:\school\2016fall\homework\graphics\valleplanet\sphere.h
+1478650974 e:\school\2016fall\homework\graphics\valleplanet\sphere.h
 	"hemisphere.h"
 
-1478640682 e:\school\2016fall\homework\graphics\valleplanet\transform.h
+1478652162 e:\school\2016fall\homework\graphics\valleplanet\transform.h
 	<glm/glm.hpp>
+	"globals.h"
 
 1478477326 e:\school\2016fall\homework\graphics\valleplanet\hemispherebuilder.h
 
-1478488884 e:\school\2016fall\homework\graphics\valleplanet\drawable.h
-	<GL/glew.h>
-	<GL/freeglut.h>
-	<OpenGL/glext.h>
-	<GL/glext.h>
-	<glm/glm.hpp>
-	<glm/gtc/matrix_transform.hpp>
-	<glm/gtc/type_ptr.hpp>
+1478651374 e:\school\2016fall\homework\graphics\valleplanet\drawable.h
 	"vertex.h"
 
-1478488932 e:\school\2016fall\homework\graphics\valleplanet\drawablefactory.h
+1478652402 e:\school\2016fall\homework\graphics\valleplanet\drawablefactory.h
 	"sphere.h"
 
-1478638578 e:\school\2016fall\homework\graphics\valleplanet\node.h
+1478651894 e:\school\2016fall\homework\graphics\valleplanet\node.h
 	<deque>
-	<glm/gtc/type_ptr.hpp>
 	"transform.h"
 	"drawable.h"
 	"animator.h"
 
-1478640786 e:\school\2016fall\homework\graphics\valleplanet\animator.h
+1478652620 e:\school\2016fall\homework\graphics\valleplanet\animator.h
+	"transform.h"
 
-1478640786 e:\school\2016fall\homework\graphics\valleplanet\ellipticalanimator.h
+1478652728 e:\school\2016fall\homework\graphics\valleplanet\ellipticalanimator.h
 	"animator.h"
+
+1478650272 e:\school\2016fall\homework\graphics\valleplanet\globals.h
+
+1478651870 source:e:\school\2016fall\homework\graphics\valleplanet\sphere.cpp
+	"sphere.h"
+	<glm/gtc/matrix_transform.hpp>
+
+1478651870 source:e:\school\2016fall\homework\graphics\valleplanet\drawable.cpp
 	"drawable.h"
+	<GL/glew.h>
+
+1478651836 source:e:\school\2016fall\homework\graphics\valleplanet\node.cpp
+	"node.h"
+	<glm/gtc/matrix_transform.hpp>
+
+1478651986 source:e:\school\2016fall\homework\graphics\valleplanet\transform.cpp
+	"transform.h"
+
+1478652402 source:e:\school\2016fall\homework\graphics\valleplanet\drawablefactory.cpp
+	"drawableFactory.h"
+
+1478652598 source:e:\school\2016fall\homework\graphics\valleplanet\animator.cpp
+	"animator.h"
 

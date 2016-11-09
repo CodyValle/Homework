@@ -42,18 +42,26 @@
 			<Add library="gdi32" />
 			<Add directory="C:/MinGW/lib" />
 		</Linker>
+		<Unit filename="animator.cpp" />
 		<Unit filename="animator.h" />
+		<Unit filename="drawable.cpp" />
 		<Unit filename="drawable.h" />
+		<Unit filename="drawableFactory.cpp" />
 		<Unit filename="drawableFactory.h" />
+		<Unit filename="ellipticalAnimator.cpp" />
 		<Unit filename="ellipticalAnimator.h" />
 		<Unit filename="fragmentShader.glsl" />
+		<Unit filename="globals.h" />
 		<Unit filename="hemisphere.cpp" />
 		<Unit filename="hemisphere.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="node.cpp" />
 		<Unit filename="node.h" />
 		<Unit filename="shader.cpp" />
 		<Unit filename="shader.h" />
+		<Unit filename="sphere.cpp" />
 		<Unit filename="sphere.h" />
+		<Unit filename="transform.cpp" />
 		<Unit filename="transform.h" />
 		<Unit filename="vertex.h" />
 		<Unit filename="vertexShader.glsl" />

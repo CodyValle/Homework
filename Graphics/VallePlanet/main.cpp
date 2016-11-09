@@ -3,6 +3,8 @@
 //
 // Forward-compatible core GL 4.3 version
 //
+// This creates a Solar System, complete with Halley's Comet and an Asteroid Belt.
+//
 // Interaction:
 // Press space to toggle between animation on and off.
 // Press the up/down arrow keys to speed up/slow down animation.
@@ -14,6 +16,12 @@
 #include <cmath>
 #include <iostream>
 #include <fstream>
+
+#include <GL/glew.h>
+#include <GL/freeglut.h>
+
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include "shader.h"
 #include "drawableFactory.h"
@@ -40,7 +48,7 @@ void animate(int value)
     if (isAnimate)
     {
         if (root)
-            root->animate();
+            root->animate(); // Update all aniamtions
 
         glutPostRedisplay();
         glutTimerFunc(animationPeriod, animate, value);
@@ -132,7 +140,7 @@ void setup(void)
         for (int i = 0; i < numAsteroids; ++i)
         {
             asteroid = new Node();
-            float radius = j / float(numAsteroids) * 100.0 + 40.0;
+            float radius = j / numAsteroids * 100.0 + 40.0;
             anim = new EllipticalAnimator(asteroid->getTransform(), radius, radius, PI / 500, PI * 2 * float(i) / numAsteroids);
             root->addChild(asteroid, anim);
 
@@ -144,6 +152,7 @@ void setup(void)
         animate(1);
 }
 
+// Converts degrees to radians
 float radians(float in)
 {
     return in / 180. * PI;

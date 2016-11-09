@@ -3,8 +3,6 @@
 
 #include <deque>
 
-#include <glm/gtc/type_ptr.hpp>
-
 #include "transform.h"
 #include "drawable.h"
 #include "animator.h"
@@ -14,78 +12,44 @@ using namespace std;
 class Node
 {
 public:
-    Node()
-    {
-    }
+    // Constructors
+    Node();
+    Node(Transform t);
 
-    Node(Transform t) :
-        transform(t)
-    {
-    }
+    // Destructor
+    ~Node();
 
-    ~Node()
-    {
-        // Delete all drawables attached to this node
-        for (unsigned i = 0; i < drawables.size(); ++i)
-            delete drawables.at(i);
-        drawables.clear();
-
-        // Delete all child nodes
-        for (unsigned i = 0; i < children.size(); ++i)
-            delete children.at(i);
-        children.clear();
-    }
-
+    // Adds a child to this Node
     inline void addChild(Node* node)
         { children.push_back(node); }
 
+    // Adds a child to this node, whose Transform is controlled by an Animator
     inline void addChild(Node* node, Animator* anim)
         {
             children.push_back(node);
             animators.push_back(anim);
         }
 
+    // Adds a Drawable to this Node
     inline void addDrawable(Drawable* draw)
         { drawables.push_back(draw); }
 
-    void draw(mat4 modelViewMat)
-    {
-        // Create base model view matrix
-        modelViewMat = translate(modelViewMat, transform.getTranslate());
-        modelViewMat = rotate(modelViewMat, transform.getXAngle(), vec3(1., 0., 0.));
-        modelViewMat = rotate(modelViewMat, transform.getYAngle(), vec3(0., 1., 0.));
-        modelViewMat = rotate(modelViewMat, transform.getZAngle(), vec3(0., 0., 1.));
-        modelViewMat = scale(modelViewMat, transform.getScale());
-
-        // Draw all drawables attached to this node
-        for (unsigned i = 0; i < drawables.size(); ++i)
-            drawables.at(i)->draw(modelViewMat);
-
-        // Draw all child nodes
-        for (unsigned i = 0; i < children.size(); ++i)
-            children.at(i)->draw(modelViewMat);
-    }
-
-    void animate()
-    {
-        // Call all animators attached to this node
-        for (unsigned i = 0; i < animators.size(); ++i)
-            animators.at(i)->animate();
-
-        // Animate all child nodes
-        for (unsigned i = 0; i < children.size(); ++i)
-            children.at(i)->animate();
-    }
-
+    // Gets a reference to the Transform of this Node
     inline Transform& getTransform()
         { return transform; }
 
+    // Will call draw for every attached Drawable, then draw for every attached Node
+    void draw(glm::mat4 modelViewMat);
+
+    // Will call animate for every Animator, then animate for every attached Node
+    void animate();
+
 protected:
+    Transform transform; // The Transform of this Node
+
+    // Children
     deque<Node*> children;
-    Transform transform;
-
     deque<Drawable*> drawables;
-
     deque<Animator*> animators;
 };
 

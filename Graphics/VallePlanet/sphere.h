@@ -3,32 +3,27 @@
 
 #include "hemisphere.h"
 
+/*
+ * Sphere class needs to be updated to use its own
+ * vertices and such, instead of drawing two Hemispheres.
+ */
+
 class Sphere : public Drawable
 {
 public:
-    void draw(mat4 modelViewMat)
-    {
-        // Draw the top
-        hemisphere->draw(modelViewMat);
-        // Draw the bottom
-        modelViewMat = scale(modelViewMat, vec3(1., -1., 1.));
-        hemisphere->draw(modelViewMat);
-    }
+    // Destructor
+    ~Sphere();
 
-    ~Sphere()
-    {
-        delete hemisphere;
-    }
+    // Inherited from Drawable
+    void draw(mat4 modelViewMat);
 
 protected:
-    friend class DrawableFactory;
+    friend class DrawableFactory; // To access the constructor
 
-    Sphere(const unsigned int pid, float const color[4], Hemisphere* hemi) :
-        Drawable(pid, color),
-        hemisphere(hemi)
-    {
-    }
+    // Constructor
+    Sphere(const unsigned int pid, float const color[4], Hemisphere* hemi);
 
+    // The hemisphere that will make up this sphere
     Hemisphere* hemisphere;
 };
 

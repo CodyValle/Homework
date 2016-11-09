@@ -1,29 +1,26 @@
 #ifndef HEMISPHERE_H
 #define HEMISPHERE_H
 
+#include "globals.h"
 #include "drawable.h"
 
 using namespace glm;
 
-static const double PI = 3.14159265358979;
-
 class Hemisphere : public Drawable
 {
 public:
+    // Destructor
+    ~Hemisphere();
+
+    // Inherited from Drawable
     void draw(mat4 modelViewMat);
 
-    ~Hemisphere()
-    {
-        delete[] vertices;
-        delete[] indices;
-        delete[] counts;
-        delete[] offsets;
-    }
 
 protected:
-    friend class DrawableFactory;
+    friend class DrawableFactory; // To access the constructor
 
-    Hemisphere(const unsigned pid, float const color[4], float r = 2.0, unsigned longs = 10, unsigned lats = 5);
+    // Constructor
+    Hemisphere(const unsigned pid, float const color[4], const float radius = 2.0, const unsigned longs = 10, const unsigned lats = 5);
 
     // Shape data
     float radius; // Hemisphere radius.
@@ -33,7 +30,7 @@ protected:
 private:
     /// Methods to fill vertex data
     // Fill the vertex array with co-ordinates of the sample points.
-    void fillHemVertexArray(Vertex* hemVertices, float radius, unsigned lats, unsigned longs)
+    static void fillHemVertexArray(Vertex* hemVertices, const float radius, const unsigned lats, const unsigned longs)
     {
         int k = 0;
         for (unsigned j = 0; j <= lats; j++)
@@ -48,7 +45,7 @@ private:
     }
 
     // Fill the array of index arrays.
-    void fillHemIndices(unsigned* hemIndices, unsigned lats, unsigned longs)
+    static void fillHemIndices(unsigned* hemIndices, const unsigned lats, const unsigned longs)
     {
         for(unsigned j = 0; j < lats; j++)
             for (unsigned i = 0; i <= longs; i++)
@@ -59,17 +56,18 @@ private:
     }
 
     // Fill the array of counts.
-    void fillHemCounts(int hemCounts[], unsigned lats, unsigned longs)
+    static void fillHemCounts(int hemCounts[], const unsigned lats, const unsigned longs)
     {
         for(unsigned j = 0; j < lats; j++)
             hemCounts[j] = 2*(longs + 1);
     }
 
+
     // Fill the array of buffer offsets.
-    void fillHemOffsets(void* hemOffsets[], unsigned lats, unsigned longs)
+    static void fillHemOffsets(void* hemOffsets[], const unsigned lats, const unsigned longs)
     {
         for(unsigned j = 0; j < lats; j++)
-            hemOffsets[j] = (GLvoid*)(2*(longs+1)*j*sizeof(unsigned));
+            hemOffsets[j] = (void*)(2*(longs+1)*j*sizeof(unsigned));
     }
 };
 
