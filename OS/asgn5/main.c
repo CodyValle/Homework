@@ -84,16 +84,11 @@ void child(int time_crit_sect, int time_non_crit_sect)
 // Main
 int main(int argc, char** argv)
 {
-    if (argc != 5)
-    {
-        printf("ERROR: incorrect usage.\n");
-    }
-
     // Load the wait times from the command line
-    int time_parent = atoi(argv[1]),
-        time_child = atoi(argv[2]),
-        time_parent_non_cs = atoi(argv[3]),
-        time_child_non_cs = atoi(argv[4]);
+    int time_parent = argc >= 2 ? atoi(argv[1]) : 1;
+    int time_child = argc >= 3 ? atoi(argv[2]) : 1;
+    int time_parent_non_cs = argc >= 4 ? atoi(argv[3]) : 1;
+    int time_child_non_cs = argc >= 5 ? atoi(argv[4]) : 1;
 
     // Make the shared pointer shared between parent and child
     int shmid = shmget(0, 3, 0777 | IPC_CREAT);
