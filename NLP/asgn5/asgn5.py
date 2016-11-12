@@ -143,30 +143,12 @@ def main():
         sentences = getSentences()
         words = flatten(sentences) # Flatten them into a single list
 
-        for i in range(2,5):
+        for i in range(1,5):
                 # Get the N-Grams
                 grams, starts = make_ngrams(words, i)
                 # Make N-Gram sentences
                 print str(i) + '-Gram Sentence:'
                 print ngram_sentence(grams, starts), ''
-        
-        """
-        unigrams, unistarts = make_ngrams(words, 1)
-        bigrams, bistarts = make_ngrams(words, 2)
-        trigrams, tristarts = make_ngrams(words, 3)
-        quadgrams, quadstarts = make_ngrams(words, 4)
-
-
-        
-        print 'Unigram Sentence:'
-        print ngram_sentence(unigrams, unistarts), ''
-        print 'Bigram Sentence:'
-        print ngram_sentence(bigrams, bistarts), ''
-        print 'Trigram Sentence:'
-        print ngram_sentence(trigrams, tristarts),''
-        print 'Quadgram Sentence:'
-        print ngram_sentence(quadgrams, quadstarts), ''
-        """
 
 if __name__ == '__main__':
     main()
