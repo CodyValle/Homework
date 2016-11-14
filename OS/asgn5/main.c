@@ -50,11 +50,12 @@ void non_cs(int time_non_crit_sect)
 // This is what the parent process does
 void parent(int time_crit_sect, int time_non_crit_sect)
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 4; i++)
     {
         shared[0] = true;
         shared[2] = true;
-        while (shared[1] && shared[2]);
+        if (!shared[3])
+            while (shared[1] && shared[2]);
 
         cs('p', time_crit_sect);
 
@@ -62,16 +63,18 @@ void parent(int time_crit_sect, int time_non_crit_sect)
 
         non_cs(time_non_crit_sect);
     }
+    shared[3] = true;
 }
 
 // This is what the child process does
 void child(int time_crit_sect, int time_non_crit_sect)
 {
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < 4; i++)
     {
         shared[1] = true;
         shared[2] = false;
-        while (shared[0] && !shared[2]);
+        if (!shared[3])
+            while (shared[0] && !shared[2]);
 
         cs('c', time_crit_sect);
 
@@ -79,24 +82,26 @@ void child(int time_crit_sect, int time_non_crit_sect)
 
         non_cs(time_non_crit_sect);
     }
+    shared[3] = true;
 }
 
 // Main
 int main(int argc, char** argv)
 {
     // Load the wait times from the command line
-    int time_parent = argc >= 2 ? atoi(argv[1]) : 1;
+    int time_parent = argc >= 2 ? atoi(argv[1]) : 2;
     int time_child = argc >= 3 ? atoi(argv[2]) : 1;
-    int time_parent_non_cs = argc >= 4 ? atoi(argv[3]) : 1;
+    int time_parent_non_cs = argc >= 4 ? atoi(argv[3]) : 3;
     int time_child_non_cs = argc >= 5 ? atoi(argv[4]) : 1;
 
     // Make the shared pointer shared between parent and child
-    int shmid = shmget(0, 3, 0777 | IPC_CREAT);
+    int shmid = shmget(0, 4, 0777 | IPC_CREAT);
     shared = shmat(shmid, 0, 0);
     // Initialize the shared pointer
     shared[0] = true;
     shared[1] = true;
     shared[2] = true;
+    shared[3] = false;
 
     // Attempting the fork
 	int status;
