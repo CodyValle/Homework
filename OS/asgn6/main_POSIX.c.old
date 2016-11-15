@@ -1,0 +1,143 @@
+/**
+ * Scott Rein and Cody Valle
+ * srein@zagmail.gonzaga.edu, cvalle@zagmail.gonzaga.edu
+ * Operating Systems Assignment 6
+ * CPSC 346.2
+**/
+
+#include <stdio.h>
+#include <sys/types.h>
+#include <stdlib.h>
+#include <sys/ipc.h>
+#include <sys/sem.h>
+#include <sys/wait.h>
+#include <unistd.h>
+#include <errno.h>
+#include <string.h>
+#include <semaphore.h>
+
+#define INIT_MUTEX 1
+#define INIT_EMPTY 100
+#define INIT_FULL  0
+#define EMPTY_ARG  0 //used when argument is optional
+
+const int PROD = 0;
+const int CONS = 1;
+
+// Enable pseudo-bool type for fun
+typedef unsigned char bool;
+const bool true = 1;
+const bool false = 0;
+
+typedef struct sembuf sem_struct;
+
+void criticalSection(int who)
+{
+    if (who == PROD)
+        printf("Producer baking bread\n");
+    else
+        printf("Consumer eating bread\n");
+}
+
+void producer(sem_t* mutex, sem_t* empty, sem_t* full)
+{
+    for(int i = 0; i < 6; i++)
+    {
+        sem_wait(mutex);
+        sem_trywait(empty);
+        criticalSection(PROD);
+        sem_post(full);
+        sem_post(mutex);
+
+        sleep(1);
+    }
+}
+
+void consumer(sem_t* mutex, sem_t* empty, sem_t* full)
+{
+    for (int i = 0; i < 6; i++)
+    {
+        sem_wait(mutex);
+        sem_trywait(full);
+        criticalSection(CONS);
+        sem_post(empty);
+        sem_post(mutex);
+
+        //sleep(0);
+    }
+}
+
+//set struct values for down/up ops to be used in semop
+//By design, we will always refer to the 0th semaphore in the set
+void set_sem_struct(sem_struct sem[], int op_val)
+{
+ sem[0].sem_num = 0;
+ sem[0].sem_op = op_val;
+ sem[0].sem_flg = SEM_UNDO;
+}
+
+//retrieve value held by the 0th semaphore, which is the second arg.
+//0 in the final argument indicates that it is not used
+void get_sem_values(sem_t* mutex, sem_t* empty, sem_t* full)
+{
+    int m, e, f;
+    sem_getvalue(mutex, &m);
+    sem_getvalue(empty, &e);
+    sem_getvalue(full, &f);
+    printf("mutex: %d empty: %d full: %d\n", m,e,f);
+}
+
+//create a semaphore set of 1 semaphore specified by key
+void create_semaphore(sem_t* key, int value)
+{
+    if (sem_init(key, 1, value) == -1)
+    {
+        perror("sem_init failed");
+        exit(1);
+    }
+}
+
+int main()
+{
+    sem_t mutex, empty, full;   //will hold semaphore identifiers
+    int status;
+
+    //create semaphore sets using arbitrary int unique to the semaphore set.
+    create_semaphore(&mutex, 1);
+    create_semaphore(&empty, 100);
+    create_semaphore(&full, 0);
+
+    printf("Intial semaphore values\n");
+    get_sem_values(&mutex, &empty, &full);
+
+    // Attempting the fork
+
+	pid_t pid = fork();
+
+	if (pid < 0) // Then the fork failed
+	{
+		fprintf(stderr, "Failed to Fork");
+		return -1;
+	}
+
+    //parbegin
+        if (pid == 0) // This is the child process
+        {
+            consumer(&mutex, &empty, &full);
+            _Exit(3); // Close the child process
+        }
+        else
+        {
+            producer(&mutex, &empty, &full);
+            while (wait(&status) != pid); // Wait for the child process to finish
+        }
+    //parend
+
+    printf("Final semaphore values\n");
+    get_sem_values(&mutex, &empty, &full);
+
+    // Cleanup
+    sem_destroy(&mutex);
+    sem_destroy(&empty);
+    sem_destroy(&full);
+}

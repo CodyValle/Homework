@@ -26,7 +26,7 @@ CFLAGS   = -g -O2 -Wall -Wextra -pedantic -fexceptions
 
 LINKER   = gcc
 # linking flags here
-LFLAGS   = 
+LFLAGS   = -pthread 
 
 # change these to set the proper directories where each files should be
 SRCDIR   = .
