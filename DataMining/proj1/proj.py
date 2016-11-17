@@ -265,10 +265,11 @@ def do_plots(table):
 """Returns the class frequencies for each attribute value:
 {att_val:[{class1: freq, class2: freq, ...}, total], ...}
 """
-def attribute_frequencies(instances, att_index, class_index):
+def attribute_frequencies(instances, att_index, class_index, class_labels = None):
     # Get unique list of attribute and class values
     att_vals = get_categories(instances, att_index)
-    class_vals = get_categories(instances, class_index)
+    if class_labels == None:
+        class_vals = get_categories(instances, class_index)
     
     # Initialize the result
     result = {v: [{c: 0 for c in class_vals}, 0] for v in att_vals}
@@ -281,7 +282,7 @@ def attribute_frequencies(instances, att_index, class_index):
         result[att_val][1] += 1
     return result
 
-def calc_enew(instances, att_index, class_index):
+def calc_enew(instances, att_index, class_index, class_labels = None):
     # Calculate the partition stats for att_index (see below)
     freqs = attribute_frequencies(instances, att_index, class_index)
     
@@ -425,6 +426,74 @@ def classify(table, atts):
 
     print 'Accuracy:', float(correct) / total
 
+""" Finds the best index to split the data """
+def split_points(table, att_index, class_index, n):
+    table.sort(key=lambda x:x[att_index])
+    labels = get_categories(table, class_index)
+
+    lowest = calc_enew(table[:2], att_index, class_index, labels) * 2
+    lowest += calc_enew(table[2:], att_index, class_index, labels) * (len(table) - 2)
+    split = 2
+    for i in range(3, len(table) - 2):
+        # Calculate Enew
+        enew = calc_enew(table[:i], att_index, class_index, labels) * len(table[:i])
+        enew += calc_enew(table[i:], att_index, class_index, labels) * len(table[i:])
+
+        # Update if needed
+        if enew < lowest:
+            split = i
+            lowest = enew
+
+    ret = [split]
+    if n > 1:
+        before = split_points(table[:split], att_index, class_index, n - 1)
+        ret = before + ret
+        
+        after = split_points(table[split:], att_index, class_index, n - 1)
+        for each in after:
+            ret += [each + split]
+
+    return ret
+
+""" Cleans the table of all rows with at least one None """
+def clean(table, indices = None):
+    keep = []
+    rem = []
+    if indices == None:
+        indices = list(range(len(table[0])))
+    for row in table:
+        good = True
+        for index in indices:
+            if row[index] == None:
+                rem.append(row)
+                good = False
+                break
+        if good:
+            keep.append(row)
+    return keep, rem
+
+""" Determines the best split points for the dataset """
+def determine_split_points(table):
+    data, fill = clean(table, [YEAR, MONTH, LATITUDE, LONGITUDE, HUMIDITY, AIR_TEMP, SEA_TEMP])
+    #data = bootstrap(data, 300)
+    print 'Rows:', len(data)
+    
+    print 'Sea Temp as label:'
+    print 'Year:', split_points(data, YEAR, SEA_TEMP, 3)
+    print 'Month:', split_points(data, MONTH, SEA_TEMP, 3)
+    print 'Latitude:', split_points(data, LATITUDE, SEA_TEMP, 3)
+    print 'Longitude:', split_points(data, LONGITUDE, SEA_TEMP, 3)
+    print 'Humidity:', split_points(data, HUMIDITY, SEA_TEMP, 3)
+    print 'Air Temp:', split_points(data, AIR_TEMP, SEA_TEMP, 3)
+    
+    print 'Air Temp as label:'
+    print 'Year:', split_points(data, YEAR, AIR_TEMP, 3)
+    print 'Month:', split_points(data, MONTH, AIR_TEMP, 3)
+    print 'Latitude:', split_points(data, LATITUDE, AIR_TEMP, 3)
+    print 'Longitude:', split_points(data, LONGITUDE, AIR_TEMP, 3)
+    print 'Humidity:', split_points(data, HUMIDITY, AIR_TEMP, 3)
+    print 'Sea Temp:', split_points(data, SEA_TEMP, AIR_TEMP, 3)
+
 """
 Main function. Loads the dataset, performs summary statistics,
 creates classifiers to guess temperatures based on weather and date.
@@ -455,9 +524,11 @@ def main():
     SEA_TEMP = 10
     
     elnino, atts = load_elnino()
+    determine_split_points(elnino)
     #summary_statistics(elnino, atts)
     #split_into_buoys(elnino)
     #do_plots(elnino)
+    """
     chunk = strip(categorize(elnino), SEA_TEMP)
     folds = partition_into_folds(chunk, 3, SEA_TEMP)
     sea_temps = get_categories(chunk, SEA_TEMP)
@@ -474,6 +545,7 @@ def main():
     print 'Correct:', correct
     print 'Total:', total
     print 'Accuracy:', float(correct) / total
+    """
     #classify(elnino, atts)
 
 """ To make this an executable """

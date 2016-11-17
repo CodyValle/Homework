@@ -16,16 +16,13 @@ import random
 Returns a random number between 0(inclusive) and 1(exclusive) with currently set decimal precision
 Code from: http://stackoverflow.com/questions/31595594/python-random-float-with-limited-decimal-digits
 """
-def random_float():
+def random_float(mx = 1):
         return Decimal(round(random.uniform(0, 1), decimal.getcontext().prec))
 
 """
 Chooses a random N-Gram based on frequency
 """
 def random_ngram(grams, matches):
-        # Get a random number between 0 and 1, with desired precision
-        percent = random_float()
-
         # Get a list of possible grams
         new_grams = grams
         for i in range(len(matches)):
@@ -34,6 +31,9 @@ def random_ngram(grams, matches):
             for key,val in next_grams.iteritems():
                 if matches[i] == key[i]:
                     new_grams[key] = val
+
+        # Get a random number between 0 and 1, with desired precision
+        percent = random_float(sum(new_grams.values()))
         
         # Count down the probability until zero
         while percent > 0:
@@ -41,31 +41,29 @@ def random_ngram(grams, matches):
                 percent -= val
                 if percent < 0:
                         return key
-        return None # Should never run
 
 """
-Makes an N-Gram sentence that starts with '<s>' and ends with '</s>'
+Makes an N-Gram sentence that starts with '<s>' and ends with '<e>'
 """
 def ngram_sentence(grams, starts):
-        ret = ''
         # Get the start of the sentence
         choice = random.choice(starts)
 
         # Append the gram to the return string
+        ret = ''
         for word in choice:
                 ret += word + ' '
 
         # Keep choosing until we get an end of sentence
-        choice = ['']
         loop = True
         while loop:
                 choice = random_ngram(grams, choice[1:])
                 # Append the gram to the return string
                 if len(choice) == 1:
-                        loop = choice[0] != '</s>'
+                        loop = choice[0] != '<e>'
                         ret += choice[0] + ' '
                 else:
-                        loop = choice[-1] != '</s>'
+                        loop = choice[-1] != '<e>'
                         ret += choice[-1] + ' '
                         
         return ret
@@ -130,20 +128,28 @@ def getSentences():
 
                 # We have t make sure we have words in this sentence
                 if sentence[-1] != '<s>':
-                        sentences.append(sentence + ['</s>'])
+                        sentences.append(sentence + ['<e>'])
         return sentences 
 
 """
 The main function.
 """
 def main():
-        decimal.getcontext().prec = 56 # Double the default precision
+        decimal.getcontext().prec = 28 # Double the default precision
         
         # Get the sentences from the Brown corpus
         sentences = getSentences()
         words = flatten(sentences) # Flatten them into a single list
 
-        for i in range(1,5):
+        # Special case for monogram
+        uniwords = flatten(sentences[:35])
+        # Get the unigrams
+        grams, starts = make_ngrams(uniwords, 1)
+        # Make 1-Gram sentences
+        print '1-Gram Sentence:'
+        print ngram_sentence(grams, starts), ''
+
+        for i in range(2,5):
                 # Get the N-Grams
                 grams, starts = make_ngrams(words, i)
                 # Make N-Gram sentences

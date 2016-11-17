@@ -27,7 +27,6 @@
 *.i*86
 *.x86_64
 *.hex
-myShell
 
 # Debug files
 *.dSYM/
@@ -45,3 +44,6 @@ myShell
 /BioMedics/Lab7b/build/
 /BioMedics/Lab7c/nbproject/private/
 /BioMedics/Lab7c/build/
+
+# Program Files
+*.pickle
