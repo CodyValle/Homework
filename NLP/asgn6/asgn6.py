@@ -77,11 +77,12 @@ def create_a_and_b(tagged):
 
 """ Creates a testing set and training set from a list of words """
 def create_test_and_train(words):
+        import random
         training_set = []
         test_set = []
         k = 0
         for row in words:
-                if k % 10 == 0: # Put every tenth row in the test_set
+                if random.randint(0, 9) == 0: # 10% in the test set
                         test_set.append(row)
                 else:
                         training_set.append(row)
@@ -107,7 +108,7 @@ def main():
         decimal.getcontext().prec = 56 # Double the default precision
 
         # Get the sentences from the Brown corpus
-        words = get_words()[:10000]
+        words = get_words()[:200]
 
         # Create training and test sets
         brown_train, brown_test = create_test_and_train(words)
@@ -126,6 +127,9 @@ def main():
         with open('b.pickle', 'wb') as handle:
                 pickle.dump(b, handle)
 
+        print 'DONE'
+
+        """
         with open('b.pickle', 'rb') as handle:
                 b = pickle.load(handle)
         with open('a.pickle', 'rb') as handle:
@@ -139,6 +143,7 @@ def main():
 
         print a[pairs[('of', 'IN')]][pairs[('the', 'AT')]]
         print b[words['of']][tags['IN']]
+        """
 
 if __name__ == '__main__':
     main()
