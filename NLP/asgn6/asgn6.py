@@ -108,7 +108,7 @@ def main():
         decimal.getcontext().prec = 56 # Double the default precision
 
         # Get the sentences from the Brown corpus
-        words = get_words()[:200]
+        words = get_words()
 
         # Create training and test sets
         brown_train, brown_test = create_test_and_train(words)

@@ -299,8 +299,8 @@ def calc_enew(instances, att_index, class_index, class_labels = None):
 Calculates the least entropy of the passed in attribute values
 """
 def calculate_least_entropy(table, indices, class_index):
-    min_ent = calc_enew(table, 0, class_index)
-    ret = 0
+    min_ent = calc_enew(table, indices[0], class_index)
+    ret = indices[0]
     for index in indices[1:]:
         ent = calc_enew(table, index, class_index)
         if ent < min_ent:
@@ -311,7 +311,7 @@ def calculate_least_entropy(table, indices, class_index):
 """
 Creates a Decision Tree based on the passed in attributes
 """
-def decision_tree(table, attrs, class_index):
+def decision_tree(table, attrs, class_index, F):
     """ Check three conditions """
     # No rows
     if len(table) == 0:
@@ -332,27 +332,31 @@ def decision_tree(table, attrs, class_index):
     num_max_label =  max([count_occurences(table, class_index, label) for label in labels])
     if num_max_label == len(table):
         return (None, [(table[0][class_index], 1.0)])
-    
-    # Calculate the smallest entropy
-    index = calculate_least_entropy(table, attrs, class_index)
+
+    """ Create node and/or subtrees """
+    # Calculate the smallest entropy on random F attrs
+    sub_attrs = copy.deepcopy(attrs)
+    while len(sub_attrs) > F:
+        del sub_attrs[random.randint(0, len(sub_attrs) - 1)]
+    index = calculate_least_entropy(table, sub_attrs, class_index)
 
     # Partition on that index
-    values = get_categories(table, index)
-    partitions = {value : [] for value in values}
+    values = get_categories(table, attrs.index(index))
+    partitions = {value: [] for value in values}
     for row in table:
-        partitions[row[index]].append(row)
+        partitions[row[attrs.index(index)]].append(row)
 
     # Create a decision tree on each partition
     new_attrs = copy.deepcopy(attrs)
-    del new_attrs[index]
+    del new_attrs[attrs.index(index)]
     sub_trees = {}
     for value in values:
-        sub_trees[value] = decision_tree(partitions[value], new_attrs, class_index)
+        sub_trees[value] = decision_tree(partitions[value], new_attrs, class_index, F)
 
-    return (index, sub_trees)
+    return (attrs.index(index), sub_trees)
 
 """
-Uses the decision tree to determine the class label
+Uses a decision tree to determine the class label
 """
 def decide(tree, x, class_labels):
     if tree[0] == None:
@@ -365,6 +369,48 @@ def decide(tree, x, class_labels):
     if x[tree[0]] not in tree[1]:
         return random.choice(class_labels)
     return decide(tree[1][x[tree[0]]], x, class_labels)
+
+""" Tests a tree and returns its accuracy """
+def test_tree(tree, test, class_index, class_labels):
+    total, correct = len(test), 0
+    for row in test:
+        if row[class_index] == decide(tree, row, class_labels):
+            correct += 1
+    return float(correct) / total     
+
+""" Creates an ensemble of decision trees """
+# table is a subset of the whole table (2/3)
+# attrs are the attributes to use for the decision tree
+# class_index is the index of the class to guess
+# class_labels are all the possible labels
+# M is the number of trees to keep, M < N
+# N is the number of trees to make
+# F is the number of attributes to randomly select
+def random_forest(table, attrs, class_index, class_labels, M, N, F):
+    trees = []
+    for _ in range(N):
+        # Bootstrap for this tree
+        boot = bootstrap(table)
+        # Create the tree
+        tree = decision_tree(boot, attrs, class_index, F)
+        # Check its accuracy using 20 percent of the passed in table
+        test = bootstrap(table, int(len(table) * 0.2))
+        accuracy = test_tree(tree, test, class_index, class_labels)
+        # Add it to the list
+        trees.append((tree, accuracy))
+
+    # Sort the trees by accuracy
+    trees.sort(key= lambda x:x[1])
+    # Get the M best trees
+    ret = []
+    for i in range(-1, -M - 1, -1):
+        ret.append(trees[i])
+    return ret
+
+""" Tests a random forest """
+def test_random_forest(forest, test, class_index, class_labels):
+    for tree in forest:
+        print test_tree(tree, test, class_index, class_labels)
 
 """
 Partitions the passed in table into k folds.
@@ -396,7 +442,7 @@ def categorize(table):
     for row in table:
         tup = (row[OBSERVATION], row[YEAR], row[MONTH], row[DAY], row[LATITUDE], row[LONGITUDE],
                row[ZONAL], row[MERIDIONAL], row[HUMIDITY], row[AIR_TEMP],
-               int(row[SEA_TEMP]) if row[SEA_TEMP] != None else None # round(row[SEA_TEMP], 1) produces 136 labels
+               round(row[SEA_TEMP], 0) if row[SEA_TEMP] != None else None
                 )
         categorized.append(tup)
     return categorized
@@ -475,16 +521,14 @@ def clean(table, indices = None):
 """ Determines the best split points for the dataset """
 def determine_split_points(table):
     data, fill = clean(table, [YEAR, MONTH, LATITUDE, LONGITUDE, HUMIDITY, AIR_TEMP, SEA_TEMP])
+    data = categorize(data)
     #data = bootstrap(data, 300)
     print 'Rows:', len(data)
     
     print 'Sea Temp as label:'
-    print 'Year:', split_points(data, YEAR, SEA_TEMP, 3)
-    print 'Month:', split_points(data, MONTH, SEA_TEMP, 3)
-    print 'Latitude:', split_points(data, LATITUDE, SEA_TEMP, 3)
-    print 'Longitude:', split_points(data, LONGITUDE, SEA_TEMP, 3)
-    print 'Humidity:', split_points(data, HUMIDITY, SEA_TEMP, 3)
-    print 'Air Temp:', split_points(data, AIR_TEMP, SEA_TEMP, 3)
+    print 'Humidity:', split_points(data, HUMIDITY, SEA_TEMP, 1)
+    print 'Air Temp:', split_points(data, AIR_TEMP, SEA_TEMP, 1)
+    return
     
     print 'Air Temp as label:'
     print 'Year:', split_points(data, YEAR, AIR_TEMP, 3)
@@ -524,13 +568,34 @@ def main():
     SEA_TEMP = 10
     
     elnino, atts = load_elnino()
-    determine_split_points(elnino)
-    #summary_statistics(elnino, atts)
-    #split_into_buoys(elnino)
-    #do_plots(elnino)
+    
     """
-    chunk = strip(categorize(elnino), SEA_TEMP)
-    folds = partition_into_folds(chunk, 3, SEA_TEMP)
+    """
+    chunk, fill = clean(elnino, [YEAR, MONTH, LATITUDE, LONGITUDE, HUMIDITY, AIR_TEMP, SEA_TEMP])
+    chunk = bootstrap(chunk, 300)
+    chunk = categorize(chunk)
+    sea_temps = get_categories(chunk, SEA_TEMP)
+
+    ensemble = random_forest(bootstrap(chunk, 200),
+                             [YEAR, MONTH, LATITUDE, LONGITUDE, HUMIDITY, AIR_TEMP],
+                             SEA_TEMP,
+                             sea_temps,
+                             100,
+                             200,
+                             2)
+    test_random_forest(ensemble, bootstrap(chunk, 100), SEA_TEMP, sea_temps)
+
+    """
+    prev_tree = decision_tree(chunk, [YEAR, MONTH, LATITUDE, LONGITUDE, HUMIDITY, AIR_TEMP], SEA_TEMP, 2)
+    for _ in range(3):
+        tree = decision_tree(chunk, [YEAR, MONTH, LATITUDE, LONGITUDE, HUMIDITY, AIR_TEMP], SEA_TEMP, 2)
+        print tree == prev_tree
+        prev_tree = tree
+        row = bootstrap(elnino, 1)[0]
+        print decide(tree, row, sea_temps), row[SEA_TEMP]
+    """
+    """
+    folds = partition_into_folds(chunk, 10, SEA_TEMP)
     sea_temps = get_categories(chunk, SEA_TEMP)
     correct = 0
     total = 0
@@ -546,6 +611,11 @@ def main():
     print 'Total:', total
     print 'Accuracy:', float(correct) / total
     """
+    
+    #determine_split_points(elnino)
+    #summary_statistics(elnino, atts)
+    #split_into_buoys(elnino)
+    #do_plots(elnino)
     #classify(elnino, atts)
 
 """ To make this an executable """
