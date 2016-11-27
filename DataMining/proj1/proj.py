@@ -525,18 +525,13 @@ def determine_split_points(table):
     #data = bootstrap(data, 300)
     print 'Rows:', len(data)
     
-    print 'Sea Temp as label:'
-    print 'Humidity:', split_points(data, HUMIDITY, SEA_TEMP, 1)
-    print 'Air Temp:', split_points(data, AIR_TEMP, SEA_TEMP, 1)
-    return
-    
-    print 'Air Temp as label:'
-    print 'Year:', split_points(data, YEAR, AIR_TEMP, 3)
-    print 'Month:', split_points(data, MONTH, AIR_TEMP, 3)
-    print 'Latitude:', split_points(data, LATITUDE, AIR_TEMP, 3)
-    print 'Longitude:', split_points(data, LONGITUDE, AIR_TEMP, 3)
-    print 'Humidity:', split_points(data, HUMIDITY, AIR_TEMP, 3)
-    print 'Sea Temp:', split_points(data, SEA_TEMP, AIR_TEMP, 3)
+    print 'Humidity->SeaTemp:', split_points(data, HUMIDITY, SEA_TEMP, 2)
+    print 'Humidity->AirTemp:', split_points(data, HUMIDITY, AIR_TEMP, 2)
+    print 'AirTemp->SeaTemp:', split_points(data, AIR_TEMP, SEA_TEMP, 2)
+    print 'SeaTemp->AirTemp:', split_points(data, SEA_TEMP, AIR_TEMP, 2)
+    print 'Longitude->SeaTemp:', split_points(data, LONGITUDE, SEA_TEMP, 2)
+    print 'Longitude->AirTemp:', split_points(data, LONGITUDE, AIR_TEMP, 2)
+    print 'Done!'
 
 """
 Main function. Loads the dataset, performs summary statistics,
@@ -570,7 +565,6 @@ def main():
     elnino, atts = load_elnino()
     
     """
-    """
     chunk, fill = clean(elnino, [YEAR, MONTH, LATITUDE, LONGITUDE, HUMIDITY, AIR_TEMP, SEA_TEMP])
     chunk = bootstrap(chunk, 300)
     chunk = categorize(chunk)
@@ -585,7 +579,6 @@ def main():
                              2)
     test_random_forest(ensemble, bootstrap(chunk, 100), SEA_TEMP, sea_temps)
 
-    """
     prev_tree = decision_tree(chunk, [YEAR, MONTH, LATITUDE, LONGITUDE, HUMIDITY, AIR_TEMP], SEA_TEMP, 2)
     for _ in range(3):
         tree = decision_tree(chunk, [YEAR, MONTH, LATITUDE, LONGITUDE, HUMIDITY, AIR_TEMP], SEA_TEMP, 2)
@@ -612,7 +605,7 @@ def main():
     print 'Accuracy:', float(correct) / total
     """
     
-    #determine_split_points(elnino)
+    determine_split_points(elnino)
     #summary_statistics(elnino, atts)
     #split_into_buoys(elnino)
     #do_plots(elnino)

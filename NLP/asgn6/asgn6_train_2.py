@@ -29,7 +29,7 @@ def first_element(start, items):
                         ret[item[1]] = ret.get(item[1], 0) + 1
         return ret 
 
-""" Creates a set of first element that ends with second """
+""" Creates a set of first element that end with second """
 def second_element(second, items):
         ret = {}
         for item in items:
@@ -39,6 +39,8 @@ def second_element(second, items):
 
 """ Creates the A and B matrices """
 def create_a_and_b(tagged):
+        import pickle
+        
         # The IDs and counts of each word, tag, and pair
         pairs, words, tags = {}, {}, {}
         tag_count, word_count = {}, {}
@@ -56,29 +58,49 @@ def create_a_and_b(tagged):
                 word_count[pair[0]] = word_count.get(pair[0], 0) + 1
                 tag_count[pair[1]] = tag_count.get(pair[1], 0) + 1
 
+        print 'Finished creating prep work!'
+        with open('pairs.pickle', 'wb') as handle:
+                pickle.dump(pairs, handle)
+        with open('words.pickle', 'wb') as handle:
+                pickle.dump(words, handle)
+        with open('tags.pickle', 'wb') as handle:
+                pickle.dump(tags, handle)
+        print 'Finished writing prep work!'
+
         # All word/tag pair bigrams in this corpus
         bigrams = make_bigrams(tagged)
         num_bigrams = len(bigrams.keys())
+        print 'Finished creating bigrams!'
 
         # Create the A matrix
-        a = [[[0] for _ in range(num_words)] for _ in range(num_words)]
+        a = [[[0] for _ in range(num_pairs)] for _ in range(num_pairs)]
 
         # Fill the A matrix
         for word, x in words.iteritems():
-                next_word = first_element(word, bigrams)
+                follows_words = first_element(word, bigrams)
                 total = word_count[word]
-                for follows, count in next_word.iteritems():
+                for follows, count in follows_words.iteritems():
                         a[x][words[follows]] = Decimal(count) / total
+                        
+        print 'Finished creating A matrix!'
+        with open('a.pickle', 'wb') as handle:
+                pickle.dump(a, handle)
+        print 'Finished writing A matrix!'
 
         # Create the B matrix
         b = [[[0] for _ in range(num_words)] for _ in range(num_tags)]
 
         # Fill the B matrix
         for tag, x in tags.iteritems():
-                words_with_tag = second_element(tag, tagged)
+                word_tags = second_element(tag, tagged)
                 total = tag_count[tag]
-                for word, count in words_with_tag.iteritems():
+                for word, count in word_tags.iteritems():
                         b[x][words[word]] = Decimal(count) / total
+
+        print 'Finished creating B matrix!'
+        with open('b.pickle', 'wb') as handle:
+                pickle.dump(b, handle)
+        print 'Finished writing B matrix!'
 
         return a, b, pairs, words, tags
 
@@ -111,49 +133,18 @@ def get_words():
 
 """ The main function """
 def main():
-        import pickle
         decimal.getcontext().prec = 56 # Double the default precision
 
         # Get the sentences from the Brown corpus
-        words = get_words()[:10000]
-        for word in words[:500]:
-                print word
-        return
+        words = get_words()
 
         # Create training and test sets
-        #brown_train, brown_test = create_test_and_train(words)
+        brown_train, brown_test = create_test_and_train(words)
 
         # Create A nd B matrix
-        a, b, pairs, words, tags = create_a_and_b(words)
+        a, b, pairs, words, tags = create_a_and_b(brown_train)
 
-        with open('pairs.pickle', 'wb') as handle:
-                pickle.dump(pairs, handle)
-        with open('words.pickle', 'wb') as handle:
-                pickle.dump(words, handle)
-        with open('tags.pickle', 'wb') as handle:
-                pickle.dump(tags, handle)
-        with open('a.pickle', 'wb') as handle:
-                pickle.dump(a, handle)
-        with open('b.pickle', 'wb') as handle:
-                pickle.dump(b, handle)
-
-        print 'DONE'
-
-        """
-        with open('b.pickle', 'rb') as handle:
-                b = pickle.load(handle)
-        with open('a.pickle', 'rb') as handle:
-                a = pickle.load(handle)
-        with open('tags.pickle', 'rb') as handle:
-                tags = pickle.load(handle)
-        with open('words.pickle', 'rb') as handle:
-                words = pickle.load(handle)
-        with open('pairs.pickle', 'rb') as handle:
-                pairs = pickle.load(handle)
-
-        print a[words['of']][words['the']]
-        print b[tags['IN']][words['of']]
-        """
+        print 'Finished everything!'
 
 if __name__ == '__main__':
     main()
