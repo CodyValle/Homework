@@ -1,0 +1,657 @@
+# depslib dependency file v1.0
+1350227316 source:c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\car.cpp
+	"Car.h"
+	"Shapes.h"
+	"Globals.h"
+
+1350226638 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\car.h
+	"mat.h"
+
+1350143912 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\mat.h
+	"vec.h"
+	<cstdio>
+	<iostream>
+
+1350147054 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\vec.h
+	"Angel.h"
+
+1342808776 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\angel.h
+	<cmath>
+	<iostream>
+	<OpenGL/OpenGL.h>
+	<GLUT/glut.h>
+	"GL/glew.h"
+	<GL/freeglut.h>
+	<GL/freeglut_ext.h>
+	"vec.h"
+	"mat.h"
+	"CheckError.h"
+
+1342653670 c:\program files (x86)\codeblocks\mingw\include\gl\glew.h
+	<stddef.h>
+	<inttypes.h>
+	<stdint.h>
+	<inttypes.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+
+1341006772 c:\program files (x86)\codeblocks\mingw\include\inttypes.h
+	<_mingw.h>
+	<stdint.h>
+	<stddef.h>
+
+1341006770 c:\program files (x86)\codeblocks\mingw\include\_mingw.h
+
+1341006776 c:\program files (x86)\codeblocks\mingw\include\stdint.h
+	<stddef.h>
+
+1228530734 c:\program files (x86)\codeblocks\mingw\include\gl\glu.h
+	<stddef.h>
+	<GL/gl.h>
+
+1341966648 c:\program files (x86)\codeblocks\mingw\include\gl\gl.h
+
+1342028594 c:\program files (x86)\codeblocks\mingw\include\gl\freeglut.h
+	"freeglut_std.h"
+	"freeglut_ext.h"
+
+1342028594 c:\program files (x86)\codeblocks\mingw\include\gl\freeglut_std.h
+	<windows.h>
+	<GL/gl.h>
+	<GL/glu.h>
+	<stdlib.h>
+
+1301107562 c:\program files (x86)\codeblocks\mingw\include\windows.h
+	<winresrc.h>
+	<stdarg.h>
+	<windef.h>
+	<wincon.h>
+	<winbase.h>
+	<wingdi.h>
+	<winuser.h>
+	<winnls.h>
+	<winver.h>
+	<winnetwk.h>
+	<winreg.h>
+	<winsvc.h>
+	<cderr.h>
+	<dde.h>
+	<ddeml.h>
+	<dlgs.h>
+	<imm.h>
+	<lzexpand.h>
+	<mmsystem.h>
+	<nb30.h>
+	<rpc.h>
+	<shellapi.h>
+	<winperf.h>
+	<commdlg.h>
+	<winspool.h>
+	<winsock2.h>
+	<winsock.h>
+	<ole2.h>
+
+1301107562 c:\program files (x86)\codeblocks\mingw\include\winresrc.h
+	<winuser.h>
+	<winnt.h>
+	<winver.h>
+	<dde.h>
+	<dlgs.h>
+	<commctrl.h>
+
+1301107564 c:\program files (x86)\codeblocks\mingw\include\winuser.h
+
+1301107562 c:\program files (x86)\codeblocks\mingw\include\winnt.h
+	<winerror.h>
+	<string.h>
+	<basetsd.h>
+	<pshpack4.h>
+	<poppack.h>
+
+1301107562 c:\program files (x86)\codeblocks\mingw\include\winerror.h
+
+1341006776 c:\program files (x86)\codeblocks\mingw\include\string.h
+	<_mingw.h>
+	<stddef.h>
+
+1301107548 c:\program files (x86)\codeblocks\mingw\include\basetsd.h
+
+1301107556 c:\program files (x86)\codeblocks\mingw\include\pshpack4.h
+
+1301107556 c:\program files (x86)\codeblocks\mingw\include\poppack.h
+
+1301107564 c:\program files (x86)\codeblocks\mingw\include\winver.h
+
+1301107548 c:\program files (x86)\codeblocks\mingw\include\dde.h
+
+1301107550 c:\program files (x86)\codeblocks\mingw\include\dlgs.h
+
+1301107548 c:\program files (x86)\codeblocks\mingw\include\commctrl.h
+	<prsht.h>
+
+1301107556 c:\program files (x86)\codeblocks\mingw\include\prsht.h
+
+1301107562 c:\program files (x86)\codeblocks\mingw\include\windef.h
+	<winnt.h>
+
+1301107562 c:\program files (x86)\codeblocks\mingw\include\wincon.h
+
+1301107560 c:\program files (x86)\codeblocks\mingw\include\winbase.h
+
+1301107562 c:\program files (x86)\codeblocks\mingw\include\wingdi.h
+
+1301107562 c:\program files (x86)\codeblocks\mingw\include\winnls.h
+
+1301107562 c:\program files (x86)\codeblocks\mingw\include\winnetwk.h
+
+1301107562 c:\program files (x86)\codeblocks\mingw\include\winreg.h
+
+1301107564 c:\program files (x86)\codeblocks\mingw\include\winsvc.h
+
+1301107548 c:\program files (x86)\codeblocks\mingw\include\cderr.h
+
+1301107548 c:\program files (x86)\codeblocks\mingw\include\ddeml.h
+
+1301107550 c:\program files (x86)\codeblocks\mingw\include\imm.h
+
+1301107554 c:\program files (x86)\codeblocks\mingw\include\lzexpand.h
+
+1301107554 c:\program files (x86)\codeblocks\mingw\include\mmsystem.h
+
+1301107554 c:\program files (x86)\codeblocks\mingw\include\nb30.h
+
+1301107558 c:\program files (x86)\codeblocks\mingw\include\rpc.h
+	<windows.h>
+	<rpcdce.h>
+	<rpcnsi.h>
+	<rpcnterr.h>
+	<winerror.h>
+	<excpt.h>
+
+1301107558 c:\program files (x86)\codeblocks\mingw\include\rpcdce.h
+	<basetyps.h>
+	<rpcdcep.h>
+
+1301107548 c:\program files (x86)\codeblocks\mingw\include\basetyps.h
+
+1301107558 c:\program files (x86)\codeblocks\mingw\include\rpcdcep.h
+
+1301107558 c:\program files (x86)\codeblocks\mingw\include\rpcnsi.h
+
+1301107558 c:\program files (x86)\codeblocks\mingw\include\rpcnterr.h
+
+1341006772 c:\program files (x86)\codeblocks\mingw\include\excpt.h
+	<_mingw.h>
+	<windef.h>
+
+1301107560 c:\program files (x86)\codeblocks\mingw\include\shellapi.h
+	<pshpack2.h>
+	<poppack.h>
+
+1301107556 c:\program files (x86)\codeblocks\mingw\include\pshpack2.h
+
+1301107562 c:\program files (x86)\codeblocks\mingw\include\winperf.h
+
+1301107548 c:\program files (x86)\codeblocks\mingw\include\commdlg.h
+	<unknwn.h>
+	<prsht.h>
+
+1301107560 c:\program files (x86)\codeblocks\mingw\include\unknwn.h
+	<windows.h>
+	<objfwd.h>
+	<wtypes.h>
+
+1301107556 c:\program files (x86)\codeblocks\mingw\include\objfwd.h
+	<basetyps.h>
+
+1301107564 c:\program files (x86)\codeblocks\mingw\include\wtypes.h
+	<rpc.h>
+	<rpcndr.h>
+
+1301107558 c:\program files (x86)\codeblocks\mingw\include\rpcndr.h
+	<rpcnsip.h>
+	<objfwd.h>
+
+1301107558 c:\program files (x86)\codeblocks\mingw\include\rpcnsip.h
+
+1301107562 c:\program files (x86)\codeblocks\mingw\include\winspool.h
+
+1301107562 c:\program files (x86)\codeblocks\mingw\include\winsock2.h
+	<windows.h>
+
+1301107562 c:\program files (x86)\codeblocks\mingw\include\winsock.h
+	<windows.h>
+	<mswsock.h>
+
+1301107554 c:\program files (x86)\codeblocks\mingw\include\mswsock.h
+
+1301107556 c:\program files (x86)\codeblocks\mingw\include\ole2.h
+	<winerror.h>
+	<objbase.h>
+	<olectlid.h>
+	<oleauto.h>
+	<oleidl.h>
+
+1301107554 c:\program files (x86)\codeblocks\mingw\include\objbase.h
+	<rpc.h>
+	<rpcndr.h>
+	<stdlib.h>
+	<basetyps.h>
+	<wtypes.h>
+	<unknwn.h>
+	<objidl.h>
+	<cguid.h>
+
+1341006776 c:\program files (x86)\codeblocks\mingw\include\stdlib.h
+	<_mingw.h>
+	<stddef.h>
+
+1301107556 c:\program files (x86)\codeblocks\mingw\include\objidl.h
+	<objfwd.h>
+
+1301107548 c:\program files (x86)\codeblocks\mingw\include\cguid.h
+
+1301107556 c:\program files (x86)\codeblocks\mingw\include\olectlid.h
+
+1301107556 c:\program files (x86)\codeblocks\mingw\include\oleauto.h
+	<oaidl.h>
+
+1301107554 c:\program files (x86)\codeblocks\mingw\include\oaidl.h
+	<windows.h>
+	<ole2.h>
+
+1301107556 c:\program files (x86)\codeblocks\mingw\include\oleidl.h
+	<objfwd.h>
+
+1342028594 c:\program files (x86)\codeblocks\mingw\include\gl\freeglut_ext.h
+	<stdarg.h>
+
+1289182998 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\checkerror.h
+	<stdio.h>
+	<GL/gl.h>
+
+1341006776 c:\program files (x86)\codeblocks\mingw\include\stdio.h
+	<_mingw.h>
+	<stddef.h>
+	<stdarg.h>
+	<sys/types.h>
+
+1341006780 c:\program files (x86)\codeblocks\mingw\include\sys\types.h
+	<_mingw.h>
+	<stddef.h>
+
+1350224218 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\shapes.h
+	"WireCube.h"
+	"Disk.h"
+	"WireDisk.h"
+	"Cylinder.h"
+	"WireCylinder.h"
+	"WireSteiner.h"
+	"Steiner.h"
+	"Cube.h"
+
+1348799792 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\wirecube.h
+	"Angel.h"
+
+1348799792 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\disk.h
+	"Angel.h"
+
+1348846926 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\wiredisk.h
+	"Angel.h"
+
+1348799792 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\cylinder.h
+	"Angel.h"
+
+1348856806 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\wirecylinder.h
+	"Angel.h"
+
+1349053192 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\wiresteiner.h
+	"Angel.h"
+
+1349054374 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\steiner.h
+	"Angel.h"
+
+1349291522 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\cube.h
+	"Angel.h"
+
+1350224250 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\globals.h
+	"MatrixStack.h"
+	"Shapes.h"
+
+1343344168 c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\matrixstack.h
+	<stack>
+	"Angel.h"
+
+1350225136 source:c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\cube.cpp
+	"Cube.h"
+	<iostream>
+
+1350225136 source:c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\cylinder.cpp
+	"Cylinder.h"
+	<iostream>
+
+1350224992 source:c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\disk.cpp
+	"Disk.h"
+	<iostream>
+
+1342816934 source:c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\initshader.cpp
+	"Angel.h"
+
+1351119867 source:c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\main.cpp
+	"Angel.h"
+	<iostream>
+	"MatrixStack.h"
+	"Shapes.h"
+	"Car.h"
+
+1343588472 source:c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\matrixstack.cpp
+	"MatrixStack.h"
+
+1350227218 source:c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\shapes.cpp
+	"Shapes.h"
+	"Globals.h"
+
+1350227218 source:c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\steiner.cpp
+	"Steiner.h"
+	<iostream>
+
+1350227218 source:c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\wirecube.cpp
+	"WireCube.h"
+	<iostream>
+
+1350227218 source:c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\wirecylinder.cpp
+	"WireCylinder.h"
+	<iostream>
+
+1350227218 source:c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\wiredisk .cpp
+	"WireDisk.h"
+	<iostream>
+
+1350227218 source:c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\wiresteiner.cpp
+	"WireSteiner.h"
+	<iostream>
+
+1342654209 source:c:\users\kathie\documents\kathie.yerion\aagraphics\carnavigationproj\carnavigationproj\glew.c
+	<GL/glew.h>
+	<GL/wglew.h>
+	<GL/glxew.h>
+	<dlfcn.h>
+	<stdio.h>
+	<stdlib.h>
+	<stdlib.h>
+	<string.h>
+	<AvailabilityMacros.h>
+	<dlfcn.h>
+	<mach-o/dyld.h>
+
+1342653688 c:\program files (x86)\codeblocks\mingw\include\gl\wglew.h
+	<windows.h>
+
+1342653680 c:\program files (x86)\codeblocks\mingw\include\gl\glxew.h
+	<X11/Xlib.h>
+	<X11/Xutil.h>
+	<X11/Xmd.h>
+	<GL/glew.h>
+
+1350230916 source:z:\graphics2014\carnavigationproj2014\car.cpp
+	"Car.h"
+	"Shapes.h"
+	"Globals.h"
+
+1350230238 z:\graphics2014\carnavigationproj2014\car.h
+	"mat.h"
+
+1350147512 z:\graphics2014\carnavigationproj2014\mat.h
+	"vec.h"
+	<cstdio>
+	<iostream>
+
+1350150654 z:\graphics2014\carnavigationproj2014\vec.h
+	"Angel.h"
+
+1479328574 z:\graphics2014\carnavigationproj2014\angel.h
+	<cmath>
+	<iostream>
+	<OpenGL/OpenGL.h>
+	<GLUT/glut.h>
+	"glew.h"
+	<GL/freeglut.h>
+	"vec.h"
+	"mat.h"
+	"CheckError.h"
+
+1469349816 z:\graphics2014\carnavigationproj2014\glew.h
+	<stddef.h>
+	<inttypes.h>
+	<stdint.h>
+	<inttypes.h>
+	<Availability.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+
+1289182998 z:\graphics2014\carnavigationproj2014\checkerror.h
+	<stdio.h>
+	<GL/gl.h>
+
+1350227818 z:\graphics2014\carnavigationproj2014\shapes.h
+	"WireCube.h"
+	"Disk.h"
+	"WireDisk.h"
+	"Cylinder.h"
+	"WireCylinder.h"
+	"WireSteiner.h"
+	"Steiner.h"
+	"Cube.h"
+
+1348803392 z:\graphics2014\carnavigationproj2014\wirecube.h
+	"Angel.h"
+
+1348803392 z:\graphics2014\carnavigationproj2014\disk.h
+	"Angel.h"
+
+1348850526 z:\graphics2014\carnavigationproj2014\wiredisk.h
+	"Angel.h"
+
+1348803392 z:\graphics2014\carnavigationproj2014\cylinder.h
+	"Angel.h"
+
+1348860406 z:\graphics2014\carnavigationproj2014\wirecylinder.h
+	"Angel.h"
+
+1349056792 z:\graphics2014\carnavigationproj2014\wiresteiner.h
+	"Angel.h"
+
+1349057974 z:\graphics2014\carnavigationproj2014\steiner.h
+	"Angel.h"
+
+1349295122 z:\graphics2014\carnavigationproj2014\cube.h
+	"Angel.h"
+
+1350227850 z:\graphics2014\carnavigationproj2014\globals.h
+	"MatrixStack.h"
+	"Shapes.h"
+
+1343347768 z:\graphics2014\carnavigationproj2014\matrixstack.h
+	<stack>
+	"Angel.h"
+
+1350228736 source:z:\graphics2014\carnavigationproj2014\cube.cpp
+	"Cube.h"
+	<iostream>
+
+1350228736 source:z:\graphics2014\carnavigationproj2014\cylinder.cpp
+	"Cylinder.h"
+	<iostream>
+
+1350228592 source:z:\graphics2014\carnavigationproj2014\disk.cpp
+	"Disk.h"
+	<iostream>
+
+1342820534 source:z:\graphics2014\carnavigationproj2014\initshader.cpp
+	"Angel.h"
+
+1416273600 source:z:\graphics2014\carnavigationproj2014\main.cpp
+	"Angel.h"
+	<iostream>
+	"MatrixStack.h"
+	"Shapes.h"
+	"Car.h"
+
+1343592072 source:z:\graphics2014\carnavigationproj2014\matrixstack.cpp
+	"MatrixStack.h"
+
+1350230818 source:z:\graphics2014\carnavigationproj2014\shapes.cpp
+	"Shapes.h"
+	"Globals.h"
+
+1350230818 source:z:\graphics2014\carnavigationproj2014\steiner.cpp
+	"Steiner.h"
+	<iostream>
+
+1350230818 source:z:\graphics2014\carnavigationproj2014\wirecube.cpp
+	"WireCube.h"
+	<iostream>
+
+1350230818 source:z:\graphics2014\carnavigationproj2014\wirecylinder.cpp
+	"WireCylinder.h"
+	<iostream>
+
+1350230818 source:z:\graphics2014\carnavigationproj2014\wiredisk .cpp
+	"WireDisk.h"
+	<iostream>
+
+1350230818 source:z:\graphics2014\carnavigationproj2014\wiresteiner.cpp
+	"WireSteiner.h"
+	<iostream>
+
+1350230916 source:e:\school\2016fall\homework\graphics\vallecarnavigation\car.cpp
+	"Car.h"
+	"Shapes.h"
+	"Globals.h"
+
+1350230238 e:\school\2016fall\homework\graphics\vallecarnavigation\car.h
+	"mat.h"
+
+1350147512 e:\school\2016fall\homework\graphics\vallecarnavigation\mat.h
+	"vec.h"
+	<cstdio>
+	<iostream>
+
+1350150654 e:\school\2016fall\homework\graphics\vallecarnavigation\vec.h
+	"Angel.h"
+
+1479328576 e:\school\2016fall\homework\graphics\vallecarnavigation\angel.h
+	<cmath>
+	<iostream>
+	<OpenGL/OpenGL.h>
+	<GLUT/glut.h>
+	"glew.h"
+	<GL/freeglut.h>
+	"vec.h"
+	"mat.h"
+	"CheckError.h"
+
+1469349816 e:\school\2016fall\homework\graphics\vallecarnavigation\glew.h
+	<stddef.h>
+	<inttypes.h>
+	<stdint.h>
+	<inttypes.h>
+	<Availability.h>
+	<OpenGL/glu.h>
+	<GL/glu.h>
+
+1289182998 e:\school\2016fall\homework\graphics\vallecarnavigation\checkerror.h
+	<stdio.h>
+	<GL/gl.h>
+
+1350227818 e:\school\2016fall\homework\graphics\vallecarnavigation\shapes.h
+	"WireCube.h"
+	"Disk.h"
+	"WireDisk.h"
+	"Cylinder.h"
+	"WireCylinder.h"
+	"WireSteiner.h"
+	"Steiner.h"
+	"Cube.h"
+
+1348803392 e:\school\2016fall\homework\graphics\vallecarnavigation\wirecube.h
+	"Angel.h"
+
+1348803392 e:\school\2016fall\homework\graphics\vallecarnavigation\disk.h
+	"Angel.h"
+
+1348850526 e:\school\2016fall\homework\graphics\vallecarnavigation\wiredisk.h
+	"Angel.h"
+
+1348803392 e:\school\2016fall\homework\graphics\vallecarnavigation\cylinder.h
+	"Angel.h"
+
+1348860406 e:\school\2016fall\homework\graphics\vallecarnavigation\wirecylinder.h
+	"Angel.h"
+
+1349056792 e:\school\2016fall\homework\graphics\vallecarnavigation\wiresteiner.h
+	"Angel.h"
+
+1349057974 e:\school\2016fall\homework\graphics\vallecarnavigation\steiner.h
+	"Angel.h"
+
+1349295122 e:\school\2016fall\homework\graphics\vallecarnavigation\cube.h
+	"Angel.h"
+
+1350227850 e:\school\2016fall\homework\graphics\vallecarnavigation\globals.h
+	"MatrixStack.h"
+	"Shapes.h"
+
+1343347768 e:\school\2016fall\homework\graphics\vallecarnavigation\matrixstack.h
+	<stack>
+	"Angel.h"
+
+1350228736 source:e:\school\2016fall\homework\graphics\vallecarnavigation\cube.cpp
+	"Cube.h"
+	<iostream>
+
+1350228736 source:e:\school\2016fall\homework\graphics\vallecarnavigation\cylinder.cpp
+	"Cylinder.h"
+	<iostream>
+
+1350228592 source:e:\school\2016fall\homework\graphics\vallecarnavigation\disk.cpp
+	"Disk.h"
+	<iostream>
+
+1342820534 source:e:\school\2016fall\homework\graphics\vallecarnavigation\initshader.cpp
+	"Angel.h"
+
+1343592072 source:e:\school\2016fall\homework\graphics\vallecarnavigation\matrixstack.cpp
+	"MatrixStack.h"
+
+1350230818 source:e:\school\2016fall\homework\graphics\vallecarnavigation\shapes.cpp
+	"Shapes.h"
+	"Globals.h"
+
+1350230818 source:e:\school\2016fall\homework\graphics\vallecarnavigation\steiner.cpp
+	"Steiner.h"
+	<iostream>
+
+1350230818 source:e:\school\2016fall\homework\graphics\vallecarnavigation\wirecube.cpp
+	"WireCube.h"
+	<iostream>
+
+1350230818 source:e:\school\2016fall\homework\graphics\vallecarnavigation\wirecylinder.cpp
+	"WireCylinder.h"
+	<iostream>
+
+1350230818 source:e:\school\2016fall\homework\graphics\vallecarnavigation\wiredisk .cpp
+	"WireDisk.h"
+	<iostream>
+
+1350230818 source:e:\school\2016fall\homework\graphics\vallecarnavigation\wiresteiner.cpp
+	"WireSteiner.h"
+	<iostream>
+
+1479845286 source:e:\school\2016fall\homework\graphics\vallecarnavigation\main.cpp
+	"Angel.h"
+	<iostream>
+	"MatrixStack.h"
+	"Shapes.h"
+	"Car.h"
+
