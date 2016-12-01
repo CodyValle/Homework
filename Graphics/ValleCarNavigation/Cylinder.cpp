@@ -84,11 +84,11 @@ Cylinder::createVAO(GLint _vao, GLint program )
     glBindBuffer( GL_ARRAY_BUFFER, buffer );
 
      int csize = sizeof((*points))* numVertices;
-    glBufferData( GL_ARRAY_BUFFER, 2*csize,
+    glBufferData( GL_ARRAY_BUFFER,3*csize,
                   NULL, GL_STATIC_DRAW );
     glBufferSubData( GL_ARRAY_BUFFER, 0, csize, *points );
     glBufferSubData( GL_ARRAY_BUFFER, csize, csize, *colors );
-    //glBufferSubData( GL_ARRAY_BUFFER, 2*csize, csize, *normals );
+    glBufferSubData( GL_ARRAY_BUFFER, 2*csize, csize, *normals );
     // set up shader variables
     GLuint vPosition = glGetAttribLocation( program, "vPosition" );
     glEnableVertexAttribArray( vPosition );
@@ -98,6 +98,11 @@ Cylinder::createVAO(GLint _vao, GLint program )
     glEnableVertexAttribArray( vColor );
     glVertexAttribPointer( vColor, 4, GL_FLOAT, GL_FALSE, 0,
                            BUFFER_OFFSET(csize) );
+
+    GLint vNormal = glGetAttribLocation( program, "vNormal" );
+    glEnableVertexAttribArray( vNormal );
+    glVertexAttribPointer( vNormal, 4, GL_FLOAT, GL_FALSE, 0,
+                           BUFFER_OFFSET(2*csize) );
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
     glBindVertexArray( 0 );
 

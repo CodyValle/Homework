@@ -70,11 +70,13 @@
 		<Unit filename="WireSteiner.h" />
 		<Unit filename="fragment.glsl" />
 		<Unit filename="fragment2.glsl" />
+		<Unit filename="fshader53.glsl" />
 		<Unit filename="main.cpp" />
 		<Unit filename="mat.h" />
 		<Unit filename="vec.h" />
 		<Unit filename="vertex 2.glsl" />
 		<Unit filename="vertex.glsl" />
+		<Unit filename="vshader53.glsl" />
 		<Extensions>
 			<code_completion />
 			<envvars />

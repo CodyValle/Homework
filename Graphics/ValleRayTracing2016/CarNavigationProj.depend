@@ -1,0 +1,165 @@
+# depslib dependency file v1.0
+1347578776 source:z:\graphics\raytracing2016\main.cpp
+	<GLUT/glut.h>
+	<GL/glut.h>
+	<cstdlib>
+	"World.h"
+	"RenderEngine.h"
+
+1347578776 z:\graphics\raytracing2016\world.h
+	<vector>
+	"GeometricObject.h"
+
+1347578776 z:\graphics\raytracing2016\geometricobject.h
+	"RGBColor.h"
+	"Ray.h"
+	"ShadeRec.h"
+	"Constants.h"
+
+1347578776 z:\graphics\raytracing2016\rgbcolor.h
+
+1347578776 z:\graphics\raytracing2016\ray.h
+	"Vector3D.h"
+
+1347578776 z:\graphics\raytracing2016\vector3d.h
+
+1347578776 z:\graphics\raytracing2016\shaderec.h
+	"Vector3D.h"
+	"RGBColor.h"
+
+1347578776 z:\graphics\raytracing2016\constants.h
+	<stdlib.h>
+	"RGBColor.h"
+
+1347578776 z:\graphics\raytracing2016\renderengine.h
+	<GLUT/glut.h>
+	<GL/glut.h>
+	"RGBColor.h"
+	"Ray.h"
+	"World.h"
+	"Constants.h"
+	"RGBColor.h"
+	"Vector3D.h"
+
+1347578776 source:z:\graphics\raytracing2016\geometricobject.cpp
+	"Constants.h"
+	"GeometricObject.h"
+
+1347578776 source:z:\graphics\raytracing2016\ray.cpp
+	"Ray.h"
+
+1347583776 source:z:\graphics\raytracing2016\renderengine.cpp
+	"RenderEngine.h"
+	"Ray.h"
+
+1347578776 source:z:\graphics\raytracing2016\rgbcolor.cpp
+	<math.h>
+	"RGBColor.h"
+
+1347578776 source:z:\graphics\raytracing2016\shaderec.cpp
+	"Constants.h"
+	"ShadeRec.h"
+
+1347997188 source:z:\graphics\raytracing2016\sphere.cpp
+	"Sphere.h"
+	"math.h"
+
+1347578776 z:\graphics\raytracing2016\sphere.h
+	"GeometricObject.h"
+	"Vector3D.h"
+
+1347578776 source:z:\graphics\raytracing2016\vector3d.cpp
+	<cmath>
+	"Vector3D.h"
+
+1347583348 source:z:\graphics\raytracing2016\world.cpp
+	"World.h"
+	"Constants.h"
+	"Sphere.h"
+	"Vector3D.h"
+	"Maths.h"
+
+1347578776 z:\graphics\raytracing2016\maths.h
+
+1347578776 source:e:\school\2016fall\homework\graphics\valleraytracing2016\geometricobject.cpp
+	"Constants.h"
+	"GeometricObject.h"
+
+1347578776 e:\school\2016fall\homework\graphics\valleraytracing2016\constants.h
+	<stdlib.h>
+	"RGBColor.h"
+
+1347578776 e:\school\2016fall\homework\graphics\valleraytracing2016\rgbcolor.h
+
+1347578776 e:\school\2016fall\homework\graphics\valleraytracing2016\geometricobject.h
+	"RGBColor.h"
+	"Ray.h"
+	"ShadeRec.h"
+	"Constants.h"
+
+1347578776 e:\school\2016fall\homework\graphics\valleraytracing2016\ray.h
+	"Vector3D.h"
+
+1347578776 e:\school\2016fall\homework\graphics\valleraytracing2016\vector3d.h
+
+1347578776 e:\school\2016fall\homework\graphics\valleraytracing2016\shaderec.h
+	"Vector3D.h"
+	"RGBColor.h"
+
+1347578776 source:e:\school\2016fall\homework\graphics\valleraytracing2016\main.cpp
+	<GLUT/glut.h>
+	<GL/glut.h>
+	<cstdlib>
+	"World.h"
+	"RenderEngine.h"
+
+1347578776 e:\school\2016fall\homework\graphics\valleraytracing2016\world.h
+	<vector>
+	"GeometricObject.h"
+
+1347578776 e:\school\2016fall\homework\graphics\valleraytracing2016\renderengine.h
+	<GLUT/glut.h>
+	<GL/glut.h>
+	"RGBColor.h"
+	"Ray.h"
+	"World.h"
+	"Constants.h"
+	"RGBColor.h"
+	"Vector3D.h"
+
+1347578776 source:e:\school\2016fall\homework\graphics\valleraytracing2016\ray.cpp
+	"Ray.h"
+
+1347583776 source:e:\school\2016fall\homework\graphics\valleraytracing2016\renderengine.cpp
+	"RenderEngine.h"
+	"Ray.h"
+
+1347578776 source:e:\school\2016fall\homework\graphics\valleraytracing2016\rgbcolor.cpp
+	<math.h>
+	"RGBColor.h"
+
+1347578776 source:e:\school\2016fall\homework\graphics\valleraytracing2016\shaderec.cpp
+	"Constants.h"
+	"ShadeRec.h"
+
+1347997188 source:e:\school\2016fall\homework\graphics\valleraytracing2016\sphere.cpp
+	"Sphere.h"
+	"math.h"
+
+1347578776 e:\school\2016fall\homework\graphics\valleraytracing2016\sphere.h
+	"GeometricObject.h"
+	"Vector3D.h"
+
+1347578776 source:e:\school\2016fall\homework\graphics\valleraytracing2016\vector3d.cpp
+	<cmath>
+	"Vector3D.h"
+
+1480541050 source:e:\school\2016fall\homework\graphics\valleraytracing2016\world.cpp
+	"World.h"
+	"Constants.h"
+	"Sphere.h"
+	"Vector3D.h"
+	"Maths.h"
+
+1347578776 e:\school\2016fall\homework\graphics\valleraytracing2016\maths.h
+

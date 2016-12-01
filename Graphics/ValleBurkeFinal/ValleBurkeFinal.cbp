@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="ValleBurkeFinal" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/ValleBurkeFinal" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/ValleBurkeFinal" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="C:/MinGW/include" />
+			<Add directory="../glm" />
+			<Add directory="Engine/include" />
+		</Compiler>
+		<Linker>
+			<Add library="freeglut" />
+			<Add library="glew32" />
+			<Add library="opengl32" />
+			<Add library="glu32" />
+			<Add library="winmm" />
+			<Add library="gdi32" />
+			<Add directory="C:/MinGW/lib" />
+		</Linker>
+		<Unit filename="Engine/fragment.glsl">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="Engine/include/animator.h" />
+		<Unit filename="Engine/include/drawable.h" />
+		<Unit filename="Engine/include/drawableFactory.h" />
+		<Unit filename="Engine/include/ellipticalAnimator.h" />
+		<Unit filename="Engine/include/globals.h" />
+		<Unit filename="Engine/include/hemisphere.h" />
+		<Unit filename="Engine/include/node.h" />
+		<Unit filename="Engine/include/shader.h" />
+		<Unit filename="Engine/include/sphere.h" />
+		<Unit filename="Engine/include/transform.h" />
+		<Unit filename="Engine/include/vertex.h" />
+		<Unit filename="Engine/src/animator.cpp" />
+		<Unit filename="Engine/src/drawable.cpp" />
+		<Unit filename="Engine/src/drawableFactory.cpp" />
+		<Unit filename="Engine/src/ellipticalAnimator.cpp" />
+		<Unit filename="Engine/src/hemisphere.cpp" />
+		<Unit filename="Engine/src/node.cpp" />
+		<Unit filename="Engine/src/shader.cpp" />
+		<Unit filename="Engine/src/sphere.cpp" />
+		<Unit filename="Engine/src/transform.cpp" />
+		<Unit filename="Engine/vertex.glsl">
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src/main.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

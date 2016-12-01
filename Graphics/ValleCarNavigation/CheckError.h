@@ -11,7 +11,7 @@
 #include <GL/gl.h>
 
 //----------------------------------------------------------------------------
-
+/*
 static const char*
 ErrorString( GLenum error )
 {
@@ -25,14 +25,14 @@ ErrorString( GLenum error )
 	Case( GL_STACK_OVERFLOW );
 	Case( GL_STACK_UNDERFLOW );
 	Case( GL_OUT_OF_MEMORY );
-#undef Case	
+#undef Case
     }
 
     return msg;
 }
-
+*/
 //----------------------------------------------------------------------------
-
+/*
 static void
 _CheckError( const char* file, int line )
 {
@@ -41,9 +41,9 @@ _CheckError( const char* file, int line )
     do {
 	fprintf( stderr, "[%s:%d] %s\n", file, line, ErrorString(error) );
     } while ((error = glGetError()) != GL_NO_ERROR );
-	
-}
 
+}
+*/
 //----------------------------------------------------------------------------
 
 #define CheckError()  _CheckError( __FILE__, __LINE__ )

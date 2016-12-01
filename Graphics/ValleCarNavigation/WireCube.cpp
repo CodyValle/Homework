@@ -116,7 +116,6 @@ WireCube::createVAO(GLint _vao, GLint program )
                   NULL, GL_STATIC_DRAW );
     glBufferSubData( GL_ARRAY_BUFFER, 0, csize, points );
     glBufferSubData( GL_ARRAY_BUFFER, csize, csize, colors );
-    //glBufferSubData( GL_ARRAY_BUFFER, 2*csize, csize, normals );
     // set up shader variables
     GLint vPosition = glGetAttribLocation( program, "vPosition" );
     glEnableVertexAttribArray( vPosition );

@@ -532,7 +532,7 @@
 1350230238 e:\school\2016fall\homework\graphics\vallecarnavigation\car.h
 	"mat.h"
 
-1350147512 e:\school\2016fall\homework\graphics\vallecarnavigation\mat.h
+1480628354 e:\school\2016fall\homework\graphics\vallecarnavigation\mat.h
 	"vec.h"
 	<cstdio>
 	<iostream>
@@ -540,7 +540,7 @@
 1350150654 e:\school\2016fall\homework\graphics\vallecarnavigation\vec.h
 	"Angel.h"
 
-1479328576 e:\school\2016fall\homework\graphics\vallecarnavigation\angel.h
+1480628400 e:\school\2016fall\homework\graphics\vallecarnavigation\angel.h
 	<cmath>
 	<iostream>
 	<OpenGL/OpenGL.h>
@@ -560,11 +560,11 @@
 	<OpenGL/glu.h>
 	<GL/glu.h>
 
-1289182998 e:\school\2016fall\homework\graphics\vallecarnavigation\checkerror.h
+1480628346 e:\school\2016fall\homework\graphics\vallecarnavigation\checkerror.h
 	<stdio.h>
 	<GL/gl.h>
 
-1350227818 e:\school\2016fall\homework\graphics\vallecarnavigation\shapes.h
+1480629872 e:\school\2016fall\homework\graphics\vallecarnavigation\shapes.h
 	"WireCube.h"
 	"Disk.h"
 	"WireDisk.h"
@@ -606,15 +606,15 @@
 	<stack>
 	"Angel.h"
 
-1350228736 source:e:\school\2016fall\homework\graphics\vallecarnavigation\cube.cpp
+1480628760 source:e:\school\2016fall\homework\graphics\vallecarnavigation\cube.cpp
 	"Cube.h"
 	<iostream>
 
-1350228736 source:e:\school\2016fall\homework\graphics\vallecarnavigation\cylinder.cpp
+1480628994 source:e:\school\2016fall\homework\graphics\vallecarnavigation\cylinder.cpp
 	"Cylinder.h"
 	<iostream>
 
-1350228592 source:e:\school\2016fall\homework\graphics\vallecarnavigation\disk.cpp
+1480628994 source:e:\school\2016fall\homework\graphics\vallecarnavigation\disk.cpp
 	"Disk.h"
 	<iostream>
 
@@ -624,31 +624,38 @@
 1343592072 source:e:\school\2016fall\homework\graphics\vallecarnavigation\matrixstack.cpp
 	"MatrixStack.h"
 
-1350230818 source:e:\school\2016fall\homework\graphics\vallecarnavigation\shapes.cpp
+1480629814 source:e:\school\2016fall\homework\graphics\vallecarnavigation\shapes.cpp
 	"Shapes.h"
 	"Globals.h"
 
-1350230818 source:e:\school\2016fall\homework\graphics\vallecarnavigation\steiner.cpp
+1480629814 source:e:\school\2016fall\homework\graphics\vallecarnavigation\steiner.cpp
 	"Steiner.h"
 	<iostream>
 
-1350230818 source:e:\school\2016fall\homework\graphics\vallecarnavigation\wirecube.cpp
+1480629814 source:e:\school\2016fall\homework\graphics\vallecarnavigation\wirecube.cpp
 	"WireCube.h"
 	<iostream>
 
-1350230818 source:e:\school\2016fall\homework\graphics\vallecarnavigation\wirecylinder.cpp
+1480629814 source:e:\school\2016fall\homework\graphics\vallecarnavigation\wirecylinder.cpp
 	"WireCylinder.h"
 	<iostream>
 
-1350230818 source:e:\school\2016fall\homework\graphics\vallecarnavigation\wiredisk .cpp
+1480629814 source:e:\school\2016fall\homework\graphics\vallecarnavigation\wiredisk .cpp
 	"WireDisk.h"
 	<iostream>
 
-1350230818 source:e:\school\2016fall\homework\graphics\vallecarnavigation\wiresteiner.cpp
+1480629814 source:e:\school\2016fall\homework\graphics\vallecarnavigation\wiresteiner.cpp
 	"WireSteiner.h"
 	<iostream>
 
-1479845286 source:e:\school\2016fall\homework\graphics\vallecarnavigation\main.cpp
+1480630674 source:e:\school\2016fall\homework\graphics\vallecarnavigation\main.cpp
+	"Angel.h"
+	<iostream>
+	"MatrixStack.h"
+	"Shapes.h"
+	"Car.h"
+
+1480628228 source:e:\school\2016fall\homework\graphics\vallecarnavigation\firstmain.cpp
 	"Angel.h"
 	<iostream>
 	"MatrixStack.h"

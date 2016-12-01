@@ -168,6 +168,7 @@ public:
         }
 
         *this = a;
+        return *this;
     }
 
     mat2& operator /= ( const GLfloat s )
@@ -404,6 +405,7 @@ public:
         }
 
         *this = a;
+        return *this;
     }
 
     mat3& operator /= ( const GLfloat s )
@@ -654,6 +656,7 @@ public:
         }
 
         *this = a;
+        return *this;
     }
 
     mat4& operator /= ( const GLfloat s )
