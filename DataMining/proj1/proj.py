@@ -5,6 +5,30 @@ import math
 import copy
 import random
 
+# Indexes of this dataset
+global OBSERVATION
+OBSERVATION = 0
+global YEAR
+YEAR = 1
+global MONTH
+MONTH = 2
+global DAY
+DAY = 3
+global LATITUDE
+LATITUDE = 4
+global LONGITUDE
+LONGITUDE = 5
+global ZONAL
+ZONAL = 6
+global MERIDIONAL
+MERIDIONAL = 7
+global HUMIDITY
+HUMIDITY = 8
+global AIR_TEMP
+AIR_TEMP = 9
+global SEA_TEMP
+SEA_TEMP = 10
+
 """ Loads the El Nino Dataset, and returns the attributes and converted rows. """
 def load_elnino():
     import csv
@@ -20,6 +44,23 @@ def load_elnino():
                          [float(i) if i != '.' else None for i in row[7:12]]))
     the_file.close()
     return table, atts
+
+""" Cleans the table of all rows with at least one None """
+def clean(table, indices = None):
+    keep = []
+    rem = []
+    if indices == None:
+        indices = list(range(len(table[0])))
+    for row in table:
+        good = True
+        for index in indices:
+            if row[index] == None:
+                rem.append(row)
+                good = False
+                break
+        if good:
+            keep.append(row)
+    return keep, rem
 
 """ Gets a list of all different categorical values """
 def get_categories(table, index):
@@ -437,14 +478,48 @@ def create_test_and_train_from_folds(folds, index):
     return (training_set, folds[index])
 
 """ Categorizes the values in the El Nino dataset """
-def categorize(table):
+def categorize(table, sea_temp = True):
+    table.sort(key = lambda x:x[HUMIDITY])
     categorized = []
+    index = 0
     for row in table:
-        tup = (row[OBSERVATION], row[YEAR], row[MONTH], row[DAY], row[LATITUDE], row[LONGITUDE],
-               row[ZONAL], row[MERIDIONAL], row[HUMIDITY], row[AIR_TEMP],
-               round(row[SEA_TEMP], 0) if row[SEA_TEMP] != None else None
-                )
-        categorized.append(tup)
+        l = [row[OBSERVATION], row[YEAR], row[MONTH], row[DAY], row[LATITUDE], row[LONGITUDE],
+               row[ZONAL], row[MERIDIONAL]]
+
+        """ These indices were determined as the best split points using entropy """
+        """
+        if sea_temp: # Categorize the humidity for sea temperatures
+            if index <= 22991:
+                l += [0]
+            elif index <= 35192:
+                l += [1]
+            elif index <= 68315:
+                l += [2]
+            elif index <= 99657:
+                l += [3]
+            elif index <= 100392:
+                l += [4]
+            else:
+                l += [5]
+                
+        else: # Categorize the humidity for air temperatures
+            if index <= 56595:
+                l += [0]
+            elif index <= 65979:
+                l += [1]
+            elif index <= 68751:
+                l += [2]
+            else:
+                l += [3]
+        """
+        l += [row[HUMIDITY]]
+            
+        l += [row[AIR_TEMP],
+              round(row[SEA_TEMP], 0) if row[SEA_TEMP] != None else None]
+        
+        categorized.append(tuple(l))
+        index += 1
+        
     return categorized
 
 """ Classifies the dataset """
@@ -471,6 +546,47 @@ def classify(table, atts):
             total += 1
 
     print 'Accuracy:', float(correct) / total
+
+""" Does work in a thread for the determine_split_points_threadpool function """
+def split_points_worker_threadpool(arg):
+    table = arg[0]
+    att_index = arg[1]
+    class_index = arg[2]
+    labels = arg[3]
+    start_index = arg[4]
+    stop_index = arg[5]
+    
+    lowest = calc_enew(table[:start_index + 2], att_index, class_index, labels) * (start_index + 2)
+    lowest += calc_enew(table[start_index + 2:], att_index, class_index, labels) * len(table[start_index + 2:])
+    split = 2
+    for i in range(start_index + 3, stop_index):
+        # Calculate Enew
+        enew = calc_enew(table[:i], att_index, class_index, labels) * len(table[:i])
+        enew += calc_enew(table[i:], att_index, class_index, labels) * len(table[i:])
+
+        # Update if needed
+        if enew < lowest:
+            split = i
+            lowest = enew
+
+    return (lowest, split)
+
+""" Does work in a thread for the determine_split_points_threadsfunction """  
+def split_points_worker_threads(table, att_index, class_index, labels, start_index, stop_index, result):
+    lowest = calc_enew(table[:start_index + 2], att_index, class_index, labels) * (start_index + 2)
+    lowest += calc_enew(table[start_index + 2:], att_index, class_index, labels) * len(table[start_index + 2:])
+    split = 2
+    for i in range(start_index + 3, stop_index):
+        # Calculate Enew
+        enew = calc_enew(table[:i], att_index, class_index, labels) * len(table[:i])
+        enew += calc_enew(table[i:], att_index, class_index, labels) * len(table[i:])
+
+        # Update if needed
+        if enew < lowest:
+            split = i
+            lowest = enew
+
+    result[start_index] = (lowest, split)
 
 """ Finds the best index to split the data """
 def split_points(table, att_index, class_index, n):
@@ -501,69 +617,135 @@ def split_points(table, att_index, class_index, n):
 
     return ret
 
-""" Cleans the table of all rows with at least one None """
-def clean(table, indices = None):
-    keep = []
-    rem = []
-    if indices == None:
-        indices = list(range(len(table[0])))
-    for row in table:
-        good = True
-        for index in indices:
-            if row[index] == None:
-                rem.append(row)
-                good = False
-                break
-        if good:
-            keep.append(row)
-    return keep, rem
-
-""" Determines the best split points for the dataset """
-def determine_split_points(table):
-    data, fill = clean(table, [YEAR, MONTH, LATITUDE, LONGITUDE, HUMIDITY, AIR_TEMP, SEA_TEMP])
-    data = categorize(data)
-    #data = bootstrap(data, 300)
-    print 'Rows:', len(data)
+""" Determines the best split points for the dataset using threads """
+def determine_split_points_threads(table):
+    #elnino, atts = load_elnino()
+    #table = elnino[:100]
     
-    print 'Humidity->SeaTemp:', split_points(data, HUMIDITY, SEA_TEMP, 2)
-    print 'Humidity->AirTemp:', split_points(data, HUMIDITY, AIR_TEMP, 2)
-    print 'AirTemp->SeaTemp:', split_points(data, AIR_TEMP, SEA_TEMP, 2)
-    print 'SeaTemp->AirTemp:', split_points(data, SEA_TEMP, AIR_TEMP, 2)
-    print 'Longitude->SeaTemp:', split_points(data, LONGITUDE, SEA_TEMP, 2)
-    print 'Longitude->AirTemp:', split_points(data, LONGITUDE, AIR_TEMP, 2)
+    #data, fill = clean(table, [YEAR, MONTH, LATITUDE, LONGITUDE, HUMIDITY, AIR_TEMP, SEA_TEMP])
+    table = categorize(table)
+    print 'Rows:', len(table)
+
+    table.sort(key=lambda x:x[HUMIDITY])
+    labels = get_categories(table, SEA_TEMP)
+
+    from threading import Thread
+    
+    num_threads = 8
+
+    results = {}
+    args = []
+    l = float(len(table))
+    for i in range(num_threads):
+        lst = [table, HUMIDITY, SEA_TEMP, labels]
+        lst += [int(l / num_threads * i + .5)]
+        lst += [int(l / num_threads * (i + 1) + .5)]
+        lst += [results]
+        args.append(tuple(lst))
+
+    threads = []
+    for arg in args:
+        t = Thread(target=split_points_worker_threads, args=arg)
+        t.start()
+        threads.append(t)
+        
+    for thread in threads:
+        thread.join()
+
+    results = results.values()
+    results.sort(key=lambda x:x[0])
+    for r in results:
+        print r
+        
     print 'Done!'
+
+""" Determines the best split points for the dataset using dummy threads """
+def determine_split_points_threadpool(table):
+    #elnino, atts = load_elnino()
+    #table = elnino[:100]
+    
+    #data, fill = clean(table, [YEAR, MONTH, LATITUDE, LONGITUDE, HUMIDITY, AIR_TEMP, SEA_TEMP])
+    table = categorize(table)
+    print 'Rows:', len(table)
+
+    table.sort(key=lambda x:x[HUMIDITY])
+    labels = get_categories(table, SEA_TEMP)
+
+    from multiprocessing.dummy import Pool as ThreadPool
+    num_threads = 8
+    
+    pool = ThreadPool(num_threads)
+
+    args = []
+    l = float(len(table))
+    for i in range(num_threads):
+        lst = [table, HUMIDITY, SEA_TEMP, labels]
+        lst += [int(l / num_threads * i + .5)]
+        lst += [int(l / num_threads * (i + 1) + .5)]
+        args.append(tuple(lst))
+
+    results = pool.map(split_points_worker_threadpool, args)
+
+    pool.close()
+    pool.join()
+
+    results.sort(key=lambda x:x[0])
+
+    for r in results:
+        print r
+    """
+(268109.6362056146, 99657)
+(268121.6767270988, 68315)
+(268123.24279139587, 81654)
+(268124.24775218713, 92224)
+(268134.375379706, 93281)
+(268134.89608269086, 35192)
+(268135.5173712733, 62152)
+(268138.51301281207, 22991)
+(268141.0542846892, 29999)
+(268142.58684238617, 53175)
+    """
+    print 'Done!'
+
+def wrapper(func, *args, **kwargs):
+    def wrapped():
+        return func(*args, **kwargs)
+    return wrapped
 
 """
 Main function. Loads the dataset, performs summary statistics,
 creates classifiers to guess temperatures based on weather and date.
 """
 def main():
-    # Indexes of this dataset
-    global OBSERVATION
-    OBSERVATION = 0
-    global YEAR
-    YEAR = 1
-    global MONTH
-    MONTH = 2
-    global DAY
-    DAY = 3
-    global LATITUDE
-    LATITUDE = 4
-    global LONGITUDE
-    LONGITUDE = 5
-    global ZONAL
-    ZONAL = 6
-    global MERIDIONAL
-    MERIDIONAL = 7
-    global HUMIDITY
-    HUMIDITY = 8
-    global AIR_TEMP
-    AIR_TEMP = 9
-    global SEA_TEMP
-    SEA_TEMP = 10
-    
     elnino, atts = load_elnino()
+    elnino, fill = clean(elnino, [YEAR, MONTH, LATITUDE, LONGITUDE, HUMIDITY, AIR_TEMP, SEA_TEMP])
+    elnino = bootstrap(elnino, 30000)
+
+    import cProfile, pstats
     
+    prof = cProfile.Profile() # Create the profiler
+    prof.enable() # Start the profiler
+    determine_split_points_threadpool(elnino)
+    prof.disable() # Stop the profiler
+    poolStats = pstats.Stats(prof).sort_stats('cumtime') # Sort by time in function
+    
+    prof = cProfile.Profile() # Create new profiler
+    prof.enable() # Start the profiler
+    determine_split_points_threads(elnino)
+    prof.disable() # Stop the profiler
+    threadStats = pstats.Stats(prof).sort_stats('cumtime') # Sort by time in function
+    
+    poolStats.print_stats('proj.py') # Restrict stats to functions called in this file
+    threadStats.print_stats('proj.py') # Restrict stats to functions called in this file
+    """
+    prof = cProfile.Profile() # Create new profiler
+    prof.enable() # Start the profiler
+    split_points(elnino, HUMIDITY, SEA_TEMP, 1)
+    prof.disable() # Stop the profiler
+    rawStats = pstats.Stats(prof).sort_stats('cumtime') # Sort by time in function
+    
+    rawStats.print_stats('proj.py') # Restrict stats to functions called in this file
+    """
     """
     chunk, fill = clean(elnino, [YEAR, MONTH, LATITUDE, LONGITUDE, HUMIDITY, AIR_TEMP, SEA_TEMP])
     chunk = bootstrap(chunk, 300)
@@ -605,7 +787,7 @@ def main():
     print 'Accuracy:', float(correct) / total
     """
     
-    determine_split_points(elnino)
+    #determine_split_points(elnino)
     #summary_statistics(elnino, atts)
     #split_into_buoys(elnino)
     #do_plots(elnino)
