@@ -25,7 +25,7 @@ public:
     WireSteiner myWireSteiner;
     Cube myCube;
 
-    void createVAO(GLint programWithNorms, GLint programNoNorms);
+    void createVAO(GLint program);
 
     void drawCube(vec4 color);
     void drawCylinder(vec4 color);

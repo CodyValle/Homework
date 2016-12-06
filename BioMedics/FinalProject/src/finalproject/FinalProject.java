@@ -5,20 +5,9 @@
  */
 package finalproject;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.ListIterator;
-import java.util.Objects;
-import java.util.Scanner;
-import java.util.StringTokenizer;
+import java.util.*;
+import java.io.*;
+import java.lang.*;
 
 /**
  *
@@ -26,8 +15,170 @@ import java.util.StringTokenizer;
  */
 public class FinalProject {
 
-    final static String fileLocation = "E:/School/2016Fall/Homework/BioMedics/FinalProject/Topic_Data_Set_I";
+    final static String fileLocation = "E:/School/2016Fall/Homework/BioMedics/FinalProject";
+    
+    protected String[] getFileTokens(String filepath, String split)
+    {
+        StringBuilder sb = null;
         
+        try {
+            InputStream is = new FileInputStream(filepath);
+            BufferedReader buf = new BufferedReader(new InputStreamReader(is));
+
+            String line = buf.readLine();
+            sb = new StringBuilder();
+
+            while(line != null){
+               sb.append(line).append("\n");
+               line = buf.readLine();
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+        if (sb != null) {
+            return sb.toString().trim().split(split);
+        }
+        else return null;
+    }
+    
+    protected List<IwStructure> getIw(String[] Q, List<String> Sentences, Set<String> C)
+    {
+        List<IwStructure> Iw = new ArrayList<>();
+        Iterator<String> iterator = C.iterator();
+        while(iterator.hasNext()) {
+            String concept = iterator.next();
+            double fwq = 0, fcj = 0, fwqcj = 0;
+            
+            for (String sentence: Sentences) {
+                int cInS = 0;
+                for (String q: Q) {
+                    for (String s: sentence.split(" ")) {
+                        if (q.equals(s.trim())) {
+                            cInS++;
+                            break;
+                        }
+                    }
+                }
+                
+                boolean cInSent = false;
+                for (String s: sentence.split(" ")) {
+                    if (concept.equals(s.trim())) {
+                        cInSent = true;
+                        break;
+                    }
+                }
+                double partialCNT = (double)cInS / Q.length;
+                
+                fwq += partialCNT;
+                fcj += cInSent ? 1 : 0;
+                fwqcj += cInSent ? partialCNT : 0;
+            }
+            Double iwcj = (Sentences.size() * fwqcj) / (fwq * fcj);
+            Iw.add(new IwStructure(concept, iwcj));
+        }
+        
+        Collections.sort(Iw);
+        Collections.reverse(Iw);
+        
+        return Iw;
+    }
+    
+    protected void runProgram(String str) {
+        String[] Query = getFileTokens(fileLocation + "/Topic_Data_Set_" + str + "/topic_" + str + ".txt", " ");
+        String[] Z = getFileTokens(fileLocation + "/Topic_Data_Set_" + str + "/goldstandard_" + str + ".txt", ", ");
+        
+        // Get all sentences and concepts in Z
+        List<String> Sentences = new ArrayList<>();
+        Set<String> uniqueCinZ = Collections.synchronizedSet(new HashSet<String>());
+        for (String z: Z) {
+            String[] sentencesPerFile = getFileTokens(fileLocation + "/Topic_Data_Set_" + str + "/CUI_Files_" + str + "/" + z, "\n ");
+            for (String s: sentencesPerFile) {
+                if (s.trim().length() == 0) continue;
+                Sentences.add(s.trim());
+                for (String c: s.trim().split(" "))
+                    uniqueCinZ.add(c.trim());
+            }
+        }
+        
+        System.out.println(uniqueCinZ.size());
+        
+        // Calculate Iw
+        List<IwStructure> Iw;
+        boolean createIw = false;
+        
+        if (createIw) {
+            Iw = getIw(Query, Sentences, uniqueCinZ);
+            try {
+                FileOutputStream fos = new FileOutputStream(fileLocation + "/Topic_Data_Set_" + str + "/DocumentIw_" + str + ".bin");
+                try (ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+                    oos.writeObject(Iw);
+                }
+            } catch (IOException e) {
+                System.out.println("Error! " + e);
+            }
+            return;
+        }
+        else {
+            try {
+                FileInputStream fis = new FileInputStream(fileLocation + "/Topic_Data_Set_" + str + "/DocumentIw_" + str + ".bin");
+                try (ObjectInputStream ois = new ObjectInputStream(fis)) {
+                    Iw = (List<IwStructure>) ois.readObject();
+                }
+            }
+            catch (IOException | ClassNotFoundException e) {
+                System.out.println("Error! " + e);
+                return;
+            }
+        }
+        
+        for (String z: Z) {
+            String[] sentencesPerFile = getFileTokens(fileLocation + "/Topic_Data_Set_" + str + "/CUI_Files_" + str + "/" + z, "\n ");
+            Set<String> uniqueCinFile = Collections.synchronizedSet(new HashSet<String>());
+            for (String s: sentencesPerFile) {
+                if (s.trim().length() == 0) continue;
+                Sentences.add(s.trim());
+                for (String c: s.trim().split(" "))
+                    uniqueCinFile.add(c.trim());
+            }
+            
+            // Develop the Iw for this document
+            
+        }
+        
+        for (int i = 0; i < 100; ++i)
+            System.out.println(Iw.get(i).concept + " " + Iw.get(i).weight);
+    }
+        
+    public static void main(String[] args) {
+        FinalProject p1 = new FinalProject();
+        
+        p1.runProgram("I");
+    }
+    /*
+    
+    protected StringTokenizer getFileTokens(String filepath)
+    {
+        StringBuilder sb = null;
+        
+        try {
+            InputStream is = new FileInputStream(filepath);
+            BufferedReader buf = new BufferedReader(new InputStreamReader(is));
+
+            String line = buf.readLine();
+            sb = new StringBuilder();
+
+            while(line != null){
+               sb.append(line).append("\n");
+               line = buf.readLine();
+            }
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+        if (sb != null)
+            return new StringTokenizer(sb.toString());
+        else return null;
+    }
+    
     public static void main(String[] args) {
         
         FinalProject p1 = new FinalProject();
@@ -37,27 +188,79 @@ public class FinalProject {
         //File docfile = new File(fileLocation + "/fileweights.log");
         File goldstandard = new File(fileLocation + "/goldstandard.txt");
         
-        ArrayList<DocDataStructure> docs_and_weights = new ArrayList<DocDataStructure>();
+        ArrayList<IwStructure> docs_and_weights = new ArrayList<IwStructure>();
         float P10 = 0;
         float P20 = 0;
         float avep = 0;
         
         while(true){
-        System.out.println("1: Scan MetaMap Files For CUIs");
-        System.out.println("2: Calculate and Output Document Weights to File");
-        System.out.println("3: Read Document Weights From File");
+        System.out.println("1: Calculate and Output Document Weights topic 1");
+        System.out.println("2: Calculate and Output Document Weights topic 2");
         System.out.println("4: Get P@10 (You must read the document weight from file first)");
         System.out.println("5: Get P@20 (You must read the document weight from file first)");
         System.out.println("6: Get AveP (You must read the document weight from file first)");
         System.out.println("7: Exit");
         System.out.print("Please choose: ");
         
-        String choice = new String("");
+        String choice = "";
         choice = scan.nextLine();
         System.out.print("\n");
         
         if(Objects.equals(choice,"1")){
-            File dir = new File(fileLocation + "/CUI_Files_I/");
+            StringTokenizer topics = p1.getFileTokens(fileLocation + "/Topic_Data_Set_I" + "/topic_I.txt");
+            File dir = new File(fileLocation + "/Topic_Data_Set_I/CUI_Files_I/");
+            
+            Map<String, Map<String,Double> > Weights = new HashMap<>();
+
+            while (topics.hasMoreTokens()){
+                String curTopic = topics.nextToken();
+
+                int topicOccurences = 0;
+                int totalDocs = 0;
+                for(File i : dir.listFiles()){
+                    topicOccurences += p1.get_one_IDF_count(i, curTopic);
+                    totalDocs++;
+                }
+                double IDF = 0;
+                if (topicOccurences != 0)
+                    IDF = Math.log10((double)totalDocs / topicOccurences); 
+                
+                for(File i : dir.listFiles()){
+                    float TF = p1.getTF(i, curTopic);
+                    
+                    double weight = TF * IDF;
+                    
+                    Map<String,Double> in = new HashMap<>();
+                    in.put(curTopic, weight);
+                    
+                    Weights.put(i.getName(), in);
+                }
+            }
+            
+            for(Map.Entry<String, Map<String,Double> > entry: Weights.entrySet()) {
+                Double totalWeight = 0.0;
+                for(Map.Entry<String,Double> entry2: entry.getValue().entrySet()) {
+                    totalWeight += entry2.getValue();
+                }
+                docs_and_weights.add(new IwStructure(entry.getKey(), totalWeight));
+            }
+            Collections.sort(docs_and_weights);
+            Collections.reverse(docs_and_weights);
+            
+            ListIterator litr = docs_and_weights.listIterator();
+            for (int i = 0; i < 10; i++) {
+                IwStructure struct = (IwStructure)litr.next();
+                System.out.println(struct.concept + ": " + struct.weight);
+            }
+            
+            
+            System.out.println(p1.getP10(docs_and_weights, new File(fileLocation + "/Topic_Data_Set_I/goldstandard_I.txt")));
+            System.out.println(p1.getP20(docs_and_weights, new File(fileLocation + "/Topic_Data_Set_I/goldstandard_I.txt")));
+            System.out.println(p1.getAveP(docs_and_weights, new File(fileLocation + "/Topic_Data_Set_I/goldstandard_I.txt")));
+            break;
+        }
+        else if(Objects.equals(choice,"2")){
+            File dir = new File(fileLocation + "/CUI_Files_II/");
             
             
             for(File i : dir.listFiles()){
@@ -66,13 +269,11 @@ public class FinalProject {
                 }catch(IOException e){}
             }
             
-        }
-        else if(Objects.equals(choice,"2")){
-            p1.calcWeights(query);  
+            //p1.calcWeights(query);  
         }
         
         else if(Objects.equals(choice,"3")){
-            docs_and_weights=p1.getWeights(docfile);
+            //docs_and_weights=p1.getWeights(docfile);
             System.out.println("--> Successfully Read Document Weights\n");
         }
         
@@ -103,11 +304,10 @@ public class FinalProject {
         }
         
     }
-    public float getP10(ArrayList<DocDataStructure> docs, File goldstandard){
+    public float getP10(ArrayList<IwStructure> docs, File goldstandard){
          float P10 = 0;
          float count = 0;
          float relevant = 0;
-         ArrayList<DocDataStructure> info = new ArrayList<DocDataStructure>();
          try(
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(goldstandard)));){
             String line = null;
@@ -117,10 +317,10 @@ public class FinalProject {
                 
                 ListIterator litr = docs.listIterator();
                 while(count<10){  
-                    DocDataStructure struct = (DocDataStructure)litr.next();
+                    IwStructure struct = (IwStructure)litr.next();
                     
                     for(String i : tokens){
-                        if(Objects.equals(i,struct.document)){
+                        if(i.equals(struct.concept)){
                             relevant++;
                         }
                     }
@@ -135,11 +335,11 @@ public class FinalProject {
          
          return P10;
     }
-    public float getP20(ArrayList<DocDataStructure> docs, File goldstandard){
+    public float getP20(ArrayList<IwStructure> docs, File goldstandard){
          float P20 = 0;
          float count = 0;
          float relevant = 0;
-         ArrayList<DocDataStructure> info = new ArrayList<DocDataStructure>();
+         ArrayList<IwStructure> info = new ArrayList<IwStructure>();
          try(
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(goldstandard)));){
             String line = null;
@@ -149,9 +349,9 @@ public class FinalProject {
                 
                 ListIterator litr = docs.listIterator();
                 while(count<20){  
-                    DocDataStructure struct = (DocDataStructure)litr.next();
+                    IwStructure struct = (IwStructure)litr.next();
                     for(String i : tokens){
-                        if(Objects.equals(i,struct.document)){
+                        if(Objects.equals(i,struct.concept)){
                             relevant++;
                         }
                     }
@@ -166,11 +366,11 @@ public class FinalProject {
          
          return P20;
     }
-    public float getAveP(ArrayList<DocDataStructure> docs, File goldstandard){
+    public float getAveP(ArrayList<IwStructure> docs, File goldstandard){
          float avep = 0;
          float count = 0;
          float relevant = 0;
-         ArrayList<DocDataStructure> info = new ArrayList<DocDataStructure>();
+         ArrayList<IwStructure> info = new ArrayList<IwStructure>();
          try(
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(goldstandard)));){
             String line = null;
@@ -181,9 +381,9 @@ public class FinalProject {
                 ListIterator litr = docs.listIterator();
                 while(litr.hasNext()){  
                     count++;
-                    DocDataStructure struct = (DocDataStructure)litr.next();
+                    IwStructure struct = (IwStructure)litr.next();
                     for(String i : tokens){
-                        if(Objects.equals(i,struct.document)){
+                        if(Objects.equals(i,struct.concept)){
                             relevant++;
                             avep += relevant/count;
                         }
@@ -197,8 +397,8 @@ public class FinalProject {
          avep = avep/relevant;
          return avep;
     }
-    public ArrayList<DocDataStructure> getWeights(File docfile){
-        ArrayList<DocDataStructure> info = new ArrayList<DocDataStructure>();
+    public ArrayList<IwStructure> getWeights(File docfile){
+        ArrayList<IwStructure> info = new ArrayList<IwStructure>();
         try(
             BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(docfile)));){
             String line = null;
@@ -225,7 +425,7 @@ public class FinalProject {
                     weightstring = line.substring(i,j);
                 }
                 weightnum = Double.valueOf(weightstring);
-                DocDataStructure ds = new DocDataStructure(docname, weightnum);
+                IwStructure ds = new IwStructure(docname, weightnum);
                 info.add(ds);
                 
             }
@@ -261,7 +461,7 @@ public class FinalProject {
                 System.out.println("\n");
                 
                 File dir = new File(fileLocation + "/part1files");
-                ArrayList<DocDataStructure> tfs = new ArrayList<DocDataStructure>();
+                ArrayList<IwStructure> tfs = new ArrayList<IwStructure>();
                 
                 double total = 0;
                 total = dir.listFiles().length;
@@ -369,7 +569,7 @@ public void convertMmFileToCuiFiles(String metaMapFilePath, String cuiFilePath) 
 IOException
  {
     BufferedReader br = new BufferedReader(new InputStreamReader(new
-    FileInputStream(metaMapFilePath)));
+        FileInputStream(metaMapFilePath)));
     File cuiFile = new File(cuiFilePath);
     PrintWriter out = new PrintWriter(cuiFile);
     String cui = null;
@@ -466,5 +666,5 @@ IOException
         }
         return tokens[1].substring(1);
     }
-    
+    */
 }

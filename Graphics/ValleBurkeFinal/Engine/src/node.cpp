@@ -4,12 +4,18 @@
 
 using namespace glm;
 
-Node::Node()
+Node::Node() :
+    parent(0),
+    anim(0),
+    enabled(true)
 {
 }
 
 Node::Node(Transform t) :
-    transform(t)
+    transform(t),
+    parent(0),
+    anim(0),
+    enabled(true)
 {
 }
 
@@ -28,6 +34,8 @@ Node::~Node()
 
 void Node::draw(mat4 modelViewMat)
 {
+    if (!enabled) return;
+
     // Create base model view matrix
     modelViewMat = translate(modelViewMat, transform.getTranslate());
     modelViewMat = rotate(modelViewMat, transform.getXAngle(), vec3(1., 0., 0.));
@@ -44,13 +52,15 @@ void Node::draw(mat4 modelViewMat)
         children.at(i)->draw(modelViewMat);
 }
 
-void Node::animate()
+void Node::animate(float deltaTime)
 {
+    if (!enabled) return;
+
     // Call all animators attached to this node
     for (unsigned i = 0; i < animators.size(); ++i)
-        animators.at(i)->animate();
+        animators.at(i)->animate(deltaTime);
 
     // Animate all child nodes
     for (unsigned i = 0; i < children.size(); ++i)
-        children.at(i)->animate();
+        children.at(i)->animate(deltaTime);
 }

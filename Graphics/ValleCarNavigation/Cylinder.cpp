@@ -103,6 +103,7 @@ Cylinder::createVAO(GLint _vao, GLint program )
     glEnableVertexAttribArray( vNormal );
     glVertexAttribPointer( vNormal, 4, GL_FLOAT, GL_FALSE, 0,
                            BUFFER_OFFSET(2*csize) );
+
     glBindBuffer( GL_ARRAY_BUFFER, 0 );
     glBindVertexArray( 0 );
 

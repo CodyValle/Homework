@@ -14,7 +14,7 @@ GLuint  projection; // projection matrix uniform shader variable location
 GLuint  model_view;  // model-view matrix uniform shader variable location
 GLuint  model_color;  // model-view matrix uniform shader variable location
 
-GLuint programWithNorms;
+GLuint program;
 
 MatrixStack mvMatrixStack;  // stores the movel view matrix stack
 
@@ -90,25 +90,18 @@ init()
 {
     calcUVN(VPN, VUP);
 
-    programWithNorms = InitShader( "vShader53.glsl", "fShader53.glsl" );  // gouraud shading
-    glUseProgram( programWithNorms );
+    program = InitShader( "vShader53.glsl", "fShader53.glsl" );  // gouraud shading
+    glUseProgram( program );
     // Uniform variables: color and viewing parameters
 
-    model_color = glGetUniformLocation( programWithNorms, "model_color" );
-    model_view = glGetUniformLocation( programWithNorms, "model_view" );
-    projection = glGetUniformLocation( programWithNorms, "projection" );
-
-    GLuint programNoNorms = InitShader( "vertex.glsl", "fragment.glsl" );
-    glUseProgram( programNoNorms );
-    // Uniform variables: color and viewing parameters
-    model_color = glGetUniformLocation( programNoNorms, "model_color" );
-    model_view = glGetUniformLocation( programNoNorms, "model_view" );
-    projection = glGetUniformLocation( programNoNorms, "projection" );
+    model_color = glGetUniformLocation( program, "model_color" );
+    model_view = glGetUniformLocation( program, "model_view" );
+    projection = glGetUniformLocation( program, "projection" );
 
     lightSetUp();
 
-    shapes.createVAO(programWithNorms, programNoNorms);
-return;
+    shapes.createVAO(program);
+
     glUniform4fv( model_color, 1,vec4(1,1,1,1) ); // set color to white initially
 
     glLineWidth(1);
@@ -136,17 +129,17 @@ void lightSetUp()
     vec4 diffuse_product = light_diffuse * material_diffuse;
     vec4 specular_product = light_specular * material_specular;
 
-    glUniform4fv( glGetUniformLocation(programWithNorms, "AmbientProduct"),
+    glUniform4fv( glGetUniformLocation(program, "AmbientProduct"),
                   1, ambient_product );
-    glUniform4fv( glGetUniformLocation(programWithNorms, "DiffuseProduct"),
+    glUniform4fv( glGetUniformLocation(program, "DiffuseProduct"),
                   1, diffuse_product );
-    glUniform4fv( glGetUniformLocation(programWithNorms, "SpecularProduct"),
+    glUniform4fv( glGetUniformLocation(program, "SpecularProduct"),
                   1, specular_product );
 
-    glUniform4fv( glGetUniformLocation(programWithNorms, "LightPosition"),
+    glUniform4fv( glGetUniformLocation(program, "LightPosition"),
                   1, light_position );
 
-    glUniform1f( glGetUniformLocation(programWithNorms, "Shininess"),
+    glUniform1f( glGetUniformLocation(program, "Shininess"),
                  material_shininess );
 }
 
@@ -208,7 +201,7 @@ display( void )
 
     vec4 l_position = mv * light_position;  // translate to eye position for shader calculation
 
-    glUniform4fv( glGetUniformLocation(programWithNorms, "LightPosition"),
+    glUniform4fv( glGetUniformLocation(program, "LightPosition"),
                   1, l_position );
 
     drawAxes(mv);
@@ -435,14 +428,13 @@ main( int argc, char **argv )
     glutInit( &argc, argv );
     glutInitDisplayMode( GLUT_RGBA | GLUT_DOUBLE | GLUT_DEPTH );
     glutInitWindowSize( 512, 512 );
-    glutInitContextVersion( 3, 2 );
-    glutInitContextProfile( GLUT_CORE_PROFILE );
+    glutInitContextVersion( 3, 3 );
+    glutInitContextProfile( GLUT_FORWARD_COMPATIBLE );
     glutCreateWindow( "Camera Navigation with Light Source" );
 
     glewInit();
 
     init();
-    return 0;
 
     glutDisplayFunc( display );
     glutKeyboardFunc( keyboard );

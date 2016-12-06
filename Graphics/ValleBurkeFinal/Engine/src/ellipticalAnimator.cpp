@@ -13,11 +13,11 @@ EllipticalAnimator::~EllipticalAnimator()
 {
 }
 
-void EllipticalAnimator::animate()
+void EllipticalAnimator::animate(float deltaTime)
 {
     // Calculate the new x and z for the transform, then apply translational offset
     float x = cos(angle) * mjr + transform.getTranslate()[0];
     float z = sin(angle) * mnr + transform.getTranslate()[2];
     object.setTranslate(glm::vec3(x, 0, z)); // Update the transform we are animating
-    angle = fmod(angle + rads, 2 * PI); // Update the current angle
+    angle = fmod(angle + rads * deltaTime, 2 * PI); // Update the current angle
 }

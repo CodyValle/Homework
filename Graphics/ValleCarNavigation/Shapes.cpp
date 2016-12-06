@@ -15,20 +15,20 @@ Shapes::~Shapes()
 }
 
 void
-Shapes::createVAO(GLint programWithNorms, GLint programNoNorms) {
+Shapes::createVAO(GLint program) {
 
      // Create multiple vertex array objects
     GLuint vao[8];
-    glGenVertexArrays( 8, vao );return;
+    glGenVertexArrays( 8, vao );
 
-    myCylinder.createVAO(vao[0],programWithNorms);
-    myWireCylinder.createVAO(vao[1],programNoNorms);
-    myCube.createVAO(vao[2],programWithNorms);
-    myWireCube.createVAO(vao[3],programNoNorms);
-    myDisk.createVAO(vao[4],programWithNorms);
-    myWireDisk.createVAO(vao[5],programNoNorms);
-    mySteiner.createVAO(vao[6],programNoNorms);
-    myWireSteiner.createVAO(vao[7],programNoNorms);
+    myCylinder.createVAO(vao[0],program);
+    myWireCylinder.createVAO(vao[1],program);
+    myCube.createVAO(vao[2],program);
+    myWireCube.createVAO(vao[3],program);
+    myDisk.createVAO(vao[4],program);
+    myWireDisk.createVAO(vao[5],program);
+    mySteiner.createVAO(vao[6],program);
+    myWireSteiner.createVAO(vao[7],program);
 }
 // draws solid cube and wire cube together. The wire color is always black
 void

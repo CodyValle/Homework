@@ -13,7 +13,7 @@ public:
     ~EllipticalAnimator();
 
     // Inherited from Animator
-    void animate();
+    void animate(float deltaTime);
 
 protected:
     Transform& object;

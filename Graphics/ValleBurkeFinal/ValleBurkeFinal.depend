@@ -2,10 +2,10 @@
 1478652598 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\animator.cpp
 	"animator.h"
 
-1478652620 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\animator.h
+1480984248 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\animator.h
 	"transform.h"
 
-1478652162 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\transform.h
+1480985882 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\transform.h
 	<glm/glm.hpp>
 	"globals.h"
 
@@ -507,10 +507,10 @@
 	"globals.h"
 	"drawable.h"
 
-1478652816 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\ellipticalanimator.cpp
+1480984688 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\ellipticalanimator.cpp
 	"ellipticalAnimator.h"
 
-1478652728 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\ellipticalanimator.h
+1480984248 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\ellipticalanimator.h
 	"animator.h"
 
 1480626642 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\hemisphere.cpp
@@ -564,12 +564,13 @@
 1473914700 e:\school\2016fall\homework\graphics\glm\glm\gtc\type_ptr.inl
 	<cstring>
 
-1478651836 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\node.cpp
+1481052018 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\node.cpp
 	"node.h"
 	<glm/gtc/matrix_transform.hpp>
 
-1478651894 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\node.h
+1481056084 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\node.h
 	<deque>
+	<iostream>
 	"transform.h"
 	"drawable.h"
 	"animator.h"
@@ -826,17 +827,72 @@
 1478651986 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\transform.cpp
 	"transform.h"
 
-1480626310 source:e:\school\2016fall\homework\graphics\valleburkefinal\src\main.cpp
+1481058698 source:e:\school\2016fall\homework\graphics\valleburkefinal\src\main.cpp
 	<cmath>
 	<iostream>
 	<fstream>
+	<ctime>
 	<GL/glew.h>
 	<GL/freeglut.h>
 	<glm/gtc/matrix_transform.hpp>
 	<glm/gtc/type_ptr.hpp>
 	"drawableFactory.h"
-	"node.h"
+	"rootNode.h"
 	"ellipticalAnimator.h"
+	"shipController.h"
+	"collisionDetection.h"
+	"enemyLauncher.h"
 
 1478031368 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\shader.h
+
+1480983552 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\rootnode.h
+	"Node.h"
+
+1480991382 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\shipcontroller.h
+	"keyInput.h"
+	"bulletController.h"
+
+1480992118 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\keyinput.h
+
+1480999636 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\bulletcontroller.h
+	"drawableFactory.h"
+	"node.h"
+	"bulletAnimator.h"
+
+1481053540 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\bulletanimator.h
+	"animator.h"
+	"collisionDetection.h"
+
+1481056312 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\collider.h
+	"boundingBox.h"
+	"transform.h"
+	"node.h"
+
+1481056862 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\collisiondetection.h
+	"collider.h"
+
+1480995006 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\boundingbox.h
+
+1481057764 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\enemydistributor.h
+	"shipAnimator.h"
+	"drawableFactory.h"
+	"enemyCollider.h"
+
+1481056326 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\shipanimator.h
+	"collisionDetection.h"
+
+1481054982 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\enemylauncher.h
+	<cstdlib>
+	"EnemyDistributor.h"
+
+1481057656 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\enemycollider.cpp
+	"enemyCollider.h"
+	"EnemyDistributor.h"
+
+1481057656 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\enemycollider.h
+	"collider.h"
+	"shipAnimator.h"
+
+1481057754 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\collisiondetection.cpp
+	"collisionDetection.h"
 

@@ -47,3 +47,5 @@
 
 # Program Files
 *.pickle
+/BioMedics/FinalProject/build/
+/BioMedics/FinalProject/dist/

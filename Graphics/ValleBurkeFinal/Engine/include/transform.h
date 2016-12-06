@@ -41,6 +41,9 @@ public:
     inline vec3 getScale()
         { return scal; }
 
+    inline void setScale(vec3 scale)
+        { scal = scale; }
+
     // Translation modifiers
     inline void translate(vec3 t)
         { trans += t; }

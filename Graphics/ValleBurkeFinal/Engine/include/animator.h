@@ -13,7 +13,7 @@ public:
     ~Animator();
 
     // To be defined to child classes
-    virtual void animate() = 0;
+    virtual void animate(float deltaTime) = 0;
 
     // Sets a translation offset from the final calculation
     inline void setTranslation(glm::vec3 trans)
