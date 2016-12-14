@@ -1,3 +1,4 @@
+from tabulate import tabulate
 import numpy as np
 import math
 import random
@@ -26,6 +27,35 @@ def get_categories(table, index):
 """ Counts occurences of an element in a column """
 def count_occurences(table, index, value):
     return len([1 for row in table if row[index] == value])
+
+""" Performs summary statistics. Min, max, average, mode, and median. """
+def summary_statistics(table, atts, indices):
+    # Calculates stats for the table on the index
+    def stats(index):
+        # Counts occurences of an attribute in the table
+        def count(val):
+            return len([True for x in table if x == val])
+        
+        rows = [x[index] for x in table]
+        att_freqs = [(x, count(x)) for x in set(rows)]
+        att_freqs.sort(key=lambda x:x[1])      
+        mode = att_freqs[-1][0]
+        
+        table.sort(key=lambda x:x[index])
+        med_index = -len(table) / 2 + len(table) - 1
+        med = table[med_index][ZONAL]
+        if len(table) % 2 == 1:
+            med += table[med_index + 1][ZONAL]
+            med /= 2.
+
+        return [min(rows), max(rows), float(sum(rows)) / len(table), med, mode]
+    
+    # Prepare the table for printing
+    tab_table = [[atts[i]] + stats(i) for i in indices]
+    
+    # Print summary statistics
+    print 'Summary Statistics'
+    print tabulate(tab_table, headers = ['Metric', 'Min', 'Max', 'Avg', 'Med', 'Mode'])
 
 """ Creates a bootstrap set """
 def bootstrap(table, number = None):
