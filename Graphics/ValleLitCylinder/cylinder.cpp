@@ -25,13 +25,13 @@ void fillCylVertexArray(Vertex cylVertices[(CYL_LONGS + 1) * (CYL_LATS + 1)])
    for (j = 0; j <= CYL_LATS; j++)
       for (i = 0; i <= CYL_LONGS; i++)
       {
-         cylVertices[k].coords.x = cos( (-1 + 2 * (float)i / CYL_LONGS) * PI );
-         cylVertices[k].coords.y = sin( (-1 + 2 * (float)i / CYL_LONGS) * PI );
-         cylVertices[k].coords.z = -1 + 2 * (float)j / CYL_LATS;
+         cylVertices[k].coords.x = cos( (-1 + 2 * (float)i / CYL_LONGS) * PI ) * sin(PI * (float)j / CYL_LATS);
+         cylVertices[k].coords.y = sin( (-1 + 2 * (float)i / CYL_LONGS) * PI ) * sin(PI * (float)j / CYL_LATS);
+         cylVertices[k].coords.z = -cos(PI / 2 * (float)j / CYL_LATS);
 		 cylVertices[k].coords.w = 1.0;
-		 cylVertices[k].normal.x = cos( (-1 + 2 * (float)i / CYL_LONGS) * PI );
-         cylVertices[k].normal.y = sin( (-1 + 2 * (float)i / CYL_LONGS) * PI );
-		 cylVertices[k].normal.z = 0.0;
+		 cylVertices[k].normal.x = cylVertices[k].coords.x;
+         cylVertices[k].normal.y = cylVertices[k].coords.y;
+		 cylVertices[k].normal.z = cylVertices[k].coords.z;
 		 k++;
 	  }
 }
@@ -53,14 +53,16 @@ void fillCylIndices(unsigned int cylIndices[CYL_LATS][2 * (CYL_LONGS + 1)])
 void fillCylCounts(int cylCounts[CYL_LATS])
 {
    int j;
-   for(j = 0; j < CYL_LATS; j++) cylCounts[j] = 2 * (CYL_LONGS + 1);
+   for(j = 0; j < CYL_LATS; j++)
+    cylCounts[j] = 2 * (CYL_LONGS + 1);
 }
 
 // Fill the array cylOffsets.
 void fillCylOffsets(void* cylOffsets[CYL_LATS])
 {
    int j;
-   for(j = 0; j < CYL_LATS; j++) cylOffsets[j] = (GLvoid*)(2 * (CYL_LONGS + 1) * j * sizeof(unsigned int));
+   for(j = 0; j < CYL_LATS; j++)
+    cylOffsets[j] = (GLvoid*)(2 * (CYL_LONGS + 1) * j * sizeof(unsigned int));
 }
 
 void fillCylinder(Vertex cylVertices[(CYL_LONGS + 1) * (CYL_LATS + 1)],

@@ -1,89 +1,29 @@
 #ifndef KEYINPUT_H_INCLUDED
 #define KEYINPUT_H_INCLUDED
 
+/**
+ * Tracks the state of the keyboard
+**/
+
 class KeyInput
 {
 public:
-    KeyInput() :
-        upBtn(false),
-        downBtn(false),
-        leftBtn(false),
-        rightBtn(false),
-        fireBtn(false)
-    {
-    }
+    // Constructor
+    KeyInput();
 
-    ~KeyInput()
-    {
-    }
+    // Destructor
+    ~KeyInput();
 
-    void keyUp(unsigned char key)
-    {
-        switch(key)
-        {
-        case 'w':
-            upBtn = false;
-            break;
+    // Report a key has been lifted
+    void keyUp(unsigned char key);
 
-        case 'a':
-            leftBtn = false;
-            break;
+    // Report a key has been pressed
+    void keyDown(unsigned char key);
 
-        case 's':
-            downBtn = false;
-            break;
+    // Shoot a bullet
+    bool fire(float deltaTime);
 
-        case 'd':
-            rightBtn = false;
-            break;
-
-        default:
-            break;
-        }
-    }
-
-    void keyDown(unsigned char key)
-    {
-        switch(key)
-        {
-        case 27:
-            exit(0);
-
-        case ' ':
-            fireBtn = true;
-            break;
-
-        case 'w':
-            upBtn = true;
-            break;
-
-        case 'a':
-            leftBtn = true;
-            break;
-
-        case 's':
-            downBtn = true;
-            break;
-
-        case 'd':
-            rightBtn = true;
-            break;
-
-        default:
-            break;
-        }
-    }
-
-    bool fire()
-    {
-        if (fireBtn)
-        {
-            fireBtn = false;
-            return true;
-        }
-        return false;
-    }
-
+    // Getters for the button states
     inline bool up()
         { return upBtn; }
 
@@ -97,6 +37,7 @@ public:
         { return rightBtn; }
 
 private:
+    // Tracks whether as button is up (false) or down (true)
     bool upBtn;
     bool downBtn;
     bool leftBtn;

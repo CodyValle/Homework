@@ -1,6 +1,10 @@
 #ifndef NODE_H_INCLUDED
 #define NODE_H_INCLUDED
 
+/**
+ * A node tracks all children nodes, the animators attached to them, and the its transform.
+**/
+
 #include <deque>
 #include <iostream>
 
@@ -51,30 +55,10 @@ public:
     void animate(float deltaTime);
 
     // Removes the node from the scene
-    void destroy()
-    {
-        parent->remove(this);
-    }
+    void destroy();
 
     // Removes a node from this node
-    void remove(Node* node)
-    {
-        for (std::deque<Node*>::iterator it = children.begin(); it != children.end(); ++it)
-            if (*it == node)
-            {
-                children.erase(it);
-                break;
-            }
-
-        Animator* animator = node->getAnimator();
-        if (animator)
-            for (std::deque<Animator*>::iterator it = animators.begin(); it != animators.end(); ++it)
-                if (*it == animator)
-                {
-                    animators.erase(it);
-                    break;
-                }
-    }
+    void remove(Node* node);
 
     // Enabled getter/setter
     inline bool getEnabled()

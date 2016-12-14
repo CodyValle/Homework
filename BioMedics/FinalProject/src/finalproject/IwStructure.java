@@ -17,4 +17,9 @@ public class IwStructure implements Comparable<IwStructure>, Serializable  {
     public int compareTo(IwStructure other){
         return Double.compare(this.weight, other.weight);
     }
+    
+    @Override
+    public String toString() {
+        return concept + " " + weight;
+    }
 }

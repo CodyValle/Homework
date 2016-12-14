@@ -1,14 +1,16 @@
 #ifndef ROOTNODE_H_INCLUDED
 #define ROOTNODE_H_INCLUDED
 
+/**
+ * RootNode is a special node that is the entry point for the entire scene.
+**/
+
 #include "Node.h"
 
 class RootNode : public Node
 {
 public:
-    ~RootNode()
-    {
-    }
+    ~RootNode();
 
     static RootNode *getInstance()
     {
@@ -20,10 +22,7 @@ public:
 private:
     static RootNode *instance;
 
-    RootNode()
-    {}
+    RootNode();
 };
-
-RootNode* RootNode::instance;
 
 #endif // ROOTNODE_H_INCLUDED

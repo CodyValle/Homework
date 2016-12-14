@@ -3,7 +3,7 @@
 CollisionDetector* CollisionDetector::instance;
 
 // Only pass in bullet colliders
-void CollisionDetector::checkCollision(Collider* collider)
+bool CollisionDetector::checkCollision(Collider* collider)
 {
     for (std::deque<Collider*>::iterator it = colliders.begin(); it != colliders.end(); ++it)
     {
@@ -12,9 +12,10 @@ void CollisionDetector::checkCollision(Collider* collider)
         {
             //colliders.erase(it);
             (*it)->collision();
-            break;
+            return true;
         }
     }
+    return false;
 }
 
 CollisionDetector::CollisionDetector()

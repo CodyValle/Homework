@@ -1,6 +1,10 @@
 #ifndef HEMISPHERE_H
 #define HEMISPHERE_H
 
+/**
+ * Creates a solid hemisphere.
+**/
+
 #include "globals.h"
 #include "drawable.h"
 
@@ -17,11 +21,10 @@ public:
 
 
 protected:
-    friend class DrawableFactory; // To access the constructor
+    friend class SolidDrawableFactory; // To access the constructor
 
     // Constructor
     Hemisphere(const unsigned pid, const float radius = 2.0, const unsigned longs = 10, const unsigned lats = 5);
-    Hemisphere(const unsigned pid, float const color[4], const float radius = 2.0, const unsigned longs = 10, const unsigned lats = 5);
 
     // Shape data
     float radius; // Hemisphere radius.
@@ -41,6 +44,9 @@ private:
                 hemVertices[k].coords.y = radius * sin( (float)j/lats * PI/2.0 );
                 hemVertices[k].coords.z = radius * cos( (float)j/lats * PI/2.0 ) * sin( 2.0 * (float)i/longs * PI );
                 hemVertices[k].coords.w = 1.0;
+                hemVertices[k].normal.x = cos( (float)j/lats * PI/2.0 ) * cos( 2.0 * (float)i/longs * PI );
+                hemVertices[k].normal.y = sin( (float)j/lats * PI/2.0 );
+                hemVertices[k].normal.z = cos( (float)j/lats * PI/2.0 ) * sin( 2.0 * (float)i/longs * PI );
                 k++;
             }
     }

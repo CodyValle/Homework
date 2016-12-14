@@ -64,3 +64,28 @@ void Node::animate(float deltaTime)
     for (unsigned i = 0; i < children.size(); ++i)
         children.at(i)->animate(deltaTime);
 }
+// Removes the node from the scene
+void Node::destroy()
+{
+    parent->remove(this);
+}
+
+// Removes a node from this node
+void Node::remove(Node* node)
+{
+    for (std::deque<Node*>::iterator it = children.begin(); it != children.end(); ++it)
+        if (*it == node)
+        {
+            children.erase(it);
+            break;
+        }
+
+    Animator* animator = node->getAnimator();
+    if (animator)
+        for (std::deque<Animator*>::iterator it = animators.begin(); it != animators.end(); ++it)
+            if (*it == animator)
+            {
+                animators.erase(it);
+                break;
+            }
+}

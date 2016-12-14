@@ -1,6 +1,10 @@
 #ifndef ELLIPTICALANIMATOR_H_INCLUDED
 #define ELLIPTICALANIMATOR_H_INCLUDED
 
+/**
+ * Moves an object in an elliptical fashion
+**/
+
 #include "animator.h"
 
 class EllipticalAnimator : public Animator

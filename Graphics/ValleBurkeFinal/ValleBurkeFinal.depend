@@ -454,14 +454,15 @@
 
 1478650272 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\globals.h
 
-1480626642 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\drawable.cpp
+1481171362 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\drawable.cpp
 	"drawable.h"
 	<GL/glew.h>
 
-1480626642 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\drawable.h
+1481165998 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\drawable.h
 	"vertex.h"
+	"material.h"
 
-1478032430 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\vertex.h
+1481165044 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\vertex.h
 	<glm/glm.hpp>
 
 1467824614 c:\mingw\include\gl\glew.h
@@ -489,7 +490,7 @@
 
 1301111164 c:\mingw\include\gl\gl.h
 
-1480625638 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\drawablefactory.cpp
+1481186440 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\drawablefactory.cpp
 	"drawableFactory.h"
 	"shader.h"
 	<glm/glm.hpp>
@@ -497,13 +498,15 @@
 	<glm/gtc/matrix_transform.hpp>
 	<glm/gtc/type_ptr.hpp>
 
-1480625412 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\drawablefactory.h
+1481192344 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\drawablefactory.h
 	"sphere.h"
+	"plane.h"
+	<string>
 
-1480626642 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\sphere.h
+1481174192 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\sphere.h
 	"hemisphere.h"
 
-1480624542 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\hemisphere.h
+1481174200 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\hemisphere.h
 	"globals.h"
 	"drawable.h"
 
@@ -513,12 +516,18 @@
 1480984248 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\ellipticalanimator.h
 	"animator.h"
 
-1480626642 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\hemisphere.cpp
+1481176284 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\hemisphere.cpp
 	"hemisphere.h"
 	<cmath>
 	<iostream>
 	<GL/glew.h>
+	<GL/freeglut.h>
+	<OpenGL/glext.h>
+	<GL/glext.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
 	<glm/gtc/type_ptr.hpp>
+	<glm/gtc/matrix_inverse.hpp>
 
 1473914700 e:\school\2016fall\homework\graphics\glm\glm\gtc\type_ptr.hpp
 	"../gtc/quaternion.hpp"
@@ -564,11 +573,11 @@
 1473914700 e:\school\2016fall\homework\graphics\glm\glm\gtc\type_ptr.inl
 	<cstring>
 
-1481052018 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\node.cpp
+1481186690 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\node.cpp
 	"node.h"
 	<glm/gtc/matrix_transform.hpp>
 
-1481056084 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\node.h
+1481142896 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\node.h
 	<deque>
 	<iostream>
 	"transform.h"
@@ -820,23 +829,32 @@
 1301111165 c:\mingw\include\gl\glext.h
 	<windows.h>
 
-1480626656 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\sphere.cpp
+1481176390 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\sphere.cpp
 	"sphere.h"
+	<cmath>
+	<iostream>
+	<GL/glew.h>
+	<GL/freeglut.h>
+	<OpenGL/glext.h>
+	<GL/glext.h>
+	<glm/glm.hpp>
 	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<glm/gtc/matrix_inverse.hpp>
 
 1478651986 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\transform.cpp
 	"transform.h"
 
-1481058698 source:e:\school\2016fall\homework\graphics\valleburkefinal\src\main.cpp
+1481231116 source:e:\school\2016fall\homework\graphics\valleburkefinal\src\main.cpp
 	<cmath>
 	<iostream>
-	<fstream>
 	<ctime>
 	<GL/glew.h>
 	<GL/freeglut.h>
 	<glm/gtc/matrix_transform.hpp>
 	<glm/gtc/type_ptr.hpp>
-	"drawableFactory.h"
+	"solidDrawableFactory.h"
+	"texturedDrawableFactory.h"
 	"rootNode.h"
 	"ellipticalAnimator.h"
 	"shipController.h"
@@ -845,54 +863,223 @@
 
 1478031368 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\shader.h
 
-1480983552 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\rootnode.h
+1481143502 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\rootnode.h
 	"Node.h"
 
-1480991382 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\shipcontroller.h
+1481143132 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\shipcontroller.h
 	"keyInput.h"
 	"bulletController.h"
 
-1480992118 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\keyinput.h
+1481228762 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\keyinput.h
 
-1480999636 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\bulletcontroller.h
+1481179214 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\bulletcontroller.h
 	"drawableFactory.h"
 	"node.h"
 	"bulletAnimator.h"
 
-1481053540 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\bulletanimator.h
+1481142254 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\bulletanimator.h
 	"animator.h"
 	"collisionDetection.h"
 
-1481056312 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\collider.h
+1481142534 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\collider.h
 	"boundingBox.h"
 	"transform.h"
 	"node.h"
 
-1481056862 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\collisiondetection.h
+1481190908 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\collisiondetection.h
 	"collider.h"
 
-1480995006 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\boundingbox.h
+1481142160 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\boundingbox.h
 
-1481057764 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\enemydistributor.h
+1481189148 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\enemydistributor.h
 	"shipAnimator.h"
 	"drawableFactory.h"
 	"enemyCollider.h"
+	"distributor.h"
 
-1481056326 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\shipanimator.h
+1481189870 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\shipanimator.h
 	"collisionDetection.h"
 
-1481054982 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\enemylauncher.h
+1481188706 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\enemylauncher.h
 	<cstdlib>
-	"EnemyDistributor.h"
+	"enemyDistributor.h"
+	"yerionDistributor.h"
 
-1481057656 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\enemycollider.cpp
+1481188936 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\enemycollider.cpp
 	"enemyCollider.h"
 	"EnemyDistributor.h"
 
-1481057656 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\enemycollider.h
+1481188958 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\enemycollider.h
 	"collider.h"
 	"shipAnimator.h"
+	"distributor.h"
 
-1481057754 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\collisiondetection.cpp
+1481190908 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\collisiondetection.cpp
 	"collisionDetection.h"
+
+1481142160 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\boundingbox.cpp
+	"boundingBox.h"
+
+1481193822 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\bulletanimator.cpp
+	"bulletAnimator.h"
+
+1481179194 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\bulletcontroller.cpp
+	"bulletController.h"
+
+1481142422 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\collider.cpp
+	"collider.h"
+
+1481189248 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\enemydistributor.cpp
+	"enemyDistributor.h"
+
+1481189164 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\enemylauncher.cpp
+	"enemyLauncher.h"
+
+1481229026 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\keyinput.cpp
+	"keyInput.h"
+
+1481143502 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\rootnode.cpp
+	"rootNode.h"
+
+1481189756 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\shipanimator.cpp
+	"shipAnimator.h"
+
+1481228770 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\shipcontroller.cpp
+	"shipController.h"
+
+1481143202 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\shipfactory.cpp
+	"shipFactory.h"
+
+1481143202 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\shipfactory.h
+
+1481179808 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\plane.h
+	"drawable.h"
+
+1481179800 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\plane.cpp
+	"plane.h"
+
+1481155574 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\light.h
+	<glm/glm.hpp>
+
+1481155594 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\material.h
+	<glm/glm.hpp>
+
+1473914700 e:\school\2016fall\homework\graphics\glm\glm\gtc\matrix_inverse.hpp
+	"../detail/setup.hpp"
+	"../matrix.hpp"
+	"../mat2x2.hpp"
+	"../mat3x3.hpp"
+	"../mat4x4.hpp"
+	"matrix_inverse.inl"
+
+1473914700 e:\school\2016fall\homework\graphics\glm\glm\gtc\matrix_inverse.inl
+
+1481231064 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\soliddrawablefactory.cpp
+	"solidDrawableFactory.h"
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	"solidPlane.h"
+	"light.h"
+	"shader.h"
+
+1481192376 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\soliddrawablefactory.h
+	"drawableFactory.h"
+	<string>
+
+1481228538 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\textureddrawablefactory.cpp
+	"texturedDrawableFactory.h"
+	<GL/glew.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	"texturedPlane.h"
+	"shader.h"
+
+1481191422 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\textureddrawablefactory.h
+	"drawableFactory.h"
+	<string>
+
+1481194420 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\texturedplane.h
+	"plane.h"
+	"textureVertex.h"
+	"getbmp.h"
+
+1481194498 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\texturedplane.cpp
+	"texturedPlane.h"
+	<cmath>
+	<iostream>
+	<GL/glew.h>
+	<GL/freeglut.h>
+	<OpenGL/glext.h>
+	<GL/glext.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<glm/gtc/matrix_inverse.hpp>
+
+1481176814 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\texturevertex.h
+	<glm/glm.hpp>
+
+1481178836 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\getbmp.h
+	<string>
+
+1481228526 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\getbmp.cpp
+	<fstream>
+	<iostream>
+	"getbmp.h"
+
+1481179890 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\solidplane.h
+	"plane.h"
+
+1481181662 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\solidplane.cpp
+	"solidPlane.h"
+	<cmath>
+	<iostream>
+	<GL/glew.h>
+	<GL/freeglut.h>
+	<OpenGL/glext.h>
+	<GL/glext.h>
+	<glm/glm.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<glm/gtc/matrix_inverse.hpp>
+
+1481189148 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\yeriondistributor.h
+	"shipAnimator.h"
+	"drawableFactory.h"
+	"enemyCollider.h"
+	"distributor.h"
+
+1481189290 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\distributor.h
+	"node.h"
+	"shipAnimator.h"
+
+1481227706 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\yeriondistributor.cpp
+	"YerionDistributor.h"
+	<windows.h>
+	<mmsystem.h>
+	"yerionAnimator.h"
+	"yerionCollider.h"
+
+1481189248 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\distributor.cpp
+	"distributor.h"
+
+1481189900 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\yerionanimator.cpp
+	"yerionAnimator.h"
+
+1481189912 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\yerionanimator.h
+	"shipAnimator.h"
+
+1481193772 source:e:\school\2016fall\homework\graphics\valleburkefinal\engine\src\yerioncollider.cpp
+	"yerionCollider.h"
+	"EnemyDistributor.h"
+	<windows.h>
+	<mmsystem.h>
+
+1481190566 e:\school\2016fall\homework\graphics\valleburkefinal\engine\include\yerioncollider.h
+	"collider.h"
+	"shipAnimator.h"
+	"distributor.h"
 

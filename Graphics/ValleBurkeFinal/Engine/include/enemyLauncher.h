@@ -1,37 +1,28 @@
 #ifndef ENEMYLAUNCHER_H_INCLUDED
 #define ENEMYLAUNCHER_H_INCLUDED
 
+/**
+ * This launches all enemies. MechaYerions and normal enemy ships.
+**/
+
 #include <cstdlib>
 
-#include "EnemyDistributor.h"
+#include "enemyDistributor.h"
+#include "yerionDistributor.h"
 
 class EnemyLauncher : public Animator
 {
 public:
-    EnemyLauncher(EnemyDistributor* distributor, float launchRate) :
-        distributor(distributor),
-        launchRate(launchRate),
-        curLaunchRate(0)
-    {}
+    EnemyLauncher(EnemyDistributor* distributor, float launchRate, YerionDistributor* yerionDistributor, float yerionLaunchRate);
 
     // Inherited from Animator
-    void animate(float deltaTime)
-    {
-        curLaunchRate -= deltaTime;
-        if (curLaunchRate > 0)
-            return;
-
-        curLaunchRate = launchRate;
-
-        int x = (std::rand()  % 50) - 25; // Limits to [-25, 25]
-        int y = (std::rand()  % 50) - 25; // Limits to [-25, 25]
-        distributor->launchShip(vec3(x, y, -90));
-    }
+    void animate(float deltaTime);
 
 private:
     EnemyDistributor* distributor;
     float launchRate;
-    float curLaunchRate;
+    YerionDistributor* yerionDistributor;
+    float yerionLaunchRate;
 };
 
 #endif // ENEMYLAUNCHER_H_INCLUDED

@@ -1,10 +1,11 @@
-#version 150
+#version 430 core
 
-uniform vec4 colorIn;
+in vec4 frontColsExport, backColsExport;
+
 out vec4 colorsOut;
 
-void main()
+void main(void)
 {
-    colorsOut =  colorIn;
+   colorsOut = gl_FrontFacing? frontColsExport : backColsExport;
 }
 

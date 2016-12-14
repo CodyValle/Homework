@@ -1,88 +1,27 @@
 #ifndef ENEMYDISTRIBUTOR_H_INCLUDED
 #define ENEMYDISTRIBUTOR_H_INCLUDED
 
+/**
+ * This class places the enemies in the scene when told to launch.
+**/
+
 #include "shipAnimator.h"
 #include "drawableFactory.h"
 #include "enemyCollider.h"
+#include "distributor.h"
 
 static const unsigned numShips = 10;
 
-class EnemyDistributor
+class EnemyDistributor : public Distributor
 {
 public:
-    EnemyDistributor(DrawableFactory* factory, Node* node, float maxDistance)
-    {
-        for (unsigned i = 0; i < numShips; ++i)
-        {
-            Node* shipParentNode = new Node();
-            shipParentNode->getTransform().setTranslate(vec3(0., 0., 30.));
-            // Create an animator
-            ShipAnimator* shipAnimator = new ShipAnimator(shipParentNode->getTransform(), maxDistance);
+    EnemyDistributor(DrawableFactory* factory, Node* node, float maxDistance);
 
-            // Connect it to the world
-            node->addChild(shipParentNode, shipAnimator);
-            ships.push_back(shipParentNode);
-            animators.push_back(shipAnimator);
+    // Launches an enemy ship
+    void launch(vec3 translate);
 
-            // Set up the collider
-            BoundingBox* shipBBox = new BoundingBox(20., 20., 30.);
-            Collider* collider = new EnemyCollider(shipParentNode->getTransform(), shipBBox, this, shipParentNode, shipAnimator);
-            CollisionDetector::getInstance()->addCollider(collider);
-
-            // Create the wings
-            Node* wingsNode = new Node();
-            shipParentNode->addChild(wingsNode);
-            // Add the wings
-            Drawable* wingsObj = factory->makeSphere(1., 4., 4.);
-            wingsNode->addDrawable(wingsObj);
-            // Change the color
-            float wingsColor[] = {.8, 0.5, 0.2, 1.};
-            wingsObj->setColor(wingsColor);
-            // Change the shape
-            wingsNode->getTransform().setScale(vec3(6., 0.2, .6));
-
-            // Create the body
-            Node* bodyNode = new Node();
-            shipParentNode->addChild(bodyNode);
-            // Add the body
-            Drawable* bodyObj = factory->makeSphere(2., 4., 4.);
-            bodyNode->addDrawable(bodyObj);
-            // Change the color
-            float bodyColor[] = {.8, 0.3, 0.2, 1.};
-            bodyObj->setColor(bodyColor);
-            // Change the shape
-            bodyNode->getTransform().setScale(vec3(1., 1., 2.));
-        }
-    }
-
-    void launchShip(vec3 translate)
-    {
-        for (unsigned i = 0; i < numShips; ++i)
-        {
-            if (!animators.at(i)->isEnabled())
-            {
-                animators.at(i)->setEnabled(true);
-                ships.at(i)->getTransform().setTranslate(translate);
-                break;
-            }
-        }
-    }
-
-    void remove(unsigned i)
-    {
-        ships.at(i)->getTransform().setTranslate(vec3(0, 0, 30)); // Move offscreen
-        animators.at(i)->setEnabled(false);
-    }
-
-    void remove(Node* node, ShipAnimator* animator)
-    {
-        for (std::deque<Node*>::iterator it = ships.begin(); it != ships.end(); ++it)
-            if (*it == node)
-            {
-                (*it)->getTransform().setTranslate(vec3(0, 0, 30)); // Move offscreen
-                break;
-            }
-    }
+    // Removes an enemy ship from the scene
+    void remove(Node* node, ShipAnimator* animator);
 
 private:
     std::deque<Node*> ships;

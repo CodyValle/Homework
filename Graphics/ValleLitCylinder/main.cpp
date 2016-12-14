@@ -41,7 +41,7 @@ enum object {CYLINDER}; // VAO ids.
 enum buffer {CYL_VERTICES, CYL_INDICES}; // VBO ids.
 
 // Globals.
-static float Xangle = 150.0, Yangle = 60.0, Zangle = 0.0; // Angles to rotate the cylinder.
+static float Xangle = 0.0, Yangle = 0.0, Zangle = 0.0; // Angles to rotate the cylinder.
 
 // Light properties.
 static const Light light0 =
@@ -56,20 +56,20 @@ static const Light light0 =
 static const vec4 globAmb = vec4(0.2, 0.2, 0.2, 1.0);
 
 // Front material properties.
-static const Material cylFront =
+static const Material objFront =
 {
-	vec4(0.9, 0.0, 0.0, 1.0),
-	vec4(0.9, 0.0, 0., 1.0),
+	vec4(0.9, 0.0, .0, 1.0),
+	vec4(0.9, 0.0, .0, 1.0),
 	vec4(1.0, 1.0, 1.0, 1.0),
 	vec4(0.0, 0.0, 0.0, 1.0),
 	50.0
 };
 
 // Back material properties.
-static const Material cylBack =
+static const Material objBack =
 {
-	vec4(0.0, 0.0, 0.9, 1.0),
-	vec4(0.0, 0.0, 0.9, 1.0),
+	vec4(.0, 0.0, 0.9, 1.0),
+	vec4(.0, 0.0, 0.0, 1.0),
 	vec4(1.0, 1.0, 1.0, 1.0),
 	vec4(0.0, 0.0, 0.0, 1.0),
 	50.0
@@ -97,20 +97,40 @@ static unsigned int
    width, // OpenGL window width.
    height; // OpenGL window height.
 
+void setLight(unsigned pid)
+{
+    // Obtain light property uniform locations and set values.
+   glUniform4fv(glGetUniformLocation(pid, "light0.ambCols"), 1, &light0.ambCols[0]);
+   glUniform4fv(glGetUniformLocation(pid, "light0.difCols"), 1, &light0.difCols[0]);
+   glUniform4fv(glGetUniformLocation(pid, "light0.specCols"), 1, &light0.specCols[0]);
+   glUniform4fv(glGetUniformLocation(pid, "light0.coords"), 1, &light0.coords[0]);
+
+   // Obtain global ambient uniform location and set value.
+   glUniform4fv(glGetUniformLocation(pid, "globAmb"), 1, &globAmb[0]);
+}
+
+void setCols(unsigned pid)
+{
+    // Obtain front material property uniform locations and set values.
+   glUniform4fv(glGetUniformLocation(pid, "objFront.ambRefl"), 1, &objFront.ambRefl[0]);
+   glUniform4fv(glGetUniformLocation(pid, "objFront.difRefl"), 1, &objFront.difRefl[0]);
+   glUniform4fv(glGetUniformLocation(pid, "objFront.specRefl"), 1, &objFront.specRefl[0]);
+   glUniform4fv(glGetUniformLocation(pid, "objFront.emitCols"), 1, &objFront.emitCols[0]);
+   glUniform1f(glGetUniformLocation(pid, "objFront.shininess"), objFront.shininess);
+
+   // Obtain back material property uniform locations and set values.
+   glUniform4fv(glGetUniformLocation(pid, "objBack.ambRefl"), 1, &objBack.ambRefl[0]);
+   glUniform4fv(glGetUniformLocation(pid, "objBack.difRefl"), 1, &objBack.difRefl[0]);
+   glUniform4fv(glGetUniformLocation(pid, "objBack.specRefl"), 1, &objBack.specRefl[0]);
+   glUniform4fv(glGetUniformLocation(pid, "objBack.emitCols"), 1, &objBack.emitCols[0]);
+   glUniform1f(glGetUniformLocation(pid, "objBack.shininess"), objBack.shininess);
+}
+
 // Initialization routine.
 void setup(void)
 {
    glClearColor(1.0, 1.0, 1.0, 0.0);
    glEnable(GL_DEPTH_TEST);
-
-   // Create shader program executable.
-   vertexShaderId = setShader("vertex", "vertexShader.glsl");
-   fragmentShaderId = setShader("fragment", "fragmentShader.glsl");
-   programId = glCreateProgram();
-   glAttachShader(programId, vertexShaderId);
-   glAttachShader(programId, fragmentShaderId);
-   glLinkProgram(programId);
-   glUseProgram(programId);
 
    // Initialize cylinder.
    fillCylinder(cylVertices, cylIndices, cylCounts, cylOffsets);
@@ -125,49 +145,36 @@ void setup(void)
    glBufferData(GL_ARRAY_BUFFER, sizeof(cylVertices), cylVertices, GL_STATIC_DRAW);
    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, buffer[CYL_INDICES]);
    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(cylIndices), cylIndices, GL_STATIC_DRAW);
+
    glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(cylVertices[0]), 0);
    glEnableVertexAttribArray(0);
    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(cylVertices[0]), (void*)sizeof(cylVertices[0].coords));
    glEnableVertexAttribArray(1);
 
+   // Create shader program executable.
+   programId = glCreateProgram();
+   glAttachShader(programId, setShader("vertex", "vertexShader.glsl"));
+   glAttachShader(programId, setShader("fragment", "fragmentShader.glsl"));
+   glLinkProgram(programId);
+   glUseProgram(programId);
+
    // Obtain modelview matrix, projection matrix and normal matrix uniform locations.
    modelViewMatLoc = glGetUniformLocation(programId,"modelViewMat");
-   projMatLoc = glGetUniformLocation(programId,"projMat");
-   normalMatLoc = glGetUniformLocation(programId,"normalMat");
 
-   // Obtain light property uniform locations and set values.
-   glUniform4fv(glGetUniformLocation(programId, "light0.ambCols"), 1, &light0.ambCols[0]);
-   glUniform4fv(glGetUniformLocation(programId, "light0.difCols"), 1, &light0.difCols[0]);
-   glUniform4fv(glGetUniformLocation(programId, "light0.specCols"), 1, &light0.specCols[0]);
-   glUniform4fv(glGetUniformLocation(programId, "light0.coords"), 1, &light0.coords[0]);
+   // Calculate and update projection matrix.
+   projMat = frustum(-1, 1, -1, 1, 1, 10);
 
-   // Obtain global ambient uniform location and set value.
-   glUniform4fv(glGetUniformLocation(programId, "globAmb"), 1, &globAmb[0]);
+   glUniformMatrix4fv(glGetUniformLocation(programId,"projMat"), 1, GL_FALSE, value_ptr(projMat));
 
-   // Obtain front material property uniform locations and set values.
-   glUniform4fv(glGetUniformLocation(programId, "cylFront.ambRefl"), 1, &cylFront.ambRefl[0]);
-   glUniform4fv(glGetUniformLocation(programId, "cylFront.difRefl"), 1, &cylFront.difRefl[0]);
-   glUniform4fv(glGetUniformLocation(programId, "cylFront.specRefl"), 1, &cylFront.specRefl[0]);
-   glUniform4fv(glGetUniformLocation(programId, "cylFront.emitCols"), 1, &cylFront.emitCols[0]);
-   glUniform1f(glGetUniformLocation(programId, "cylFront.shininess"), cylFront.shininess);
+   setLight(programId);
 
-   // Obtain back material property uniform locations and set values.
-   glUniform4fv(glGetUniformLocation(programId, "cylBack.ambRefl"), 1, &cylBack.ambRefl[0]);
-   glUniform4fv(glGetUniformLocation(programId, "cylBack.difRefl"), 1, &cylBack.difRefl[0]);
-   glUniform4fv(glGetUniformLocation(programId, "cylBack.specRefl"), 1, &cylBack.specRefl[0]);
-   glUniform4fv(glGetUniformLocation(programId, "cylBack.emitCols"), 1, &cylBack.emitCols[0]);
-   glUniform1f(glGetUniformLocation(programId, "cylBack.shininess"), cylBack.shininess);
+   setCols(programId);
 }
 
 // Drawing routine.
 void drawScene(void)
 {
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-   // Calculate and update projection matrix.
-   projMat = frustum(-1, 1, -1, 1, 1, 10);
-
-   glUniformMatrix4fv(projMatLoc, 1, GL_FALSE, value_ptr(projMat));
 
    // Calculate and update modelview matrix.
    modelViewMat = mat4(1.0);
@@ -180,7 +187,7 @@ void drawScene(void)
 
    // Calculate and update normal matrix.
    normalMat = transpose(inverse(mat3(modelViewMat)));
-   glUniformMatrix3fv(normalMatLoc, 1, GL_FALSE, value_ptr(normalMat));
+   glUniformMatrix3fv(glGetUniformLocation(programId,"normalMat"), 1, GL_FALSE, value_ptr(normalMat));
 
    // Draw cylinder.
    glMultiDrawElements(GL_TRIANGLE_STRIP, cylCounts, GL_UNSIGNED_INT, (const void **)cylOffsets, CYL_LATS);
@@ -204,33 +211,33 @@ void keyInput(unsigned char key, int x, int y)
          exit(0);
          break;
       case 'x':
-         Xangle += 5.0;
-		 if (Xangle > 360.0) Xangle -= 360.0;
+         Xangle += PI / 32;
+		 if (Xangle > 2*PI) Xangle -= 2*PI;
          glutPostRedisplay();
          break;
       case 'X':
-         Xangle -= 5.0;
-		 if (Xangle < 0.0) Xangle += 360.0;
+         Xangle -= PI / 32;
+		 if (Xangle < 0.0) Xangle += 2*PI;
          glutPostRedisplay();
          break;
       case 'y':
-         Yangle += 5.0;
-		 if (Yangle > 360.0) Yangle -= 360.0;
+         Yangle += PI / 32;
+		 if (Yangle > 2*PI) Yangle -= 2*PI;
          glutPostRedisplay();
          break;
       case 'Y':
-         Yangle -= 5.0;
-		 if (Yangle < 0.0) Yangle += 360.0;
+         Yangle -= PI / 32;
+		 if (Yangle < 0.0) Yangle += 2*PI;
          glutPostRedisplay();
          break;
       case 'z':
-         Zangle += 5.0;
-		 if (Zangle > 360.0) Zangle -= 360.0;
+         Zangle += PI / 32;
+		 if (Zangle > 2*PI) Zangle -= 2*PI;
          glutPostRedisplay();
          break;
       case 'Z':
-         Zangle -= 5.0;
-		 if (Zangle < 0.0) Zangle += 360.0;
+         Zangle -= PI / 32;
+		 if (Zangle < 0.0) Zangle += 2*PI;
          glutPostRedisplay();
          break;
       default:

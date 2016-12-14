@@ -1,7 +1,7 @@
 #include "enemyCollider.h"
 #include "EnemyDistributor.h"
 
-EnemyCollider::EnemyCollider(Transform& transform, BoundingBox* bBox, EnemyDistributor* distro, Node* node, ShipAnimator* animator) :
+EnemyCollider::EnemyCollider(Transform& transform, BoundingBox* bBox, Distributor* distro, Node* node, ShipAnimator* animator) :
     Collider(transform, bBox),
     distributor(distro),
     node(node),

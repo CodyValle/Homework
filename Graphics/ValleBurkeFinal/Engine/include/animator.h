@@ -1,5 +1,9 @@
 #ifndef ANIMATOR_H_INCLUDED
 #define ANIMATOR_H_INCLUDED
+/**
+ * Parent class for all animators.
+ * An animator in the scene is updated every frame.
+**/
 
 #include "transform.h"
 

@@ -1,0 +1,33 @@
+S -> NP VP
+S -> X1 VP
+X1 ->  Aux NP
+S -> book|include|prefer
+S -> Verb NP
+S ->  X2 PP
+S ->  Verb PP
+S ->  VP PP
+S -> VP
+NP -> Pronoun
+NP -> Proper-Noun
+NP -> Det Nominal
+NP -> I|she|me
+NP -> TWA | Houston
+Nominal -> Noun
+Nominal -> book|flight|meal|money
+Nominal -> Nominal Noun
+Nominal -> Nominal PP
+VP -> Verb
+VP -> book|include|prefer
+VP -> Verb NP
+VP -> X2 PP
+X2 -> Verb NP
+VP -> Verb PP
+VP -> VP PP
+PP -> Preposition NP
+Det -> that|this|a|the
+Noun ->  book|flight|meal|money
+Verb -> book|include|prefer
+Pronoun -> I|she|me
+Proper-Noun -> TWA|Houston
+Aux -> does
+Preposition -> from|to|on|near|through

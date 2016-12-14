@@ -41,21 +41,16 @@ using namespace glm;
 enum object {FIELD, SKY}; // VAO ids.
 enum buffer {FIELD_VERTICES, SKY_VERTICES}; // VBO ids.
 
-// Globals.
-static Vertex fieldVertices[4] =
-{
-	{vec4(100.0, 0.0, 100.0, 1.0), vec2(10.0, 0.0)},
-	{vec4(100.0, 0.0, -100.0, 1.0), vec2(10.0, 10.0)},
-	{vec4(-100.0, 0.0, 100.0, 1.0), vec2(0.0, 0.0)},
-	{vec4(-100.0, 0.0, -100.0, 1.0), vec2(0.0, 10.0)}
-};
-
 static Vertex skyVertices[4] =
 {
-	{vec4(100.0, 0.0, -70.0, 1.0), vec2(1.0, 0.0)},
+	{vec4(0.5, -0.5, 0.0, 1.0), vec2(1.0, 0.0)},
+	{vec4(0.5, 0.5, .0, 1.0), vec2(1.0, 1.0)},
+	{vec4(-0.5, -0.5, 0.0, 1.0), vec2(0.0, 0.0)},
+	{vec4(-0.5, 0.5, 0.0, 1.0), vec2(0.0, 1.0)}
+	/*{vec4(100.0, 0.0, -70.0, 1.0), vec2(1.0, 0.0)},
 	{vec4(100.0, 120.0, -70.0, 1.0), vec2(1.0, 1.0)},
 	{vec4(-100.0, 0.0, -70.0, 1.0), vec2(0.0, 0.0)},
-	{vec4(-100.0, 120.0, -70.0, 1.0), vec2(0.0, 1.0)}
+	{vec4(-100.0, 120.0, -70.0, 1.0), vec2(0.0, 1.0)}*/
 };
 
 static mat4 modelViewMat = mat4(1.0);
@@ -63,18 +58,18 @@ static mat4 projMat = mat4(1.0);
 
 static unsigned int
    programId,
+   programId2,
    vertexShaderId,
    fragmentShaderId,
-   modelViewMatLoc,
+   matrixLoc,
    projMatLoc,
-   grassTexLoc,
    skyTexLoc,
    objectLoc,
-   buffer[2],
-   vao[2],
-   texture[2];
+   buffer,
+   vao,
+   texture;
 
-static BitMapFile *image[2]; // Local storage for bmp image data.
+static BitMapFile *image; // Local storage for bmp image data.
 
 static float d = 0.0; // Distance parameter in gluLookAt().
 
@@ -85,117 +80,75 @@ void setup(void)
    glEnable(GL_DEPTH_TEST);
 
    // Create shader program executable.
-   vertexShaderId = setShader("vertex", "vertexShader.glsl");
-   fragmentShaderId = setShader("fragment", "fragmentShader.glsl");
    programId = glCreateProgram();
-   glAttachShader(programId, vertexShaderId);
-   glAttachShader(programId, fragmentShaderId);
+   glAttachShader(programId, setShader("vertex", "vertexShader.glsl"));
+   glAttachShader(programId, setShader("fragment", "fragmentShader.glsl"));
    glLinkProgram(programId);
-   glUseProgram(programId);
-
-   // Create VAOs and VBOs...
-   glGenVertexArrays(2, vao);
-   glGenBuffers(2, buffer);
-
-   // ...and associate data with vertex shader.
-   glBindVertexArray(vao[FIELD]);
-   glBindBuffer(GL_ARRAY_BUFFER, buffer[FIELD_VERTICES]);
-   glBufferData(GL_ARRAY_BUFFER, sizeof(fieldVertices), fieldVertices, GL_STATIC_DRAW);
-   glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(fieldVertices[0]), 0);
-   glEnableVertexAttribArray(0);
-   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(fieldVertices[0]), (void*)(sizeof(fieldVertices[0].coords)));
-   glEnableVertexAttribArray(1);
-
-   // ...and associate data with vertex shader.
-   glBindVertexArray(vao[SKY]);
-   glBindBuffer(GL_ARRAY_BUFFER, buffer[SKY_VERTICES]);
-   glBufferData(GL_ARRAY_BUFFER, sizeof(skyVertices), skyVertices, GL_STATIC_DRAW);
-   glVertexAttribPointer(2, 4, GL_FLOAT, GL_FALSE, sizeof(skyVertices[0]), 0);
-   glEnableVertexAttribArray(2);
-   glVertexAttribPointer(3, 2, GL_FLOAT, GL_FALSE, sizeof(skyVertices[0]), (void*)(sizeof(skyVertices[0].coords)));
-   glEnableVertexAttribArray(3);
 
    // Obtain projection matrix uniform location and set value.
-   projMatLoc = glGetUniformLocation(programId,"projMat");
-   projMat = frustum(-5.0, 5.0, -5.0, 5.0, 5.0, 100.0);
-   glUniformMatrix4fv(projMatLoc, 1, GL_FALSE, value_ptr(projMat));
+   projMat = frustum(-5.0, 5.0, -5.0, 5.0, 5.0, 300.0);
+   glUniformMatrix4fv(glGetUniformLocation(programId,"projMat"), 1, GL_FALSE, value_ptr(projMat));
 
    // Obtain modelview matrix uniform and object uniform locations.
-   modelViewMatLoc = glGetUniformLocation(programId,"modelViewMat");
-   objectLoc = glGetUniformLocation(programId, "object");
+   matrixLoc = glGetUniformLocation(programId,"modelViewMat");
+
+
+   /**/
+   // Create VAOs and VBOs...
+   glGenVertexArrays(1, &vao);
+   glGenBuffers(1, &buffer);
+
+   // ...and associate data with vertex shader.
+   glBindVertexArray(vao);
+   glBindBuffer(GL_ARRAY_BUFFER, buffer);
+   glBufferData(GL_ARRAY_BUFFER, sizeof(skyVertices), skyVertices, GL_STATIC_DRAW);
+
+   glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, sizeof(Vertex), 0);
+   glEnableVertexAttribArray(0);
+   glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)(sizeof(vec4)));
+   glEnableVertexAttribArray(1);
 
    // Load the images.
-   image[0] = getbmp("grass.bmp");
-   image[1] = getbmp("sky.bmp");
+   image = getbmp("MechaYerion.bmp");
 
    // Create texture ids.
-   glGenTextures(2, texture);
-
-   // Bind grass image.
-   glActiveTexture(GL_TEXTURE0);
-   glBindTexture(GL_TEXTURE_2D, texture[0]);
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image[0]->sizeX, image[0]->sizeY, 0,
-	            GL_RGBA, GL_UNSIGNED_BYTE, image[0]->data);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-
-   // try different filtering techniques 1, 2, 3
-#define OPTION 3
-
-   // option 1
-#if OPTION == 1
-   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_NEAREST);
-   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_NEAREST);
-
-   // option 2
-#elif OPTION == 2
-   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MIN_FILTER,GL_LINEAR);
-   glTexParameteri(GL_TEXTURE_2D,GL_TEXTURE_MAG_FILTER,GL_LINEAR);
-
-   // OPTION 3
-#else
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-   glGenerateMipmap(GL_TEXTURE_2D);
-#endif
-#undef OPTION
-
-   grassTexLoc = glGetUniformLocation(programId, "grassTex");
-   glUniform1i(grassTexLoc, 0);
+   glGenTextures(1, &texture);
 
    // Bind sky image.
    glActiveTexture(GL_TEXTURE1);
-   glBindTexture(GL_TEXTURE_2D, texture[1]);
-   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image[1]->sizeX, image[1]->sizeY, 0,
-	            GL_RGBA, GL_UNSIGNED_BYTE, image[1]->data);
+   glBindTexture(GL_TEXTURE_2D, texture);
+   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, image->sizeX, image->sizeY, 0,
+	            GL_RGBA, GL_UNSIGNED_BYTE, image->data);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
    glGenerateMipmap(GL_TEXTURE_2D);
-   skyTexLoc = glGetUniformLocation(programId, "skyTex");
-   glUniform1i(skyTexLoc, 1);
+   glUniform1i(glGetUniformLocation(programId, "Tex"), 1);
+   /**/
 }
 
 // Drawing routine.
 void drawScene(void)
 {
+   glUseProgram(programId);// Create shader program executable.
    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
    // Calculate and update modelview matrix.
    modelViewMat = mat4(1.0);
-   modelViewMat = lookAt(vec3(0.0, 10.0, 15.0 + d), vec3(0.0, 10.0, -70.0), vec3(0.0, 1.0, 0.0));
-   glUniformMatrix4fv(modelViewMatLoc, 1, GL_FALSE, value_ptr(modelViewMat));
+   //modelViewMat = lookAt(vec3(0.0, 10.0, 15.0 + d), vec3(0.0, 10.0, -70.0), vec3(0.0, 1.0, 0.0));
+   modelViewMat = translate(modelViewMat, vec3(0,0,-50));
+   //modelViewMat = rotate(modelViewMat, float(180), vec3(0,1,0));
+   modelViewMat = scale(modelViewMat, vec3(30, 30, 30));
 
-   // Draw field.
-   glUniform1ui(objectLoc, FIELD);
-   glBindVertexArray(vao[FIELD]);
-   glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+   /**/
+   glUniformMatrix4fv(matrixLoc, 1, GL_FALSE, value_ptr(modelViewMat));
 
    // Draw sky.
-   glUniform1ui(objectLoc, SKY);
-   glBindVertexArray(vao[SKY]);
+   glBindVertexArray(vao);
    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+   /**/
+
 
    glutSwapBuffers();
 }

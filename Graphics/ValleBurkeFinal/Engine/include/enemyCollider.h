@@ -1,20 +1,26 @@
 #ifndef ENEMYCOLLIDER_H_INCLUDED
 #define ENEMYCOLLIDER_H_INCLUDED
 
+/**
+ * Reacts to a collsion witha  bullet.
+**/
+
 #include "collider.h"
 #include "shipAnimator.h"
+#include "distributor.h"
 
 class EnemyDistributor;
 
 class EnemyCollider : public Collider
 {
 public:
-    EnemyCollider(Transform& transform, BoundingBox* bBox, EnemyDistributor* distro, Node* node, ShipAnimator* animator);
+    EnemyCollider(Transform& transform, BoundingBox* bBox, Distributor* distro, Node* node, ShipAnimator* animator);
 
+    // Called when hit by a bullet
     void collision();
 
 private:
-    EnemyDistributor* distributor;
+    Distributor* distributor;
     Node* node;
     ShipAnimator* animator;
 };

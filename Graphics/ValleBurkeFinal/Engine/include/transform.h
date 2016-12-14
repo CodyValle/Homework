@@ -1,6 +1,10 @@
 #ifndef TRANSFORM_H_INCLUDED
 #define TRANSFORM_H_INCLUDED
 
+/**
+ * A Transform tracks the translation, rotation, and scale of whatever object it is attached to.
+**/
+
 #include <glm/glm.hpp>
 
 #include "globals.h"

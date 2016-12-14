@@ -1,22 +1,18 @@
 #ifndef SHIPANIMATOR_H_INCLUDED
 #define SHIPANIMATOR_H_INCLUDED
 
+/**
+ * ShipAnimator controls each the enemy ships.\
+**/
+
 #include "collisionDetection.h"
 
 class ShipAnimator : public Animator
 {
 public:
-    ShipAnimator(Transform& transform, float maxDistance) :
-        Animator(),
-        transform(transform),
-        maxDistance(maxDistance),
-        enabled(false)
-    {
-    }
+    ShipAnimator(Transform& transform, float maxDistance);
 
-    ~ShipAnimator()
-    {
-    }
+    virtual ~ShipAnimator();
 
     inline void setEnabled(bool e)
         { enabled = e; }
@@ -25,19 +21,9 @@ public:
         { return enabled; }
 
     // Inherited from Animator
-    void animate(float deltaTime)
-    {
-        if (enabled)
-        {
-            // Move
-            transform.translate(vec3(0, 0, 0.1 * deltaTime));
+    void animate(float deltaTime);
 
-            if (transform.getTranslate()[2] >= maxDistance)
-                setEnabled(false);
-        }
-    }
-
-private:
+protected:
     Transform& transform;
     float maxDistance;
     bool enabled;

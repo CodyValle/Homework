@@ -5,7 +5,7 @@
 
 #define PI 3.14159265
 #define CYL_LONGS 30 // Number of longitudinal slices.
-#define CYL_LATS 10 // Number of latitudinal slices.
+#define CYL_LATS 30 // Number of latitudinal slices.
 
 void fillCylVertexArray(Vertex cylVertices[(CYL_LONGS + 1) * (CYL_LATS + 1)]);
 void fillCylIndices(unsigned int cylIndices[CYL_LATS][2 * (CYL_LONGS + 1)]);

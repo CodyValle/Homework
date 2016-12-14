@@ -1,7 +1,14 @@
 #ifndef DRAWABLEFACTORY_H_INCLUDED
 #define DRAWABLEFACTORY_H_INCLUDED
 
+/**
+ * Parent class for all drawables.
+**/
+
 #include "sphere.h"
+#include "plane.h"
+
+#include <string>
 
 class DrawableFactory
 {
@@ -10,16 +17,19 @@ public:
     DrawableFactory();
 
     // Produce Spheres
-    Sphere* makeSphere(float radius = 2., unsigned longs = 10, unsigned lats = 5);
-    Sphere* makeSphere(float const col[4], float radius = 2., unsigned longs = 10, unsigned lats = 5);
+    virtual Sphere* makeSphere(unsigned longs, unsigned lats) = 0;
 
     // Produce Hemispheres
-    Hemisphere* makeHemisphere(float radius = 2., unsigned longs = 10, unsigned lats = 5);
-    Hemisphere* makeHemisphere(float const col[4], float radius = 2., unsigned longs = 10, unsigned lats = 5);
+    virtual Hemisphere* makeHemisphere(float radius, unsigned longs, unsigned lats) = 0;
+
+    // Produce Planes
+    virtual Plane* makePlane(unsigned longs = 30, unsigned lats = 30) = 0;
+    virtual Plane* makePlane(std::string file) = 0;
 
 protected:
     // GL ids
     unsigned programId;
+    mat4 projMat;
 };
 
 #endif // DRAWABLEFACTORY_H_INCLUDED
