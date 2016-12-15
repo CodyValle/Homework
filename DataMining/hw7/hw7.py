@@ -129,6 +129,15 @@ def main():
     supported = apriori(titanic_table[1:], 0.4) # Minimum support
     rules = mine_rules(titanic_table[1:], titanic_table[0], supported, 0.9) # Minimum confidence
 
+    mushroom_table = read_csv('agaricus-lepiota.txt')
+    mushroom_labels = ['class_label', 'cap_shape', 'cap_surface', 'cap_color', 'bruises', 'odor', 'gill_attachment',
+    'gill_spacing', 'gill_size', 'gill_color', 'stalk_shape', 'stalk_root', 'stalk_surface_above_ring',
+    'stalk_surface_below_ring', 'stalk_color_above_ring', 'stalk_color_below_ring', 'veil_type', 'veil_color',
+    'ring_number', 'ring_type', 'spore_print_color', 'population', 'habitat']
+
+    supported = apriori(mushroom_table, 0.9)
+    rules = mine_rules(mushroom_table, mushroom_labels, supported, 0.9)
+
 """ To make this an executable """
 if __name__ == '__main__':
     main()

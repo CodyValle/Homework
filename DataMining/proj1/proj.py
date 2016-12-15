@@ -513,18 +513,18 @@ def k_nn_approach(table):
     print 'Classifier 2: k-Nearest Neighbor Sea Temperature'
     print '==========================================='
     # Create folds
-    k = 10
-    folds = partition_into_folds(table, k, SEA_TEMP)
+    num_folds = 10
+    folds = partition_into_folds(table, num_folds, SEA_TEMP)
     indices = [HUMIDITY, ZONAL, MERIDIONAL, AIR_TEMP]
 
     # Get results
     correct = 0
     total = 0
-    for i in range(10):
+    for i in range(num_folds):
         test_set, training_set = create_test_and_train_from_folds(folds, i)
         tree = decision_tree(training_set, indices, SEA_TEMP)
         for row in test_set:
-            if classify(training_set, row, 3, indices) == row[SEA_TEMP]:
+            if classify(training_set, row, 5, indices) == row[SEA_TEMP]:
                 correct += 1
             total += 1
 
@@ -571,7 +571,7 @@ def random_forest_approach(table):
     print '==========================================='
     # Set up
     labels = get_categories(table, SEA_TEMP)
-    k = 3
+    k = 10
     indices = [MONTH, HUMIDITY, ZONAL, MERIDIONAL, LATITUDE, LONGITUDE, AIR_TEMP]
     folds = partition_into_folds(table, k, SEA_TEMP)
 
@@ -705,14 +705,18 @@ def main():
     # Load the data
     elnino, atts = load_elnino()
     elnino_raw, fill = clean(elnino, [YEAR, MONTH, LATITUDE, LONGITUDE, HUMIDITY, ZONAL, MERIDIONAL, AIR_TEMP, SEA_TEMP])
-    elnino_categorized = categorize(elnino_raw)[:150]
-    elnino_normalized = normalize(elnino_raw)[:150]
+    elnino_categorized = categorize(elnino_raw)
+    elnino_normalized = normalize(elnino_raw)
+
+    # For speed/debugging
+    elnino_categorized = bootstrap(elnino_categorized, 3000)
+    elnino_normalized = bootstrap(elnino_normalized, 3000)
 
     # Print summary statistics
     summary_statistics(elnino_raw, atts, [ZONAL, MERIDIONAL, HUMIDITY, AIR_TEMP, SEA_TEMP])
 
-    # Create plots
-    do_plots(elnino_raw, False)
+    # Create plots (True to show the plots, False to just save them)
+    do_plots(elnino_raw, True)
 
     # Run classifiers
     compare_classifiers(elnino_raw, elnino_categorized, elnino_normalized, atts)
